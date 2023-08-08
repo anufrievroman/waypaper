@@ -4,7 +4,7 @@ from waypaper.app import App
 from waypaper.changer import change_wallpaper
 
 
-__version__ = "1.0.2"
+__version__ = "1.1"
 
 
 def run():

@@ -26,7 +26,7 @@ class App(Gtk.Window):
 
     def __init__(self):
         super().__init__(title="Waypaper")
-        self.set_default_size(800, 600)
+        self.set_default_size(780, 600)
 
 
         # Create the configuration directory if it doesn't exist:
@@ -37,7 +37,7 @@ class App(Gtk.Window):
         self.add(self.main_box)
 
         # Create a button to open folder dialog:
-        self.choose_folder_button = Gtk.Button(label="Choose Image Folder")
+        self.choose_folder_button = Gtk.Button(label="Choose wallpaper folder")
         self.choose_folder_button.connect("clicked", self.on_choose_folder_clicked)
         self.main_box.pack_start(self.choose_folder_button, False, False, 0)
 
@@ -108,7 +108,7 @@ class App(Gtk.Window):
 
 
     def save_data(self):
-        """Save selected image folder to the configuration file"""
+        """Save the parameters to the configuration file"""
         config = configparser.ConfigParser()
         if os.path.exists(self.config_file_path):
             config.read(self.config_file_path)
@@ -119,7 +119,7 @@ class App(Gtk.Window):
         # Save folder:
         config.set("Settings", "folder", self.image_folder)
 
-        # Save selected image:
+        # Save selected wallpaper:
         if self.selected_image_path is not None:
             config.set("Settings", "wallpaper", self.selected_image_path)
 
@@ -148,6 +148,7 @@ class App(Gtk.Window):
         row = 0
         col = 0
 
+        # Load images from the folder:
         for filename in os.listdir(self.image_folder):
             if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
                 image_path = os.path.join(self.image_folder, filename)
@@ -179,7 +180,7 @@ class App(Gtk.Window):
 
 
     def on_choose_folder_clicked(self, widget):
-        """Choosing the folder of images"""
+        """Choosing the folder of images, saving the path, and reloading images"""
 
         dialog = Gtk.FileChooserDialog(
             "Please choose a folder", self, Gtk.FileChooserAction.SELECT_FOLDER,
@@ -194,7 +195,7 @@ class App(Gtk.Window):
 
 
     def on_image_clicked(self, widget, user_data):
-        """On clicking an image, set it as a wallpaper"""
+        """On clicking an image, set it as a wallpaper and save"""
         self.selected_image_path = user_data
         print("Selected image path:", self.selected_image_path)
         fill_option = self.fill_option_combo.get_active_text() or self.default_fill_option
@@ -203,13 +204,13 @@ class App(Gtk.Window):
 
 
     def on_exit_clicked(self, widget):
-        """On clicking exit button, save the selected folder and quit"""
+        """On clicking exit button, save the data and quit"""
         self.save_data()
         Gtk.main_quit()
 
 
     def on_key_pressed(self, widget, event):
-        """On clicking q, button save the selected folder and quit"""
+        """On clicking q, save the data and quit"""
         if event.keyval == Gdk.KEY_q:
             self.save_data()
             Gtk.main_quit()
