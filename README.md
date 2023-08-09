@@ -4,9 +4,18 @@ GUI wallpaper setter for Wayland-based window managers that works as a frontend 
 
 ![screenshot](screenshot.jpg)
 
+## Features
+
+- GUI wallpaper selection
+- Support for GIF animations (with `swww` backend)
+- Works on Wayland. It's your wayland replacement of `nitrogen`.
+- Restores wallpaper on launch of your WM with `waypaper --restore`
+  
 ## Installation
 
-`pip install waypaper` or in case of troubles `pipx install waypaper`. Also, install `swaybg` or `swww` from your package manager.
+`pipx install waypaper` (you may need to install `pipx` from your package manager first, it's sometimes called `python-pipx`)
+
+Also, install `swaybg` or `swww` from your package manager.
 
 ### Dependencies
 
@@ -28,8 +37,8 @@ To restore the chosen wallpaper at launch, add `waypaper --restore` to your star
 
 ## Roadmap
 
-- Support for other backends like -swww-, hyprpaper and xorg backends.
-- Additional options for search in -subfolders-, background colors etc.
+- Support for other backends like ~swww~, hyprpaper and xorg backends.
+- Additional options for search in ~subfolders~, background colors etc.
 - Dynamic grid of thumbnails that adopts to the application width.
 
 ## Contributions
