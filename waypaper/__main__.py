@@ -5,7 +5,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import cf
 
 
-__version__ = "1.2"
+__version__ = "1.2.1"
 
 
 def run():
@@ -13,8 +13,8 @@ def run():
 
     # Set the wallpaper and quit:
     if "--restore" in sys.argv:
-        if app.current_wallpaper is not None:
-            change_wallpaper(cf.current_wallpaper, cf.fill_option)
+        if cf.wallpaper is not None:
+            change_wallpaper(cf.wallpaper, cf.fill_option)
         exit()
 
     # Print the version and quit:
