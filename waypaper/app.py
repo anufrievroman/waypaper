@@ -64,14 +64,22 @@ class App(Gtk.Window):
         self.include_subfolders_checkbox.set_active(cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
 
+        # Create a backend dropdown menu:
+        # self.backend_option_label = Gtk.Label(label="")
+        self.backend_option_combo = Gtk.ComboBoxText()
+        options = ["swaybg", "swww"]
+        for option in options:
+            self.backend_option_combo.append_text(option)
+        active_num = options.index(cf.backend)
+        self.backend_option_combo.set_active(active_num)
+        self.backend_option_combo.connect("changed", self.on_backend_option_changed)
+
         # Create a fill option dropdown menu:
         # self.fill_option_label = Gtk.Label(label="")
         self.fill_option_combo = Gtk.ComboBoxText()
-        self.fill_option_combo.append_text("Fill")
-        self.fill_option_combo.append_text("Stretch")
-        self.fill_option_combo.append_text("Fit")
-        self.fill_option_combo.append_text("Center")
-        self.fill_option_combo.append_text("Tile")
+        options = ["Fill", "Stretch", "Fit", "Center", "Tile"]
+        for option in options:
+            self.fill_option_combo.append_text(option)
         self.fill_option_combo.set_active(0)
         self.fill_option_combo.connect("changed", self.on_fill_option_changed)
 
@@ -92,6 +100,7 @@ class App(Gtk.Window):
         self.options_box = Gtk.HBox(spacing=10)
         self.options_box.pack_start(self.include_subfolders_checkbox, False, False, 0)
         # self.options_box.pack_start(self.fill_option_label, False, False, 0)
+        self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.options_box.pack_start(self.fill_option_combo, False, False, 0)
         self.options_box.pack_end(self.exit_button, False, False, 0)
         self.button_row_alignment.add(self.options_box)
@@ -162,7 +171,13 @@ class App(Gtk.Window):
 
 
     def on_fill_option_changed(self, combo):
+        """Save fill parameter whet it is changed"""
         cf.fill_option = combo.get_active_text()
+
+
+    def on_backend_option_changed(self, combo):
+        """Save backend parameter whet it is changed"""
+        cf.backend = combo.get_active_text()
 
 
     def on_image_clicked(self, widget, user_data):
@@ -170,7 +185,7 @@ class App(Gtk.Window):
         cf.wallpaper = user_data
         print("Selected image path:", cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option)
+        change_wallpaper(cf.wallpaper, cf.fill_option, cf.backend)
         cf.save()
 
 

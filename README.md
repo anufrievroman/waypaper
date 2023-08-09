@@ -1,16 +1,16 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland-based window managers such as Hyprland or Sway.
+GUI wallpaper setter for Wayland-based window managers that works as a frontend for popular backends like `swaybg` and `swww`.
 
 ![screenshot](screenshot.jpg)
 
 ## Installation
 
-`pip install waypaper` or in case of troubles `pipx install waypaper`. Also, install `swaybg` from your package manager.
+`pip install waypaper` or in case of troubles `pipx install waypaper`. Also, install `swaybg` or `swww` from your package manager.
 
 ### Dependencies
 
-- `swaybg`
+- `swaybg` or `swww`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 
 ## Usage
@@ -23,13 +23,13 @@ To restore the chosen wallpaper at launch, add `waypaper --restore` to your star
 
 ## Troubleshooting
 
-- If wallpaper does not change, make sure that `swaybg` is installed.
+- If wallpaper does not change, make sure that `swaybg` or `swww` is installed.
 - If application does not run, much sure to install gobject library (it might be called `python-gobject` or `python3-gi` in your package manager)
 
 ## Roadmap
 
-- Support for other backends like `hyprpaper` and xorg backends.
-- Additional options for search in subfolders, background colors etc.
+- Support for other backends like -swww-, hyprpaper and xorg backends.
+- Additional options for search in -subfolders-, background colors etc.
 - Dynamic grid of thumbnails that adopts to the application width.
 
 ## Contributions

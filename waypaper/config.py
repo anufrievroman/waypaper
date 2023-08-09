@@ -13,6 +13,7 @@ class Config:
             self.image_folder = str(pathlib.Path.home()) + "/Pictures"
         self.wallpaper = None
         self.fill_option = "fill"
+        self.backend = "swaybg"
         self.include_subfolders = False
         self.config_folder  = str(pathlib.Path.home()) + "/.config/waypaper"
         self.config_file  = self.config_folder + "/config.ini"
@@ -24,6 +25,7 @@ class Config:
         config["Settings"] = {
                 "folder": str(self.image_folder),
                 "fill": str(self.fill_option),
+                "backend": str(self.backend),
                 "subfolders": str(self.include_subfolders),
                 "wallpaper": str(self.wallpaper),
                 }
@@ -39,6 +41,7 @@ class Config:
             self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
             self.wallpaper = config.get("Settings", "wallpaper", fallback=self.wallpaper)
             self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
+            self.backend = config.get("Settings", "backend", fallback=self.backend)
             self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         except Exception as e:
             print(e)
@@ -52,6 +55,7 @@ class Config:
         config.set("Settings", "folder", cf.image_folder)
         config.set("Settings", "wallpaper", cf.wallpaper)
         config.set("Settings", "fill", cf.fill_option)
+        config.set("Settings", "backend", cf.backend)
         config.set("Settings", "subfolders", str(cf.include_subfolders))
         with open(cf.config_file, "w") as configfile:
             config.write(configfile)
