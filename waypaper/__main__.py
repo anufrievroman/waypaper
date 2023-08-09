@@ -2,22 +2,29 @@ import sys
 
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
+from waypaper.config import cf
 
 
-__version__ = "1.1"
+__version__ = "1.2"
 
 
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
 
-    app = App()
-    app.load_data()
-
+    # Set the wallpaper and quit:
     if "--restore" in sys.argv:
         if app.current_wallpaper is not None:
-            change_wallpaper(app.current_wallpaper, app.fill_option)
+            change_wallpaper(cf.current_wallpaper, cf.fill_option)
         exit()
+
+    # Print the version and quit:
+    elif "--version" in sys.argv:
+        print(f"waypaper v.{__version__}")
+        exit()
+
+    # Start GUI:
     else:
+        app = App()
         app.run()
 
 

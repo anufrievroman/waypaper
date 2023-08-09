@@ -5,32 +5,35 @@ import os
 import subprocess
 import configparser
 
-from waypaper.changer import change_wallpaper
-
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk
+
+from waypaper.changer import change_wallpaper
+from waypaper.config import cf
+
+
+def get_image_paths(root_folder, include_subfolders=False, depth=None):
+    """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
+    file_paths = []
+    for root, directories, files in os.walk(root_folder):
+        if not include_subfolders and root != root_folder:
+            continue
+        if depth is not None and root != root_folder:
+            current_depth = root.count(os.path.sep) - root_folder.count(os.path.sep)
+            if current_depth > depth:
+                continue
+        for filename in files:
+            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
+                file_paths.append(os.path.join(root, filename))
+    return file_paths
 
 
 class App(Gtk.Window):
     """Main application class that controls GUI"""
 
-    selected_image_path = None
-    thumb_width = 240
-    default_fill_option = "fill"
-
-    config_dir = os.path.expanduser("~/.config/waypaper")
-    config_file_path = os.path.join(config_dir, "config.ini")
-    number_of_columns = 3
-    padding = 0
-
-
     def __init__(self):
         super().__init__(title="Waypaper")
         self.set_default_size(780, 600)
-
-
-        # Create the configuration directory if it doesn't exist:
-        os.makedirs(self.config_dir, exist_ok=True)
 
         # Create a vertical box for layout:
         self.main_box = Gtk.VBox(spacing=10)
@@ -52,25 +55,32 @@ class App(Gtk.Window):
 
         # Create a grid layout for images:
         self.grid = Gtk.Grid()
-        self.grid.set_row_spacing(self.padding)
-        self.grid.set_column_spacing(self.padding)
+        self.grid.set_row_spacing(0)
+        self.grid.set_column_spacing(0)
         self.scrolled_window.add(self.grid)
 
-        # Set default image folder:
-        self.default_image_folder = os.path.expanduser("~/Pictures")
+        # Create subfolder toggle:
+        self.include_subfolders_checkbox = Gtk.ToggleButton(label="Subfolders")
+        self.include_subfolders_checkbox.set_active(cf.include_subfolders)
+        self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
 
-        # Create a display option dropdown menu:
-        self.fill_option_label = Gtk.Label(label="Fill option:")
+        # Create a fill option dropdown menu:
+        # self.fill_option_label = Gtk.Label(label="")
         self.fill_option_combo = Gtk.ComboBoxText()
-        self.fill_option_combo.append_text("stretch")
-        self.fill_option_combo.append_text("fit")
-        self.fill_option_combo.append_text("fill")
-        self.fill_option_combo.append_text("center")
-        self.fill_option_combo.append_text("tile")
-        self.fill_option_combo.set_active(2)  # Default to "fill"
+        self.fill_option_combo.append_text("Fill")
+        self.fill_option_combo.append_text("Stretch")
+        self.fill_option_combo.append_text("Fit")
+        self.fill_option_combo.append_text("Center")
+        self.fill_option_combo.append_text("Tile")
+        self.fill_option_combo.set_active(0)
+        self.fill_option_combo.connect("changed", self.on_fill_option_changed)
+
+        # Create exit button:
+        self.exit_button = Gtk.Button(label=" Exit ")
+        self.exit_button.connect("clicked", self.on_exit_clicked)
 
         # Create a box to contain the bottom row of buttons with margin
-        self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         self.bottom_button_box.set_margin_bottom(10)
         self.main_box.pack_end(self.bottom_button_box, False, False, 0)
 
@@ -79,67 +89,19 @@ class App(Gtk.Window):
         self.bottom_button_box.pack_start(self.button_row_alignment, True, False, 0)
 
         # Create a horizontal box for display option and exit button
-        self.option_exit_box = Gtk.HBox(spacing=10)
-        self.option_exit_box.pack_start(self.fill_option_label, False, False, 0)
-        self.option_exit_box.pack_start(self.fill_option_combo, False, False, 0)
-        self.option_exit_box.pack_end(self.create_exit_button(), False, False, 0)
-        self.button_row_alignment.add(self.option_exit_box)
+        self.options_box = Gtk.HBox(spacing=10)
+        self.options_box.pack_start(self.include_subfolders_checkbox, False, False, 0)
+        # self.options_box.pack_start(self.fill_option_label, False, False, 0)
+        self.options_box.pack_start(self.fill_option_combo, False, False, 0)
+        self.options_box.pack_end(self.exit_button, False, False, 0)
+        self.button_row_alignment.add(self.options_box)
 
         # Connect the "q" key press event to exit the application
         self.connect("key-press-event", self.on_key_pressed)
 
 
-    def create_exit_button(self):
-        exit_button = Gtk.Button(label="Exit")
-        exit_button.connect("clicked", self.on_exit_clicked)
-        return exit_button
-
-
-    def load_data(self):
-        """Load data from the config or use default if it does not exists"""
-        config = configparser.ConfigParser()
-        if os.path.exists(self.config_file_path):
-            config.read(self.config_file_path)
-            self.image_folder = config.get("Settings", "folder", fallback=self.default_image_folder)
-            self.fill_option = config.get("Settings", "fill", fallback=self.default_fill_option)
-            self.current_wallpaper = config.get("Settings", "wallpaper", fallback=None)
-        else:
-            self.image_folder = self.default_image_folder
-
-
-    def save_data(self):
-        """Save the parameters to the configuration file"""
-        config = configparser.ConfigParser()
-        if os.path.exists(self.config_file_path):
-            config.read(self.config_file_path)
-
-        if not config.has_section("Settings"):
-            config.add_section("Settings")
-
-        # Save folder:
-        config.set("Settings", "folder", self.image_folder)
-
-        # Save selected wallpaper:
-        if self.selected_image_path is not None:
-            config.set("Settings", "wallpaper", self.selected_image_path)
-
-        # Save fill option:
-        fill_option = self.fill_option_combo.get_active_text() or self.default_fill_option
-        config.set("Settings", "fill", fill_option)
-
-        with open(self.config_file_path, "w") as configfile:
-            config.write(configfile)
-
-
     def load_images(self):
         """Load images from the selected folder, resize them, and arrange int grid"""
-
-        if not os.path.exists(self.default_image_folder):
-            self.default_image_folder = "/"
-
-        if not os.path.exists(self.image_folder):
-            self.image_folder = self.default_image_folder
-
 
         # Clear existing images:
         for child in self.grid.get_children():
@@ -149,31 +111,30 @@ class App(Gtk.Window):
         col = 0
 
         # Load images from the folder:
-        for filename in os.listdir(self.image_folder):
-            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
-                image_path = os.path.join(self.image_folder, filename)
+        image_paths = get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
+        for image_path in image_paths:
 
-                # Load and scale the image:
-                pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
-                aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-                scaled_width = self.thumb_width
-                scaled_height = int(scaled_width / aspect_ratio)
-                scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+            # Load and scale the image:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
+            aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
+            scaled_width = 240
+            scaled_height = int(scaled_width / aspect_ratio)
+            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
 
-                # Create a button with an image inside:
-                image = Gtk.Image.new_from_pixbuf(scaled_pixbuf)
-                button = Gtk.Button()
-                button.set_relief(Gtk.ReliefStyle.NONE)  # Remove border
-                button.add(image)
+            # Create a button with an image inside:
+            image = Gtk.Image.new_from_pixbuf(scaled_pixbuf)
+            button = Gtk.Button()
+            button.set_relief(Gtk.ReliefStyle.NONE)  # Remove border
+            button.add(image)
 
-                # Add button to the grid and connect clicked event:
-                self.grid.attach(button, col, row, 1, 1)
-                button.connect("clicked", self.on_image_clicked, image_path)
+            # Add button to the grid and connect clicked event:
+            self.grid.attach(button, col, row, 1, 1)
+            button.connect("clicked", self.on_image_clicked, image_path)
 
-                col += 1
-                if col >= self.number_of_columns:
-                    col = 0
-                    row += 1
+            col += 1
+            if col >= 3:
+                col = 0
+                row += 1
 
         # Show all images:
         self.grid.show_all()
@@ -188,31 +149,41 @@ class App(Gtk.Window):
         )
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.image_folder = dialog.get_filename()
-            self.save_data()
+            cf.image_folder = dialog.get_filename()
+            cf.save()
             self.load_images()
         dialog.destroy()
 
 
+    def on_include_subfolders_toggled(self, toggle):
+        """On chosing to include subfolders"""
+        cf.include_subfolders = toggle.get_active()
+        self.load_images()
+
+
+    def on_fill_option_changed(self, combo):
+        cf.fill_option = combo.get_active_text()
+
+
     def on_image_clicked(self, widget, user_data):
         """On clicking an image, set it as a wallpaper and save"""
-        self.selected_image_path = user_data
-        print("Selected image path:", self.selected_image_path)
-        fill_option = self.fill_option_combo.get_active_text() or self.default_fill_option
-        change_wallpaper(self.selected_image_path, fill_option)
-        self.save_data()
+        cf.wallpaper = user_data
+        print("Selected image path:", cf.wallpaper)
+        cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
+        change_wallpaper(cf.wallpaper, cf.fill_option)
+        cf.save()
 
 
     def on_exit_clicked(self, widget):
         """On clicking exit button, save the data and quit"""
-        self.save_data()
+        cf.save()
         Gtk.main_quit()
 
 
     def on_key_pressed(self, widget, event):
         """On clicking q, save the data and quit"""
         if event.keyval == Gdk.KEY_q:
-            self.save_data()
+            cf.save()
             Gtk.main_quit()
 
 
