@@ -8,14 +8,19 @@ GUI wallpaper setter for both Wayland and X11 window managers that works as a fr
 
 - Support for GIF animations (with `swww` backend)
 - GUI wallpaper selection
-- Works on Wayland. It's your wayland replacement of `nitrogen`.
+- Works on both Wayland and X11
 - Restores wallpaper on launch of your WM with `waypaper --restore`
   
 ## Installation
 
-`pipx install waypaper` (you may need to install `pipx` from your package manager first, it's sometimes called `python-pipx`)
+1) Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on x11.
+2) Install waypaper as: `pipx install waypaper`
 
-Also, install `swaybg` or `swww` from your package manager.
+If `pipx` is not found, you first need to install `pipx` from your package manager, it's sometimes called `python-pipx`.
+
+### AUR package
+
+[waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is available in AUR. So, if you are on arch-based system, you can install it as `yay -S waypaper-git`.
 
 ### Dependencies
 
@@ -24,11 +29,17 @@ Also, install `swaybg` or `swww` from your package manager.
 
 ## Usage
 
-`waypaper` will run GUI application.
+`waypaper` command will run GUI application.
 
-To restore the chosen wallpaper at launch, add `waypaper --restore` to your startup config. For example, in your Hyprland config you can write:
+To restore the chosen wallpaper at launch, add `waypaper --restore` to your startup config. For example:
+
+*In Hyprland*
 
 `exec-once=waypaper --restore`
+
+*In Sway or I3*
+
+`exec waypaper --restore`
 
 ## Backends
 
@@ -39,16 +50,17 @@ To restore the chosen wallpaper at launch, add `waypaper --restore` to your star
 ## Troubleshooting
 
 - If wallpaper does not change, make sure that `swaybg` or `swww` is installed.
-- If application does not run, much sure to install gobject library (it might be called `python-gobject` or `python3-gi` in your package manager)
+- If application does not run, make sure to install gobject library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
+- Please understand that not all backends work on all system, choose the right one for your can and stick to it.
 
 ## Roadmap
 
 - Support for other backends like ~swww~, ~feh~, and hyprpaper.
 - Additional options for ~search in subfolders~, background colors etc.
 - Dynamic grid of thumbnails that adopts to the application width.
-- Improve loading of folders with many images
+- Improve loading of folders with many images.
 
 ## Contributions
 
-Feel free to propose PR and suggest the improvements. However, I don't have much time to add features to this project.
+Feel free to propose PR and suggest the improvements.
 If you'd like to support the development, consider [donations](https://www.buymeacoffee.com/angryprofessor).
