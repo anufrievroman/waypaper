@@ -1,13 +1,13 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland-based window managers that works as a frontend for popular backends like `swaybg` and `swww`.
+GUI wallpaper setter for both Wayland and X11 window managers that works as a frontend for popular backends like `swaybg`, `swww`, and `feh`.
 
 ![screenshot](screenshot.jpg)
 
 ## Features
 
-- GUI wallpaper selection
 - Support for GIF animations (with `swww` backend)
+- GUI wallpaper selection
 - Works on Wayland. It's your wayland replacement of `nitrogen`.
 - Restores wallpaper on launch of your WM with `waypaper --restore`
   
@@ -30,6 +30,12 @@ To restore the chosen wallpaper at launch, add `waypaper --restore` to your star
 
 `exec-once=waypaper --restore`
 
+## Backends
+
+- [swaybg](https://github.com/swaywm/swaybg) - the wayland backend that supports only static images.
+- [swww](https://github.com/Horus645/swww) - the wayland backend that supports animated GIFs.
+- [feh](https://github.com/derf/feh) - the x11 backend that supports static images.
+
 ## Troubleshooting
 
 - If wallpaper does not change, make sure that `swaybg` or `swww` is installed.
@@ -37,9 +43,10 @@ To restore the chosen wallpaper at launch, add `waypaper --restore` to your star
 
 ## Roadmap
 
-- Support for other backends like ~swww~, hyprpaper and xorg backends.
-- Additional options for search in ~subfolders~, background colors etc.
+- Support for other backends like ~swww~, ~feh~, and hyprpaper.
+- Additional options for ~search in subfolders~, background colors etc.
 - Dynamic grid of thumbnails that adopts to the application width.
+- Improve loading of folders with many images
 
 ## Contributions
 

@@ -7,17 +7,41 @@ def change_wallpaper(image_path, fill_option, backend="swaybg"):
     try:
         # swaybg backend:
         if backend == "swaybg":
-            subprocess.Popen(["swaybg", "-i", image_path, "-m", fill_option.lower()])
+            fill = fill_option.lower()
+            subprocess.Popen(["swaybg", "-i", image_path, "-m", fill])
             print("Image set with swaybg")
 
         # ewww backend:
         elif backend == "swww":
+            fill_types = {
+                    "fill": "crop",
+                    "fit": "fit",
+                    "center": "no",
+                    "stretch": "crop",
+                    "tile": "no",
+                    }
+            fill = fill_types[fill_option.lower()]
+
             subprocess.Popen(["killall", "swaybg"])
             subprocess.Popen(["swww", "init"])
-            subprocess.Popen(["swww", "img", image_path])
+            subprocess.Popen(["swww", "img", image_path, "--resize", fill])
             print("Image set with swww")
 
-        # wbg backend (nor stable):
+        # feh backend:
+        elif backend == "feh":
+            fill_types = {
+                    "fill": "--bg-fill",
+                    "fit": "--bg-max",
+                    "center": "--bg-center",
+                    "stretch": "--bg-scale",
+                    "tile": "--bg-tile",
+                    }
+            fill = fill_types[fill_option.lower()]
+
+            subprocess.Popen(["feh", fill, image_path])
+            print("Image set with feh")
+
+        # wbg backend (unstable):
         # elif backend == "wbg":
             # subprocess.Popen(["killall", "swaybg"])
             # subprocess.Popen(["killall", "swww"])

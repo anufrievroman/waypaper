@@ -67,7 +67,7 @@ class App(Gtk.Window):
         # Create a backend dropdown menu:
         # self.backend_option_label = Gtk.Label(label="")
         self.backend_option_combo = Gtk.ComboBoxText()
-        options = ["swaybg", "swww"]
+        options = ["swaybg", "swww", "feh"]
         for option in options:
             self.backend_option_combo.append_text(option)
         active_num = options.index(cf.backend)
