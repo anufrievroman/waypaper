@@ -5,7 +5,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import cf
 
 
-__version__ = "1.3"
+__version__ = "1.4"
 
 
 def run():

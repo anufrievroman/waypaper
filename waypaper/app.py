@@ -10,6 +10,7 @@ from gi.repository import Gtk, GdkPixbuf, Gdk
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf
+from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 
 
 def get_image_paths(root_folder, include_subfolders=False, depth=None):
@@ -67,19 +68,18 @@ class App(Gtk.Window):
         # Create a backend dropdown menu:
         # self.backend_option_label = Gtk.Label(label="")
         self.backend_option_combo = Gtk.ComboBoxText()
-        options = ["swaybg", "swww", "feh"]
-        for option in options:
+        for option in BACKEND_OPTIONS:
             self.backend_option_combo.append_text(option)
-        active_num = options.index(cf.backend)
+        active_num = BACKEND_OPTIONS.index(cf.backend)
         self.backend_option_combo.set_active(active_num)
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
 
         # Create a fill option dropdown menu:
         # self.fill_option_label = Gtk.Label(label="")
         self.fill_option_combo = Gtk.ComboBoxText()
-        options = ["Fill", "Stretch", "Fit", "Center", "Tile"]
-        for option in options:
-            self.fill_option_combo.append_text(option)
+        for option in FILL_OPTIONS:
+            capitalized_option = option[0].upper() + option[1:]
+            self.fill_option_combo.append_text(capitalized_option)
         self.fill_option_combo.set_active(0)
         self.fill_option_combo.connect("changed", self.on_fill_option_changed)
 

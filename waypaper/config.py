@@ -2,8 +2,11 @@
 
 import configparser
 import pathlib
+import getopt
+import sys
 import os
 
+from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 
 class Config:
     """User configuration loaded from the config.ini file"""
@@ -61,6 +64,25 @@ class Config:
             config.write(configfile)
 
 
+    def read_parameters_from_user_arguments(self):
+        """Read user arguments that were provided at the run. This values take priority over config.ini"""
+        try:
+            opts, _ = getopt.getopt(sys.argv[1:],"",["backend=", "restore", "fill="])
+            for opt, arg in opts:
+
+                # Reading backend:
+                if opt in '--backend' and arg in BACKEND_OPTIONS:
+                    self.backend = arg
+
+                # Reading fill option:
+                if opt in '--fill' and arg in FILL_OPTIONS:
+                    self.fill_option = arg
+
+        except getopt.GetoptError as e_message:
+            print("Invalid user arguments. %s", e_message)
+            pass
+
+
 cf = Config()
 
 # Create config folder:
@@ -73,3 +95,4 @@ if not os.path.exists(cf.config_file):
 
 # Read config file:
 cf.read()
+cf.read_parameters_from_user_arguments()
