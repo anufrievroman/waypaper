@@ -5,6 +5,8 @@ import os
 import subprocess
 import configparser
 
+import distutils.spawn
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk
 
@@ -34,9 +36,24 @@ class App(Gtk.Window):
 
     def __init__(self):
         super().__init__(title="Waypaper")
-        self.set_default_size(780, 600)
+
+        # Before running the app, check which backends are installed:
+        self.missing_backends = []
+        for backend in BACKEND_OPTIONS:
+            is_backend_missing = not bool(distutils.spawn.find_executable(backend))
+            self.missing_backends.append(is_backend_missing)
+
+        # Show error message if no backends are installed:
+        if all(self.missing_backends):
+            message = "Looks like none of the wallpaper backends is installed in the system.\n"
+            message += "Use your package manager to install at least one of these backends:\n"
+            message += "\n- swaybg (for wayland)\n- swww (for wayland)\n- feh (for x11)"
+            self.show_no_backend_message(message)
+            exit()
+
 
         # Create a vertical box for layout:
+        self.set_default_size(780, 600)
         self.main_box = Gtk.VBox(spacing=10)
         self.add(self.main_box)
 
@@ -49,7 +66,7 @@ class App(Gtk.Window):
         self.grid_alignment = Gtk.Alignment(xalign=1, yalign=0.0, xscale=0.5, yscale=1)
         self.main_box.pack_start(self.grid_alignment, True, True, 0)
 
-        # Create a scrolled window for the grid:
+        # Create a scrolled window for the grid of images:
         self.scrolled_window = Gtk.ScrolledWindow()
         self.scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         self.grid_alignment.add(self.scrolled_window)
@@ -66,11 +83,21 @@ class App(Gtk.Window):
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
 
         # Create a backend dropdown menu:
-        # self.backend_option_label = Gtk.Label(label="")
+        # self.backend_option_label = Gtk.Label(label="  Backend:")
         self.backend_option_combo = Gtk.ComboBoxText()
-        for option in BACKEND_OPTIONS:
-            self.backend_option_combo.append_text(option)
-        active_num = BACKEND_OPTIONS.index(cf.backend)
+        for backend, is_missing in zip(BACKEND_OPTIONS, self.missing_backends):
+            if not is_missing:
+                self.backend_option_combo.append_text(backend)
+            # else:
+                # list_item = self.backend_option_combo.append_text(backend)
+                # self.backend_option_combo.get_child().set_sensitive(list_item)
+
+        # Set as active line the backend from config, if it is installed:
+        if self.missing_backends[BACKEND_OPTIONS.index(cf.backend)]:
+            active_num = 0
+        else:
+            filtered_backends = [value for value, miss in zip(BACKEND_OPTIONS, self.missing_backends) if not miss]
+            active_num = filtered_backends.index(cf.backend)
         self.backend_option_combo.set_active(active_num)
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
 
@@ -99,14 +126,28 @@ class App(Gtk.Window):
         # Create a horizontal box for display option and exit button
         self.options_box = Gtk.HBox(spacing=10)
         self.options_box.pack_start(self.include_subfolders_checkbox, False, False, 0)
-        # self.options_box.pack_start(self.fill_option_label, False, False, 0)
+        # self.options_box.pack_start(self.backend_option_label, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
+        # self.options_box.pack_start(self.fill_option_label, False, False, 0)
         self.options_box.pack_start(self.fill_option_combo, False, False, 0)
         self.options_box.pack_end(self.exit_button, False, False, 0)
         self.button_row_alignment.add(self.options_box)
 
         # Connect the "q" key press event to exit the application
         self.connect("key-press-event", self.on_key_pressed)
+
+
+    def show_no_backend_message(self, message):
+        """If no backends are installed, show a message"""
+        dialog = Gtk.MessageDialog(
+            parent=self,
+            flags=0,
+            type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            message_format=message,
+        )
+        dialog.run()
+        dialog.destroy()
 
 
     def load_images(self):
