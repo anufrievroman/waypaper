@@ -58,17 +58,16 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 `--restore` - sets the last chosen wallpaper. Useful at launch of the window manager.
 
-`--backend=XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, or `feh`. Useful if you use waypaper on both wayland and x11 on the same machine. By default, last used backend is used.
+`--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, or `feh`. Useful if you use waypaper on both wayland and x11 on the same machine. By default, last used backend is used.
 
-`--fill=XXX` - specifies filling type, which can be eiher `fill`, `stretch`, `fit`, `center`, or `tile`.
+`--fill XXX` - specifies filling type, which can be eiher `fill`, `stretch`, `fit`, `center`, or `tile`.
 
 ## Troubleshooting
 
 - If wallpaper does not change, make sure that `swaybg` or `swww` is installed.
 - If application does not run, make sure to install gobject library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
 - Please understand that not all backends work on all system, choose the right one for you and stick to it.
-- If you use different WMs on the same system, specify the backend when you restore the wallpaper at launch. For example: `
-`waypaper --restore --backend=feh`
+- If you use different WMs on the same system, specify the backend when you restore the wallpaper at launch. For example: `waypaper --restore --backend feh`
 
 ## Roadmap
 

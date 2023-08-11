@@ -7,6 +7,7 @@ import sys
 import os
 
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
+from waypaper.arguments import args
 
 class Config:
     """User configuration loaded from the config.ini file"""
@@ -65,22 +66,11 @@ class Config:
 
 
     def read_parameters_from_user_arguments(self):
-        """Read user arguments that were provided at the run. This values take priority over config.ini"""
-        try:
-            opts, _ = getopt.getopt(sys.argv[1:],"",["backend=", "restore", "fill="])
-            for opt, arg in opts:
-
-                # Reading backend:
-                if opt in '--backend' and arg in BACKEND_OPTIONS:
-                    self.backend = arg
-
-                # Reading fill option:
-                if opt in '--fill' and arg in FILL_OPTIONS:
-                    self.fill_option = arg
-
-        except getopt.GetoptError as e_message:
-            print("Invalid user arguments. %s", e_message)
-            pass
+        """Read user arguments that were provided at the run. These values take priority over config.ini"""
+        if args.backend:
+            self.backend = args.backend
+        if args.fill:
+            self.fill_option = args.fill
 
 
 cf = Config()
