@@ -92,11 +92,11 @@ class App(Gtk.Window):
                 # self.backend_option_combo.get_child().set_sensitive(list_item)
 
         # Set as active line the backend from config, if it is installed:
-        if self.missing_backends[BACKEND_OPTIONS.index(cf.backend)]:
-            active_num = 0
-        else:
+        try:
             filtered_backends = [value for value, miss in zip(BACKEND_OPTIONS, self.missing_backends) if not miss]
             active_num = filtered_backends.index(cf.backend)
+        except:
+            active_num = 0
         self.backend_option_combo.set_active(active_num)
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
 
