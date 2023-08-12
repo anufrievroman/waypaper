@@ -3,7 +3,7 @@
 import subprocess
 
 def change_wallpaper(image_path, fill_option, color, backend):
-    """Run a system command swaybg -i image_path -m fill_option &"""
+    """Run a system command to change the wallpaper depending on the backend"""
     try:
         # swaybg backend:
         if backend == "swaybg":
