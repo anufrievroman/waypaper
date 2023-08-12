@@ -51,7 +51,6 @@ class App(Gtk.Window):
             self.show_no_backend_message(message)
             exit()
 
-
         # Create a vertical box for layout:
         self.set_default_size(780, 600)
         self.main_box = Gtk.VBox(spacing=10)
@@ -110,6 +109,15 @@ class App(Gtk.Window):
         self.fill_option_combo.set_active(0)
         self.fill_option_combo.connect("changed", self.on_fill_option_changed)
 
+        # Create a color picker:
+        self.color_picker_button = Gtk.ColorButton()
+        self.color_picker_button.set_use_alpha(True)
+
+        rgba_color = Gdk.RGBA()
+        rgba_color.parse(cf.color)
+        self.color_picker_button.set_rgba(rgba_color)
+        self.color_picker_button.connect("color-set", self.on_color_set)
+
         # Create exit button:
         self.exit_button = Gtk.Button(label=" Exit ")
         self.exit_button.connect("clicked", self.on_exit_clicked)
@@ -125,11 +133,12 @@ class App(Gtk.Window):
 
         # Create a horizontal box for display option and exit button
         self.options_box = Gtk.HBox(spacing=10)
-        self.options_box.pack_start(self.include_subfolders_checkbox, False, False, 0)
         # self.options_box.pack_start(self.backend_option_label, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         # self.options_box.pack_start(self.fill_option_label, False, False, 0)
         self.options_box.pack_start(self.fill_option_combo, False, False, 0)
+        self.options_box.pack_start(self.color_picker_button, False, False, 0)
+        self.options_box.pack_start(self.include_subfolders_checkbox, False, False, 0)
         self.options_box.pack_end(self.exit_button, False, False, 0)
         self.button_row_alignment.add(self.options_box)
 
@@ -173,6 +182,10 @@ class App(Gtk.Window):
 
             # Create a button with an image inside:
             image = Gtk.Image.new_from_pixbuf(scaled_pixbuf)
+
+            # Set the tooltip with the image file name
+            image.set_tooltip_text(os.path.basename(image_path))
+
             button = Gtk.Button()
             button.set_relief(Gtk.ReliefStyle.NONE)  # Remove border
             button.add(image)
@@ -221,12 +234,21 @@ class App(Gtk.Window):
         cf.backend = combo.get_active_text()
 
 
+    def on_color_set(self, color_button):
+        """Convert selected color to web format"""
+        rgba_color = color_button.get_rgba()
+        red = int(rgba_color.red * 255)
+        green = int(rgba_color.green * 255)
+        blue = int(rgba_color.blue * 255)
+        cf.color = "#{:02X}{:02X}{:02X}".format(red, green, blue)
+
+
     def on_image_clicked(self, widget, user_data):
         """On clicking an image, set it as a wallpaper and save"""
         cf.wallpaper = user_data
         print("Selected image path:", cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option, cf.backend)
+        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
         cf.save()
 
 

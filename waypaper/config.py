@@ -9,6 +9,7 @@ import os
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 from waypaper.arguments import args
 
+
 class Config:
     """User configuration loaded from the config.ini file"""
     def __init__(self):
@@ -18,6 +19,7 @@ class Config:
         self.wallpaper = None
         self.fill_option = "fill"
         self.backend = "swaybg"
+        self.color = "#ffffff"
         self.include_subfolders = False
         self.config_folder  = str(pathlib.Path.home()) + "/.config/waypaper"
         self.config_file  = self.config_folder + "/config.ini"
@@ -30,6 +32,7 @@ class Config:
                 "folder": str(self.image_folder),
                 "fill": str(self.fill_option),
                 "backend": str(self.backend),
+                "color": str(self.color),
                 "subfolders": str(self.include_subfolders),
                 "wallpaper": str(self.wallpaper),
                 }
@@ -46,6 +49,7 @@ class Config:
             self.wallpaper = config.get("Settings", "wallpaper", fallback=self.wallpaper)
             self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
             self.backend = config.get("Settings", "backend", fallback=self.backend)
+            self.color  = config.get("Settings", "color", fallback=self.color)
             self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         except Exception as e:
             print(e)
@@ -60,6 +64,7 @@ class Config:
         config.set("Settings", "wallpaper", cf.wallpaper)
         config.set("Settings", "fill", cf.fill_option)
         config.set("Settings", "backend", cf.backend)
+        config.set("Settings", "color", cf.color)
         config.set("Settings", "subfolders", str(cf.include_subfolders))
         with open(cf.config_file, "w") as configfile:
             config.write(configfile)

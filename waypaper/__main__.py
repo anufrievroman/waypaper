@@ -6,17 +6,16 @@ from waypaper.config import cf
 from waypaper.arguments import args
 
 
-__version__ = "1.4.1"
+__version__ = "1.5"
 
 
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
 
-
     # Set the wallpaper and quit:
     if args.restore:
         if cf.wallpaper is not None:
-            change_wallpaper(cf.wallpaper, cf.fill_option, cf.backend)
+            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
         exit()
 
     # Print the version and quit:
