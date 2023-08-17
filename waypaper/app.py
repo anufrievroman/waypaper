@@ -1,5 +1,6 @@
 """Module that runs GUI app"""
 
+import threading
 import gi
 import os
 import subprocess
@@ -8,27 +9,11 @@ import configparser
 import distutils.spawn
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf, Gdk
+from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
-
-
-def get_image_paths(root_folder, include_subfolders=False, depth=None):
-    """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
-    file_paths = []
-    for root, directories, files in os.walk(root_folder):
-        if not include_subfolders and root != root_folder:
-            continue
-        if depth is not None and root != root_folder:
-            current_depth = root.count(os.path.sep) - root_folder.count(os.path.sep)
-            if current_depth > depth:
-                continue
-        for filename in files:
-            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
-                file_paths.append(os.path.join(root, filename))
-    return file_paths
 
 
 class App(Gtk.Window):
@@ -36,28 +21,34 @@ class App(Gtk.Window):
 
     def __init__(self):
         super().__init__(title="Waypaper")
+        self.check_backends()
+        self.is_first_load = True
+        self.load_main_window()
 
-        # Before running the app, check which backends are installed:
-        self.missing_backends = []
-        for backend in BACKEND_OPTIONS:
-            is_backend_missing = not bool(distutils.spawn.find_executable(backend))
-            self.missing_backends.append(is_backend_missing)
 
-        # Show error message if no backends are installed:
-        if all(self.missing_backends):
-            message = "Looks like none of the wallpaper backends is installed in the system.\n"
-            message += "Use your package manager to install at least one of these backends:\n"
-            message += "\n- swaybg (for wayland)\n- swww (for wayland)\n- feh (for x11)"
-            self.show_no_backend_message(message)
-            exit()
+    def load_main_window(self):
+        self.set_default_size(780, 600)
+        self.loading_label = Gtk.Label(label="Loading wallpapers...")
+        self.add(self.loading_label)
+        self.connect("delete-event", Gtk.main_quit)
+        self.show_all()
+
+        # Start the image processing in a separate thread:
+        loading_thread = threading.Thread(target=self.process_images)
+        loading_thread.start()
+
+
+    def init_ui(self):
+        """Initialize the UI elements of the application"""
+
+        self.remove(self.loading_label)
 
         # Create a vertical box for layout:
-        self.set_default_size(780, 600)
         self.main_box = Gtk.VBox(spacing=10)
         self.add(self.main_box)
 
         # Create a button to open folder dialog:
-        self.choose_folder_button = Gtk.Button(label="Choose wallpaper folder")
+        self.choose_folder_button = Gtk.Button(label="Change wallpaper folder")
         self.choose_folder_button.connect("clicked", self.on_choose_folder_clicked)
         self.main_box.pack_start(self.choose_folder_button, False, False, 0)
 
@@ -76,6 +67,9 @@ class App(Gtk.Window):
         self.grid.set_column_spacing(0)
         self.scrolled_window.add(self.grid)
 
+        # Fill the grid of images:
+        self.reload_image_grid()
+
         # Create subfolder toggle:
         self.include_subfolders_checkbox = Gtk.ToggleButton(label="Subfolders")
         self.include_subfolders_checkbox.set_active(cf.include_subfolders)
@@ -87,9 +81,6 @@ class App(Gtk.Window):
         for backend, is_missing in zip(BACKEND_OPTIONS, self.missing_backends):
             if not is_missing:
                 self.backend_option_combo.append_text(backend)
-            # else:
-                # list_item = self.backend_option_combo.append_text(backend)
-                # self.backend_option_combo.get_child().set_sensitive(list_item)
 
         # Set as active line the backend from config, if it is installed:
         try:
@@ -144,6 +135,23 @@ class App(Gtk.Window):
 
         # Connect the "q" key press event to exit the application
         self.connect("key-press-event", self.on_key_pressed)
+        self.show_all()
+
+
+    def check_backends(self):
+        """Before running the app, check which backends are installed"""
+        self.missing_backends = []
+        for backend in BACKEND_OPTIONS:
+            is_backend_missing = not bool(distutils.spawn.find_executable(backend))
+            self.missing_backends.append(is_backend_missing)
+
+        # Show error message if no backends are installed:
+        if all(self.missing_backends):
+            message = "Looks like none of the wallpaper backends is installed in the system.\n"
+            message += "Use your package manager to install at least one of these backends:\n"
+            message += "\n- swaybg (for wayland)\n- swww (for wayland)\n- feh (for x11)"
+            self.show_no_backend_message(message)
+            exit()
 
 
     def show_no_backend_message(self, message):
@@ -159,8 +167,50 @@ class App(Gtk.Window):
         dialog.destroy()
 
 
-    def load_images(self):
-        """Load images from the selected folder, resize them, and arrange int grid"""
+    def get_image_paths(self, root_folder, include_subfolders=False, depth=None):
+        """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
+        self.image_paths = []
+        for root, directories, files in os.walk(root_folder):
+            if not include_subfolders and root != root_folder:
+                continue
+            if depth is not None and root != root_folder:
+                current_depth = root.count(os.path.sep) - root_folder.count(os.path.sep)
+                if current_depth > depth:
+                    continue
+            for filename in files:
+                if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
+                    self.image_paths.append(os.path.join(root, filename))
+
+
+    def process_images(self):
+        """Load imaged from the selected folder, resize them, and arrange int grid"""
+
+        self.thumbnails = []
+        self.image_names = []
+
+        self.get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
+
+        for image_path in self.image_paths:
+
+            # Load and scale the image:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
+            aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
+            scaled_width = 240
+            scaled_height = int(scaled_width / aspect_ratio)
+            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+            self.thumbnails.append(scaled_pixbuf)
+            self.image_names.append(os.path.basename(image_path))
+
+        # Update the UI in the main thread
+        if self.is_first_load:
+            GLib.idle_add(self.init_ui)
+            self.is_first_load = False
+        else:
+            GLib.idle_add(self.reload_image_grid)
+
+
+    def reload_image_grid(self):
+        """Reload the grid of images"""
 
         # Clear existing images:
         for child in self.grid.get_children():
@@ -169,38 +219,25 @@ class App(Gtk.Window):
         row = 0
         col = 0
 
-        # Load images from the folder:
-        image_paths = get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
-        for image_path in image_paths:
+        for thumbnail, name, path in zip(self.thumbnails, self.image_names, self.image_paths):
 
-            # Load and scale the image:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
-            aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-            scaled_width = 240
-            scaled_height = int(scaled_width / aspect_ratio)
-            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-
-            # Create a button with an image inside:
-            image = Gtk.Image.new_from_pixbuf(scaled_pixbuf)
-
-            # Set the tooltip with the image file name
-            image.set_tooltip_text(os.path.basename(image_path))
-
+            # Create a button with an image and add tooltip:
+            image = Gtk.Image.new_from_pixbuf(thumbnail)
+            image.set_tooltip_text(name)
             button = Gtk.Button()
             button.set_relief(Gtk.ReliefStyle.NONE)  # Remove border
             button.add(image)
 
             # Add button to the grid and connect clicked event:
             self.grid.attach(button, col, row, 1, 1)
-            button.connect("clicked", self.on_image_clicked, image_path)
+            button.connect("clicked", self.on_image_clicked, path)
 
             col += 1
             if col >= 3:
                 col = 0
                 row += 1
 
-        # Show all images:
-        self.grid.show_all()
+        self.show_all()
 
 
     def on_choose_folder_clicked(self, widget):
@@ -214,14 +251,16 @@ class App(Gtk.Window):
         if response == Gtk.ResponseType.OK:
             cf.image_folder = dialog.get_filename()
             cf.save()
-            self.load_images()
+            loading_thread = threading.Thread(target=self.process_images)
+            loading_thread.start()
         dialog.destroy()
 
 
     def on_include_subfolders_toggled(self, toggle):
         """On chosing to include subfolders"""
         cf.include_subfolders = toggle.get_active()
-        self.load_images()
+        loading_thread = threading.Thread(target=self.process_images)
+        loading_thread.start()
 
 
     def on_fill_option_changed(self, combo):
@@ -267,7 +306,6 @@ class App(Gtk.Window):
 
     def run(self):
         """Run GUI application"""
-        self.load_images()
         self.connect("destroy", self.on_exit_clicked)
         self.show_all()
         Gtk.main()
