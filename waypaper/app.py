@@ -22,26 +22,16 @@ class App(Gtk.Window):
     def __init__(self):
         super().__init__(title="Waypaper")
         self.check_backends()
-        self.is_first_load = True
-        self.load_main_window()
-
-
-    def load_main_window(self):
         self.set_default_size(780, 600)
-        self.loading_label = Gtk.Label(label="Loading wallpapers...")
-        self.add(self.loading_label)
+        self.init_ui()
         self.connect("delete-event", Gtk.main_quit)
-        self.show_all()
 
         # Start the image processing in a separate thread:
-        loading_thread = threading.Thread(target=self.process_images)
-        loading_thread.start()
+        threading.Thread(target=self.process_images).start()
 
 
     def init_ui(self):
         """Initialize the UI elements of the application"""
-
-        self.remove(self.loading_label)
 
         # Create a vertical box for layout:
         self.main_box = Gtk.VBox(spacing=10)
@@ -67,16 +57,12 @@ class App(Gtk.Window):
         self.grid.set_column_spacing(0)
         self.scrolled_window.add(self.grid)
 
-        # Fill the grid of images:
-        self.reload_image_grid()
-
         # Create subfolder toggle:
         self.include_subfolders_checkbox = Gtk.ToggleButton(label="Subfolders")
         self.include_subfolders_checkbox.set_active(cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
 
         # Create a backend dropdown menu:
-        # self.backend_option_label = Gtk.Label(label="  Backend:")
         self.backend_option_combo = Gtk.ComboBoxText()
         for backend, is_missing in zip(BACKEND_OPTIONS, self.missing_backends):
             if not is_missing:
@@ -92,7 +78,6 @@ class App(Gtk.Window):
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
 
         # Create a fill option dropdown menu:
-        # self.fill_option_label = Gtk.Label(label="")
         self.fill_option_combo = Gtk.ComboBoxText()
         for option in FILL_OPTIONS:
             capitalized_option = option[0].upper() + option[1:]
@@ -103,7 +88,6 @@ class App(Gtk.Window):
         # Create a color picker:
         self.color_picker_button = Gtk.ColorButton()
         self.color_picker_button.set_use_alpha(True)
-
         rgba_color = Gdk.RGBA()
         rgba_color.parse(cf.color)
         self.color_picker_button.set_rgba(rgba_color)
@@ -113,24 +97,29 @@ class App(Gtk.Window):
         self.exit_button = Gtk.Button(label=" Exit ")
         self.exit_button.connect("clicked", self.on_exit_clicked)
 
-        # Create a box to contain the bottom row of buttons with margin
+        # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         self.bottom_button_box.set_margin_bottom(10)
         self.main_box.pack_end(self.bottom_button_box, False, False, 0)
 
-        # Create an alignment container to center align the row of buttons
+        # Create a box to contain the loading label:
+        self.loading_label = Gtk.Label(label="Loading wallpapers...")
+        self.bottom_loading_box = Gtk.HBox(spacing=0)
+        self.bottom_loading_box.set_margin_bottom(0)
+        self.bottom_loading_box.add(self.loading_label)
+        self.main_box.pack_end(self.bottom_loading_box, False, False, 0)
+
+        # Create alignment container:
         self.button_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
         self.bottom_button_box.pack_start(self.button_row_alignment, True, False, 0)
 
-        # Create a horizontal box for display option and exit button
+        # Create a horizontal box for display option and exit button:
         self.options_box = Gtk.HBox(spacing=10)
-        # self.options_box.pack_start(self.backend_option_label, False, False, 0)
-        self.options_box.pack_start(self.backend_option_combo, False, False, 0)
-        # self.options_box.pack_start(self.fill_option_label, False, False, 0)
-        self.options_box.pack_start(self.fill_option_combo, False, False, 0)
-        self.options_box.pack_start(self.color_picker_button, False, False, 0)
-        self.options_box.pack_start(self.include_subfolders_checkbox, False, False, 0)
         self.options_box.pack_end(self.exit_button, False, False, 0)
+        self.options_box.pack_end(self.include_subfolders_checkbox, False, False, 0)
+        self.options_box.pack_end(self.color_picker_button, False, False, 0)
+        self.options_box.pack_end(self.fill_option_combo, False, False, 0)
+        self.options_box.pack_end(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
 
         # Connect the "q" key press event to exit the application
@@ -149,7 +138,7 @@ class App(Gtk.Window):
         if all(self.missing_backends):
             message = "Looks like none of the wallpaper backends is installed in the system.\n"
             message += "Use your package manager to install at least one of these backends:\n"
-            message += "\n- swaybg (for wayland)\n- swww (for wayland)\n- feh (for x11)"
+            message += "\n- swaybg (for Wayland)\n- swww (for Wayland)\n- feh (for Xorg)"
             self.show_no_backend_message(message)
             exit()
 
@@ -183,7 +172,7 @@ class App(Gtk.Window):
 
 
     def process_images(self):
-        """Load imaged from the selected folder, resize them, and arrange int grid"""
+        """Load images from the selected folder, resize them, and arrange into a grid"""
 
         self.thumbnails = []
         self.image_names = []
@@ -201,15 +190,12 @@ class App(Gtk.Window):
             self.thumbnails.append(scaled_pixbuf)
             self.image_names.append(os.path.basename(image_path))
 
-        # Update the UI in the main thread
-        if self.is_first_load:
-            GLib.idle_add(self.init_ui)
-            self.is_first_load = False
-        else:
-            GLib.idle_add(self.reload_image_grid)
+        # When image processing is done, remove loading label and display the images:
+        self.bottom_loading_box.remove(self.loading_label)
+        GLib.idle_add(self.load_image_grid)
 
 
-    def reload_image_grid(self):
+    def load_image_grid(self):
         """Reload the grid of images"""
 
         # Clear existing images:
@@ -251,16 +237,16 @@ class App(Gtk.Window):
         if response == Gtk.ResponseType.OK:
             cf.image_folder = dialog.get_filename()
             cf.save()
-            loading_thread = threading.Thread(target=self.process_images)
-            loading_thread.start()
+            self.bottom_loading_box.add(self.loading_label)
+            threading.Thread(target=self.process_images).start()
         dialog.destroy()
 
 
     def on_include_subfolders_toggled(self, toggle):
         """On chosing to include subfolders"""
         cf.include_subfolders = toggle.get_active()
-        loading_thread = threading.Thread(target=self.process_images)
-        loading_thread.start()
+        self.bottom_loading_box.add(self.loading_label)
+        threading.Thread(target=self.process_images).start()
 
 
     def on_fill_option_changed(self, combo):
