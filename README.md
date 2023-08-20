@@ -1,14 +1,14 @@
 # Waypaper
 
-GUI wallpaper setter for both Wayland and X11 window managers that works as a frontend for popular backends like `swaybg`, `swww`, and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
+GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
 
 ![screenshot](screenshot.jpg)
 
 ## Features
 
-- Support for GIF animations (with `swww`)
 - GUI wallpaper selection
-- Works on both Wayland (with `swaybg` or `swww`) and X11 (with `feh`)
+- Support for GIF animations (with `swww`)
+- Works on both Wayland (with `swaybg` or `swww`) and Xorg (with `feh`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
   
@@ -18,9 +18,11 @@ You need to install at least one of the backends and Waypaper, which works as a 
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on x11. You can also install and test all of them.
+Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on Xorg.
 
 ### 2. Install Waypaper
+
+Waypaper is available as a package in different repositories listed below:
 
 #### From PyPi
 
@@ -30,9 +32,10 @@ If `pipx` is not found, you first need to install `pipx` from your package manag
 
 #### From AUR
 
-[waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is available in AUR, thanks to *metak*. So, on arch-based system, you can install it as:
-
 `yay -S waypaper-git`
+
+The [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is available in AUR, thanks to *metak*. Please upvote to support the project.
+
 
 ### Dependencies
 
@@ -63,17 +66,18 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 ## Troubleshooting
 
-- If wallpaper does not change, make sure that `swaybg` or `swww` is installed.
+- If wallpaper does not change, first, try to launch waypaper in the terminal and see the output. Also, try to change it via comand line using chosen backend to make sure that backend by itself works correctly.
 - If application does not run, make sure to install gobject library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
-- Please understand that not all backends work on all system, choose the right one for you and stick to it.
+- Please understand that not all backends work on all systems. `feh` is for Xorg, while `swww` and `swaybg` are for Wayland.
 - If you use different WMs on the same system, specify the backend when you restore the wallpaper at launch. For example: `waypaper --restore --backend feh`
 
 ## Roadmap
 
+- ~Improve loading of folders with many images~.
+- Additional options for ~search in subfolders~, ~background color~, and setting a uniform color.
 - Support for other backends like ~swww~, ~feh~, wbg, and hyprpaper.
-- Additional options for ~search in subfolders~, background color, and a uniform color.
+- Better keyboard operation and hjkl support.
 - Dynamic grid of thumbnails that adopts to the application width.
-- Improve loading of folders with many images.
 
 ## Contributions
 
