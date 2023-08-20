@@ -103,10 +103,8 @@ class App(Gtk.Window):
         self.main_box.pack_end(self.bottom_button_box, False, False, 0)
 
         # Create a box to contain the loading label:
-        self.loading_label = Gtk.Label(label="Loading wallpapers...")
         self.bottom_loading_box = Gtk.HBox(spacing=0)
         self.bottom_loading_box.set_margin_bottom(0)
-        self.bottom_loading_box.add(self.loading_label)
         self.main_box.pack_end(self.bottom_loading_box, False, False, 0)
 
         # Create alignment container:
@@ -174,10 +172,15 @@ class App(Gtk.Window):
     def process_images(self):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
+        self.get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
+
+        # Show loading label:
+        self.loading_label = Gtk.Label(label=f"Loading {len(self.image_paths)} wallpapers...")
+        self.bottom_loading_box.add(self.loading_label)
+        self.show_all()
+
         self.thumbnails = []
         self.image_names = []
-
-        self.get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
 
         for image_path in self.image_paths:
 
@@ -237,7 +240,6 @@ class App(Gtk.Window):
         if response == Gtk.ResponseType.OK:
             cf.image_folder = dialog.get_filename()
             cf.save()
-            self.bottom_loading_box.add(self.loading_label)
             threading.Thread(target=self.process_images).start()
         dialog.destroy()
 
@@ -245,7 +247,6 @@ class App(Gtk.Window):
     def on_include_subfolders_toggled(self, toggle):
         """On chosing to include subfolders"""
         cf.include_subfolders = toggle.get_active()
-        self.bottom_loading_box.add(self.loading_label)
         threading.Thread(target=self.process_images).start()
 
 
