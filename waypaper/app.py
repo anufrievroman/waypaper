@@ -5,7 +5,6 @@ import gi
 import os
 import subprocess
 import configparser
-
 import distutils.spawn
 
 gi.require_version("Gtk", "3.0")
@@ -14,6 +13,33 @@ from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
+
+
+def get_image_paths(root_folder, include_subfolders=False, depth=None):
+    """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
+    image_paths = []
+    for root, directories, files in os.walk(root_folder):
+        if not include_subfolders and root != root_folder:
+            continue
+        if depth is not None and root != root_folder:
+            current_depth = root.count(os.path.sep) - root_folder.count(os.path.sep)
+            if current_depth > depth:
+                continue
+        for filename in files:
+            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
+                image_paths.append(os.path.join(root, filename))
+    return image_paths
+
+
+def cache_image(image_path):
+    """Resize and cache images using gtk library"""
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
+    aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
+    scaled_width = 240
+    scaled_height = int(scaled_width / aspect_ratio)
+    scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+    output_file = f"{cf.config_folder}/.cache/{os.path.basename(image_path)}"
+    scaled_pixbuf.savev(output_file, "jpeg", [], [])
 
 
 class App(Gtk.Window):
@@ -154,28 +180,13 @@ class App(Gtk.Window):
         dialog.destroy()
 
 
-    def get_image_paths(self, root_folder, include_subfolders=False, depth=None):
-        """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
-        self.image_paths = []
-        for root, directories, files in os.walk(root_folder):
-            if not include_subfolders and root != root_folder:
-                continue
-            if depth is not None and root != root_folder:
-                current_depth = root.count(os.path.sep) - root_folder.count(os.path.sep)
-                if current_depth > depth:
-                    continue
-            for filename in files:
-                if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
-                    self.image_paths.append(os.path.join(root, filename))
-
-
     def process_images(self):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
-        self.get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
+        self.image_paths = get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
 
-        # Show loading label:
-        self.loading_label = Gtk.Label(label=f"Loading {len(self.image_paths)} wallpapers...")
+        # Show caching label:
+        self.loading_label = Gtk.Label(label=f"Caching {len(self.image_paths)} wallpapers...")
         self.bottom_loading_box.add(self.loading_label)
         self.show_all()
 
@@ -184,16 +195,17 @@ class App(Gtk.Window):
 
         for image_path in self.image_paths:
 
-            # Load and scale the image:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
-            aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-            scaled_width = 240
-            scaled_height = int(scaled_width / aspect_ratio)
-            scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-            self.thumbnails.append(scaled_pixbuf)
+            # If this image is not cached yet, resize and cache it:
+            if not os.path.exists(f"{cf.config_folder}/.cache/{os.path.basename(image_path)}"):
+                cache_image(image_path)
+
+            # Load cached thumbnail:
+            cached_image_path = f"{cf.config_folder}/.cache/{os.path.basename(image_path)}"
+            thumbnail = GdkPixbuf.Pixbuf.new_from_file(cached_image_path)
+            self.thumbnails.append(thumbnail)
             self.image_names.append(os.path.basename(image_path))
 
-        # When image processing is done, remove loading label and display the images:
+        # When image processing is done, remove caching label and display the images:
         self.bottom_loading_box.remove(self.loading_label)
         GLib.idle_add(self.load_image_grid)
 

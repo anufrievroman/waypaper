@@ -10,6 +10,7 @@ GUI wallpaper setter for both Wayland and X11 window managers that works as a fr
 - GUI wallpaper selection
 - Works on both Wayland (with `swaybg` or `swww`) and X11 (with `feh`)
 - Restores wallpaper at launch of your WM
+- Caching for fast loading
   
 ## Installation
 
@@ -19,17 +20,15 @@ You need to install at least one of the backends and Waypaper, which works as a 
 
 Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on x11. You can also install and test all of them.
 
-- [swaybg](https://github.com/swaywm/swaybg) - the wayland backend that supports only static images.
-- [swww](https://github.com/Horus645/swww) - the wayland backend that also supports animated GIFs.
-- [feh](https://github.com/derf/feh) - the x11 backend that supports static images.
+### 2. Install Waypaper
 
-### 2. Install Waypaper (from PyPi)
+#### From PyPi
 
 `pipx install waypaper`
 
 If `pipx` is not found, you first need to install `pipx` from your package manager, it's sometimes called `python-pipx`.
 
-### 2. Install Waypaper (from AUR)
+#### From AUR
 
 [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is available in AUR, thanks to *metak*. So, on arch-based system, you can install it as:
 

@@ -84,6 +84,10 @@ cf = Config()
 if not os.path.exists(cf.config_folder):
     os.makedirs(cf.config_folder)
 
+# Create cache folder:
+if not os.path.exists(f"{cf.config_folder}/.cache"):
+    os.makedirs(f"{cf.config_folder}/.cache")
+
 # Create config file:
 if not os.path.exists(cf.config_file):
     cf.create()
