@@ -1,6 +1,6 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
+GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils` and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
 
 ![screenshot](screenshot.jpg)
 
@@ -8,7 +8,7 @@ GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend
 
 - GUI wallpaper selection
 - Support for GIF animations (with `swww`)
-- Works on both Wayland (with `swaybg` or `swww`) and Xorg (with `feh`)
+- Works on both Wayland (with `swaybg` or `swww` or `wallutils`) and Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
   
@@ -18,7 +18,7 @@ You need to install at least one of the backends and Waypaper, which works as a 
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on Xorg.
+Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [wallutils](https://github.com/xyproto/wallutils) on both.
 
 ### 2. Install Waypaper
 
@@ -39,7 +39,7 @@ The [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is a
 
 ### Dependencies
 
-- `swaybg` or `swww` or `feh`
+- `swaybg` or `swww` or `feh` or `wallutils`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 
 ## Usage
@@ -60,7 +60,7 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 `--restore` - sets the last chosen wallpaper. Useful at launch of the window manager.
 
-`--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, or `feh`. Useful if you use waypaper on both wayland and x11 on the same machine. By default, last used backend is used.
+`--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, `feh`, or `wallutils`. Useful if you use waypaper on both wayland and x11 on the same machine. By default, last used backend is used.
 
 `--fill XXX` - specifies filling type, which can be eiher `fill`, `stretch`, `fit`, `center`, or `tile`.
 
@@ -75,9 +75,8 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 - ~Improve loading of folders with many images~.
 - Additional options for ~search in subfolders~, ~background color~, and setting a uniform color.
-- Support for other backends like ~swww~, ~feh~, wbg, and hyprpaper.
-- Better keyboard operation and hjkl support.
-- Dynamic grid of thumbnails that adopts to the application width.
+- Support for other backends like ~swww~, ~feh~, ~wallutils~, wbg, and hyprpaper.
+- Better keyboard-driven experience and hjkl support.
 
 ## Contributions
 

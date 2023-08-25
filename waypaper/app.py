@@ -155,6 +155,8 @@ class App(Gtk.Window):
         """Before running the app, check which backends are installed"""
         self.missing_backends = []
         for backend in BACKEND_OPTIONS:
+            if backend == "wallutils":
+                backend = "setwallpaper"
             is_backend_missing = not bool(distutils.spawn.find_executable(backend))
             self.missing_backends.append(is_backend_missing)
 
@@ -162,7 +164,7 @@ class App(Gtk.Window):
         if all(self.missing_backends):
             message = "Looks like none of the wallpaper backends is installed in the system.\n"
             message += "Use your package manager to install at least one of these backends:\n"
-            message += "\n- swaybg (for Wayland)\n- swww (for Wayland)\n- feh (for Xorg)"
+            message += "\n- swaybg (for Wayland)\n- swww (for Wayland)\n- feh (for Xorg)\n- wallutils (for Xorg & Wayland)"
             self.show_no_backend_message(message)
             exit()
 

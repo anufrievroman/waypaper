@@ -9,7 +9,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
         if backend == "swaybg":
             fill = fill_option.lower()
             subprocess.Popen(["swaybg", "-i", image_path, "-m", fill, "-c", color])
-            print("Image set with swaybg")
+            print(f"Wallpaper was set with {backend}")
 
         # swww backend:
         elif backend == "swww":
@@ -25,7 +25,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
             subprocess.Popen(["killall", "swaybg"])
             subprocess.Popen(["swww", "init"])
             subprocess.Popen(["swww", "img", image_path, "--resize", fill, "--fill-color", color])
-            print("Image set with swww")
+            print(f"Wallpaper was set with {backend}")
 
         # feh backend:
         elif backend == "feh":
@@ -39,7 +39,21 @@ def change_wallpaper(image_path, fill_option, color, backend):
             fill = fill_types[fill_option.lower()]
 
             subprocess.Popen(["feh", fill, "--image-bg", color, image_path])
-            print("Image set with feh")
+            print(f"Wallpaper was set with {backend}")
+
+        # wallutils backend:
+        elif backend == "wallutils":
+            fill_types = {
+                    "fill": "scale",
+                    "fit": "scale",
+                    "center": "center",
+                    "stretch": "stretch",
+                    "tile": "tile",
+                    }
+            fill = fill_types[fill_option.lower()]
+
+            subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
+            print(f"Wallpaper was set with {backend}")
 
         # wbg backend (unstable):
         # elif backend == "wbg":
