@@ -1,5 +1,3 @@
-import sys
-
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf

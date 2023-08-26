@@ -1,18 +1,15 @@
 """Module that runs GUI app"""
-
-import threading
-import gi
-import os
-import subprocess
-import configparser
-import distutils.spawn
-
-gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
-
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
+
+import threading
+import os
+import distutils.spawn
+import gi
+
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 
 def get_image_paths(root_folder, include_subfolders=False, depth=None):

@@ -2,11 +2,8 @@
 
 import configparser
 import pathlib
-import getopt
-import sys
 import os
 
-from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 from waypaper.arguments import args
 
 
@@ -71,7 +68,7 @@ class Config:
 
 
     def read_parameters_from_user_arguments(self):
-        """Read user arguments that were provided at the run. These values take priority over config.ini"""
+        """Read user arguments provided at the run. These values take priority over config.ini"""
         if args.backend:
             self.backend = args.backend
         if args.fill:
