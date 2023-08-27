@@ -1,15 +1,24 @@
 """Module that runs GUI app"""
-from waypaper.changer import change_wallpaper
-from waypaper.config import cf
-from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 
 import threading
 import os
+import shutil
 import distutils.spawn
 import gi
 
+from waypaper.changer import change_wallpaper
+from waypaper.config import cf
+from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
+
+
+def has_image_extension(file_path):
+    """Check if the file has image extension"""
+    image_extensions = ['.gif', '.jpg', '.jpeg', '.png']
+    ext = os.path.splitext(file_path)[1].lower()
+    return ext in image_extensions
 
 
 def get_image_paths(root_folder, include_subfolders=False, depth=None):
@@ -23,7 +32,7 @@ def get_image_paths(root_folder, include_subfolders=False, depth=None):
             if current_depth > depth:
                 continue
         for filename in files:
-            if filename.endswith(".jpg") or filename.endswith(".png") or filename.endswith(".gif"):
+            if has_image_extension(filename):
                 image_paths.append(os.path.join(root, filename))
     return image_paths
 
@@ -93,8 +102,8 @@ class App(Gtk.Window):
 
         # Set as active line the backend from config, if it is installed:
         try:
-            filtered_backends = [value for value, miss in zip(BACKEND_OPTIONS, self.missing_backends) if not miss]
-            active_num = filtered_backends.index(cf.backend)
+            installed_backends = [value for value, miss in zip(BACKEND_OPTIONS, self.missing_backends) if not miss]
+            active_num = installed_backends.index(cf.backend)
         except:
             active_num = 0
         self.backend_option_combo.set_active(active_num)
@@ -116,9 +125,21 @@ class App(Gtk.Window):
         self.color_picker_button.set_rgba(rgba_color)
         self.color_picker_button.connect("color-set", self.on_color_set)
 
+        # Create a sort option dropdown menu:
+        self.sort_option_combo = Gtk.ComboBoxText()
+        for option in SORT_OPTIONS:
+            self.sort_option_combo.append_text(SORT_DISPLAYS[option])
+        active_num = SORT_OPTIONS.index(cf.sort_option)
+        self.sort_option_combo.set_active(active_num)
+        self.sort_option_combo.connect("changed", self.on_sort_option_changed)
+
         # Create exit button:
         self.exit_button = Gtk.Button(label=" Exit ")
         self.exit_button.connect("clicked", self.on_exit_clicked)
+
+        # Create refresh button:
+        self.refresh_button = Gtk.Button(label=" Refresh ")
+        self.refresh_button.connect("clicked", self.on_refresh_clicked)
 
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
@@ -137,7 +158,9 @@ class App(Gtk.Window):
         # Create a horizontal box for display option and exit button:
         self.options_box = Gtk.HBox(spacing=10)
         self.options_box.pack_end(self.exit_button, False, False, 0)
+        self.options_box.pack_end(self.refresh_button, False, False, 0)
         self.options_box.pack_end(self.include_subfolders_checkbox, False, False, 0)
+        self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_end(self.color_picker_button, False, False, 0)
         self.options_box.pack_end(self.fill_option_combo, False, False, 0)
         self.options_box.pack_end(self.backend_option_combo, False, False, 0)
@@ -179,10 +202,23 @@ class App(Gtk.Window):
         dialog.destroy()
 
 
+    def sort_images(self):
+        """Sort images depending on the sorting option"""
+        if cf.sort_option == "name":
+            self.image_paths.sort(key=lambda x: os.path.basename(x))
+        elif cf.sort_option == "namerev":
+            self.image_paths.sort(key=lambda x: os.path.basename(x), reverse=True)
+        elif cf.sort_option == "date":
+            self.image_paths.sort(key=lambda x: os.path.getmtime(x))
+        elif cf.sort_option == "daterev":
+            self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+
+
     def process_images(self):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
         self.image_paths = get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
+        self.sort_images()
 
         # Show caching label:
         self.loading_label = Gtk.Label(label=f"Caching {len(self.image_paths)} wallpapers...")
@@ -266,6 +302,14 @@ class App(Gtk.Window):
         cf.fill_option = combo.get_active_text()
 
 
+    def on_sort_option_changed(self, combo):
+        """Save sort parameter whet it is changed"""
+        selected_option = combo.get_active_text()
+        selected_option_num = list(SORT_DISPLAYS.values()).index(selected_option)
+        cf.sort_option =  list(SORT_DISPLAYS.keys())[selected_option_num]
+        threading.Thread(target=self.process_images).start()
+
+
     def on_backend_option_changed(self, combo):
         """Save backend parameter whet it is changed"""
         cf.backend = combo.get_active_text()
@@ -289,17 +333,39 @@ class App(Gtk.Window):
         cf.save()
 
 
+    def on_refresh_clicked(self, widget):
+        """On clicking refresh button, clear cache"""
+        self.clear_cache()
+
+
     def on_exit_clicked(self, widget):
-        """On clicking exit button, save the data and quit"""
+        """On clicking exit button, exit"""
+        self.exit_app()
+
+
+    def exit_app(self):
+        """Save the data and quit"""
         cf.save()
         Gtk.main_quit()
 
 
+    def clear_cache(self):
+        """Delete cache folder and reprocess the images"""
+        cache_folder = f"{cf.config_folder}/.cache"
+        try:
+            shutil.rmtree(cache_folder)
+            os.makedirs(cache_folder)
+        except OSError as e:
+            print(f"Error deleting cache '{cache_folder}': {e}")
+        threading.Thread(target=self.process_images).start()
+
+
     def on_key_pressed(self, widget, event):
-        """On clicking q, save the data and quit"""
+        """Process various key bindigns"""
         if event.keyval == Gdk.KEY_q:
-            cf.save()
-            Gtk.main_quit()
+            self.exit_app()
+        if event.keyval == Gdk.KEY_r:
+            self.clear_cache()
 
 
     def run(self):

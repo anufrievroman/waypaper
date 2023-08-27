@@ -4,7 +4,7 @@ from waypaper.config import cf
 from waypaper.arguments import args
 
 
-__version__ = "1.6"
+__version__ = "1.7"
 
 
 def run():

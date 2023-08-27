@@ -5,6 +5,7 @@ import pathlib
 import os
 
 from waypaper.arguments import args
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS
 
 
 class Config:
@@ -15,6 +16,7 @@ class Config:
             self.image_folder = str(pathlib.Path.home()) + "/Pictures"
         self.wallpaper = None
         self.fill_option = "fill"
+        self.sort_option = "name"
         self.backend = "swaybg"
         self.color = "#ffffff"
         self.include_subfolders = False
@@ -28,6 +30,7 @@ class Config:
         config["Settings"] = {
                 "folder": str(self.image_folder),
                 "fill": str(self.fill_option),
+                "sort": str(self.sort_option),
                 "backend": str(self.backend),
                 "color": str(self.color),
                 "subfolders": str(self.include_subfolders),
@@ -45,6 +48,11 @@ class Config:
             self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
             self.wallpaper = config.get("Settings", "wallpaper", fallback=self.wallpaper)
             self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
+            if self.fill_option not in FILL_OPTIONS:
+                self.sort_option = FILL_OPTIONS[0]
+            self.sort_option = config.get("Settings", "sort", fallback=self.sort_option)
+            if self.sort_option not in SORT_OPTIONS:
+                self.sort_option = SORT_OPTIONS[0]
             self.backend = config.get("Settings", "backend", fallback=self.backend)
             self.color  = config.get("Settings", "color", fallback=self.color)
             self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
@@ -60,6 +68,7 @@ class Config:
         config.set("Settings", "folder", cf.image_folder)
         config.set("Settings", "wallpaper", cf.wallpaper)
         config.set("Settings", "fill", cf.fill_option)
+        config.set("Settings", "sort", cf.sort_option)
         config.set("Settings", "backend", cf.backend)
         config.set("Settings", "color", cf.color)
         config.set("Settings", "subfolders", str(cf.include_subfolders))

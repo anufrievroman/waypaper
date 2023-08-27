@@ -74,9 +74,10 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 ## Roadmap
 
 - ~Improve loading of folders with many images~.
-- Additional options for ~search in subfolders~, ~background color~, and setting a uniform color.
+- Additional options for ~search in subfolders~, ~background color~, ~sorting~, and setting a uniform color.
 - Support for other backends like ~swww~, ~feh~, ~wallutils~, wbg, and hyprpaper.
 - Better keyboard-driven experience and hjkl support.
+- Support for multiple monitors
 
 ## Contributions
 
