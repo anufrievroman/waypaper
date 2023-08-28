@@ -58,6 +58,7 @@ class App(Gtk.Window):
         self.init_ui()
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
+        self.highlighted_image_row = 0
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -266,7 +267,7 @@ class App(Gtk.Window):
             button = Gtk.Button()
             if index == self.selected_index:
                 button.set_relief(Gtk.ReliefStyle.NORMAL)
-                self.highlighted_image = image
+                self.highlighted_image_row = row
             else:
                 button.set_relief(Gtk.ReliefStyle.NONE)
             button.add(image)
@@ -281,20 +282,16 @@ class App(Gtk.Window):
                 row += 1
 
         self.show_all()
+        self.scroll_to_selected_image()
 
 
     def scroll_to_selected_image(self):
-
-        if self.highlighted_image:
-            # Calculate the position of the selected image within the scrolled window
-            allocation = self.highlighted_image.get_allocation()
-            # print(allocation.y)
-            scroll_x = allocation.x - self.scrolled_window.get_hadjustment().get_page_size() / 2
-            scroll_y = allocation.y - self.scrolled_window.get_vadjustment().get_page_size() / 2
-
-            # Adjust the scroll adjustments to make the selected image visible
-            self.scrolled_window.get_hadjustment().set_value(scroll_x)
-            self.scrolled_window.get_vadjustment().set_value(scroll_y)
+        """Scroll the window to see the highlighed image"""
+        scrolled_window_height = self.scrolled_window.get_vadjustment().get_page_size()
+        current_y = self.highlighted_image_row * 180
+        subscreen_num = current_y // scrolled_window_height
+        scroll = scrolled_window_height * subscreen_num
+        self.scrolled_window.get_vadjustment().set_value(scroll)
 
 
     def on_choose_folder_clicked(self, widget):
@@ -387,24 +384,26 @@ class App(Gtk.Window):
         """Process various key bindigns"""
         if event.keyval == Gdk.KEY_q:
             self.exit_app()
+
         elif event.keyval == Gdk.KEY_r:
             self.clear_cache()
+
         elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
             self.selected_index = max(self.selected_index - 1, 0)
             self.load_image_grid()
-            self.scroll_to_selected_image()
+
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
             self.selected_index = min(self.selected_index + 3, len(self.image_paths) - 1)
             self.load_image_grid()
-            self.scroll_to_selected_image()
+
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
             self.selected_index = max(self.selected_index - 3, 0)
             self.load_image_grid()
-            self.scroll_to_selected_image()
+
         elif event.keyval in [Gdk.KEY_l, Gdk.KEY_Right]:
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
-            self.scroll_to_selected_image()
+
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
             cf.wallpaper = wallpaper_path
