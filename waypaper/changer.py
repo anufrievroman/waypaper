@@ -1,6 +1,8 @@
 """Module that runs the system processes to change the wallpaper"""
 
 import subprocess
+import time
+
 
 def change_wallpaper(image_path, fill_option, color, backend):
     """Run a system command to change the wallpaper depending on the backend"""
@@ -8,6 +10,8 @@ def change_wallpaper(image_path, fill_option, color, backend):
         # swaybg backend:
         if backend == "swaybg":
             fill = fill_option.lower()
+            subprocess.Popen(["killall", "swaybg"])
+            time.sleep(0.005)
             subprocess.Popen(["swaybg", "-i", image_path, "-m", fill, "-c", color])
             print(f"Wallpaper was set with {backend}")
 
@@ -23,6 +27,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
             fill = fill_types[fill_option.lower()]
 
             subprocess.Popen(["killall", "swaybg"])
+            time.sleep(0.005)
             subprocess.Popen(["swww", "init"])
             subprocess.Popen(["swww", "img", image_path, "--resize", fill, "--fill-color", color])
             print(f"Wallpaper was set with {backend}")

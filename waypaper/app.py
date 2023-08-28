@@ -57,6 +57,7 @@ class App(Gtk.Window):
         self.set_default_size(780, 600)
         self.init_ui()
         self.connect("delete-event", Gtk.main_quit)
+        self.selected_index = 0
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -134,11 +135,11 @@ class App(Gtk.Window):
         self.sort_option_combo.connect("changed", self.on_sort_option_changed)
 
         # Create exit button:
-        self.exit_button = Gtk.Button(label=" Exit ")
+        self.exit_button = Gtk.Button(label="Exit")
         self.exit_button.connect("clicked", self.on_exit_clicked)
 
         # Create refresh button:
-        self.refresh_button = Gtk.Button(label=" Refresh ")
+        self.refresh_button = Gtk.Button(label="Refresh")
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
 
         # Create a box to contain the bottom row of buttons with margin:
@@ -212,6 +213,8 @@ class App(Gtk.Window):
             self.image_paths.sort(key=lambda x: os.path.getmtime(x))
         elif cf.sort_option == "daterev":
             self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+        else:
+            pass
 
 
     def process_images(self):
@@ -255,13 +258,17 @@ class App(Gtk.Window):
         row = 0
         col = 0
 
-        for thumbnail, name, path in zip(self.thumbnails, self.image_names, self.image_paths):
+        for index, [thumbnail, name, path] in enumerate(zip(self.thumbnails, self.image_names, self.image_paths)):
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
             image.set_tooltip_text(name)
             button = Gtk.Button()
-            button.set_relief(Gtk.ReliefStyle.NONE)  # Remove border
+            if index == self.selected_index:
+                button.set_relief(Gtk.ReliefStyle.NORMAL)
+                self.highlighted_image = image
+            else:
+                button.set_relief(Gtk.ReliefStyle.NONE)
             button.add(image)
 
             # Add button to the grid and connect clicked event:
@@ -274,6 +281,19 @@ class App(Gtk.Window):
                 row += 1
 
         self.show_all()
+
+
+    def scroll_to_selected_image(self):
+
+        if self.highlighted_image:
+            # Calculate the position of the selected image within the scrolled window
+            allocation = self.highlighted_image.get_allocation()
+            scroll_x = allocation.x - self.scrolled_window.get_hadjustment().get_page_size() / 2
+            scroll_y = allocation.y - self.scrolled_window.get_vadjustment().get_page_size() / 2
+
+            # Adjust the scroll adjustments to make the selected image visible
+            self.scrolled_window.get_hadjustment().set_value(scroll_x)
+            self.scrolled_window.get_vadjustment().set_value(scroll_y)
 
 
     def on_choose_folder_clicked(self, widget):
@@ -324,9 +344,11 @@ class App(Gtk.Window):
         cf.color = "#{:02X}{:02X}{:02X}".format(red, green, blue)
 
 
-    def on_image_clicked(self, widget, user_data):
+    def on_image_clicked(self, widget, path):
         """On clicking an image, set it as a wallpaper and save"""
-        cf.wallpaper = user_data
+        cf.wallpaper = path
+        self.selected_index = self.image_paths.index(path)
+        self.load_image_grid()
         print("Selected image path:", cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
         change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
@@ -364,8 +386,35 @@ class App(Gtk.Window):
         """Process various key bindigns"""
         if event.keyval == Gdk.KEY_q:
             self.exit_app()
-        if event.keyval == Gdk.KEY_r:
+        elif event.keyval == Gdk.KEY_r:
             self.clear_cache()
+        elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
+            self.selected_index = max(self.selected_index - 1, 0)
+            self.load_image_grid()
+            # self.scroll_to_selected_image()
+        elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
+            self.selected_index = min(self.selected_index + 3, len(self.image_paths) - 1)
+            self.load_image_grid()
+            # self.scroll_to_selected_image()
+        elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
+            self.selected_index = max(self.selected_index - 3, 0)
+            self.load_image_grid()
+            # self.scroll_to_selected_image()
+        elif event.keyval in [Gdk.KEY_l, Gdk.KEY_Right]:
+            self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
+            self.load_image_grid()
+            # self.scroll_to_selected_image()
+        elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
+            wallpaper_path = self.image_paths[self.selected_index]
+            cf.wallpaper = wallpaper_path
+            print("Selected image path:", cf.wallpaper)
+            cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
+            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
+            cf.save()
+
+        # Prevent other default key handling:
+        if event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
+            return True
 
 
     def run(self):

@@ -60,16 +60,18 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 `--restore` - sets the last chosen wallpaper. Useful at launch of the window manager.
 
-`--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, `feh`, or `wallutils`. Useful if you use waypaper on both wayland and x11 on the same machine. By default, last used backend is used.
+`--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, `feh`, or `wallutils`. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
 
 `--fill XXX` - specifies filling type, which can be eiher `fill`, `stretch`, `fit`, `center`, or `tile`.
 
 ## Troubleshooting
 
-- If wallpaper does not change, first, try to launch waypaper in the terminal and see the output. Also, try to change it via comand line using chosen backend to make sure that backend by itself works correctly.
-- If application does not run, make sure to install gobject library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
-- Please understand that not all backends work on all systems. `feh` is for Xorg, while `swww` and `swaybg` are for Wayland.
-- If you use different WMs on the same system, specify the backend when you restore the wallpaper at launch. For example: `waypaper --restore --backend feh`
+- If waypaper always looses focus on Hyprland try to add this to your config `windowrulev2 = stayfocused, class:(waypaper)
+`. However, other issues might occur.
+- If wallpaper does not change, first, try to launch waypaper in the terminal and see the output. Also, try to change it via command line using chosen backend to make sure that backend by itself works correctly.
+- If application does not run, make sure to install `gobject` library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
+- Please understand that not all backends work on all systems. `feh` is only for Xorg, while `swww` and `swaybg` are only for Wayland.
+- If you use different WMs on the same system, specify the backend when you restore the wallpaper at launch. For example: `waypaper --restore --backend feh` or use `wallutils` which works on both Wayland and Xorg.
 
 ## Roadmap
 
@@ -81,6 +83,6 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 ## Contributions
 
-Feel free to propose PR and suggest the improvements.
+Feel free to propose PR and suggest the improvements. I'll also appreciate any help with packaging for various distributions.
 
 If you'd like to support the development, consider [donations](https://www.buymeacoffee.com/angryprofessor).
