@@ -288,6 +288,7 @@ class App(Gtk.Window):
         if self.highlighted_image:
             # Calculate the position of the selected image within the scrolled window
             allocation = self.highlighted_image.get_allocation()
+            # print(allocation.y)
             scroll_x = allocation.x - self.scrolled_window.get_hadjustment().get_page_size() / 2
             scroll_y = allocation.y - self.scrolled_window.get_vadjustment().get_page_size() / 2
 
@@ -391,19 +392,19 @@ class App(Gtk.Window):
         elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
             self.selected_index = max(self.selected_index - 1, 0)
             self.load_image_grid()
-            # self.scroll_to_selected_image()
+            self.scroll_to_selected_image()
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
             self.selected_index = min(self.selected_index + 3, len(self.image_paths) - 1)
             self.load_image_grid()
-            # self.scroll_to_selected_image()
+            self.scroll_to_selected_image()
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
             self.selected_index = max(self.selected_index - 3, 0)
             self.load_image_grid()
-            # self.scroll_to_selected_image()
+            self.scroll_to_selected_image()
         elif event.keyval in [Gdk.KEY_l, Gdk.KEY_Right]:
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
-            # self.scroll_to_selected_image()
+            self.scroll_to_selected_image()
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
             cf.wallpaper = wallpaper_path
