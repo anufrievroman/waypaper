@@ -404,6 +404,14 @@ class App(Gtk.Window):
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
 
+        elif event.keyval == Gdk.KEY_g:
+            self.selected_index = 0
+            self.load_image_grid()
+
+        elif event.keyval == Gdk.KEY_G:
+            self.selected_index = len(self.image_paths)
+            self.load_image_grid()
+
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
             cf.wallpaper = wallpaper_path

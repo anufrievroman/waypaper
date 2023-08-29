@@ -11,6 +11,7 @@ GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend
 - Works on both Wayland (with `swaybg` or `swww` or `wallutils`) and Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
+- Vim keys
   
 ## Installation
 
@@ -78,7 +79,7 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 - ~Improve loading of folders with many images~.
 - Additional options for ~search in subfolders~, ~background color~, ~sorting~, and setting a uniform color.
 - Support for other backends like ~swww~, ~feh~, ~wallutils~, wbg, and hyprpaper.
-- Better keyboard-driven experience and hjkl support.
+- ~Better keyboard-driven experience and hjkl support.~
 - Support for multiple monitors
 
 ## Contributions
