@@ -57,6 +57,8 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 `exec waypaper --restore`
  
+ To see the list of hotkeys, press `?`.
+
 ### Options
 
 `--restore` - sets the last chosen wallpaper. Useful at launch of the window manager.

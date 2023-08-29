@@ -3,15 +3,12 @@
 import argparse
 
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
+from waypaper.translations.en import *
 
-parser = argparse.ArgumentParser(
-                prog = 'waypaper',
-                description = 'GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, and swww.',
-                epilog = 'For more information, visit: https://github.com/anufrievroman/waypaper')
 
-parser.add_argument("-v", "--version", help="print version of the program", action="store_true")
-parser.add_argument("--restore", help="restore last wallpaper.", action="store_true")
-parser.add_argument("--fill", help="specify how to fill the screen with chosen image.", choices=FILL_OPTIONS)
-parser.add_argument("--backend", help="specify which backend to use to set wallpaper.", choices=BACKEND_OPTIONS)
-
+parser = argparse.ArgumentParser(prog = MSG_NAME, description = MSG_DESC, epilog = MSG_INFO)
+parser.add_argument("-v", "--version", help=MSG_ARG_HELP, action="store_true")
+parser.add_argument("--restore", help=MSG_ARG_REST, action="store_true")
+parser.add_argument("--fill", help=MSG_ARG_FILL, choices=FILL_OPTIONS)
+parser.add_argument("--backend", help=MSG_ARG_BACK, choices=BACKEND_OPTIONS)
 args = parser.parse_args()

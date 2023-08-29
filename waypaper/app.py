@@ -13,6 +13,8 @@ from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_D
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
+from waypaper.translations.en import *
+
 
 def has_image_extension(file_path):
     """Check if the file has image extension"""
@@ -72,7 +74,7 @@ class App(Gtk.Window):
         self.add(self.main_box)
 
         # Create a button to open folder dialog:
-        self.choose_folder_button = Gtk.Button(label="Change wallpaper folder")
+        self.choose_folder_button = Gtk.Button(label=MSG_CHANGEFOLDER)
         self.choose_folder_button.connect("clicked", self.on_choose_folder_clicked)
         self.main_box.pack_start(self.choose_folder_button, False, False, 0)
 
@@ -92,7 +94,7 @@ class App(Gtk.Window):
         self.scrolled_window.add(self.grid)
 
         # Create subfolder toggle:
-        self.include_subfolders_checkbox = Gtk.ToggleButton(label="Subfolders")
+        self.include_subfolders_checkbox = Gtk.ToggleButton(label=MSG_SUBFOLDERS)
         self.include_subfolders_checkbox.set_active(cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
 
@@ -136,11 +138,11 @@ class App(Gtk.Window):
         self.sort_option_combo.connect("changed", self.on_sort_option_changed)
 
         # Create exit button:
-        self.exit_button = Gtk.Button(label="Exit")
+        self.exit_button = Gtk.Button(label=MSG_EXIT)
         self.exit_button.connect("clicked", self.on_exit_clicked)
 
         # Create refresh button:
-        self.refresh_button = Gtk.Button(label="Refresh")
+        self.refresh_button = Gtk.Button(label=MSG_REFRESH)
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
 
         # Create a box to contain the bottom row of buttons with margin:
@@ -184,14 +186,11 @@ class App(Gtk.Window):
 
         # Show error message if no backends are installed:
         if all(self.missing_backends):
-            message = "Looks like none of the wallpaper backends is installed in the system.\n"
-            message += "Use your package manager to install at least one of these backends:\n"
-            message += "\n- swaybg (for Wayland)\n- swww (for Wayland)\n- feh (for Xorg)\n- wallutils (for Xorg & Wayland)"
-            self.show_no_backend_message(message)
+            self.show_message(ERR_BACKEND)
             exit()
 
 
-    def show_no_backend_message(self, message):
+    def show_message(self, message):
         """If no backends are installed, show a message"""
         dialog = Gtk.MessageDialog(
             parent=self,
@@ -225,7 +224,7 @@ class App(Gtk.Window):
         self.sort_images()
 
         # Show caching label:
-        self.loading_label = Gtk.Label(label=f"Caching {len(self.image_paths)} wallpapers...")
+        self.loading_label = Gtk.Label(label=MSG_CACHING)
         self.bottom_loading_box.add(self.loading_label)
         self.show_all()
 
@@ -294,12 +293,12 @@ class App(Gtk.Window):
         self.scrolled_window.get_vadjustment().set_value(scroll)
 
 
-    def on_choose_folder_clicked(self, widget):
+    def choose_folder(self):
         """Choosing the folder of images, saving the path, and reloading images"""
 
         dialog = Gtk.FileChooserDialog(
             "Please choose a folder", self, Gtk.FileChooserAction.SELECT_FOLDER,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, "Select", Gtk.ResponseType.OK)
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, MSG_SELECT, Gtk.ResponseType.OK)
         )
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -307,6 +306,11 @@ class App(Gtk.Window):
             cf.save()
             threading.Thread(target=self.process_images).start()
         dialog.destroy()
+
+
+    def on_choose_folder_clicked(self, widget):
+        """Choosing the folder of images, saving the path, and reloading images"""
+        self.choose_folder()
 
 
     def on_include_subfolders_toggled(self, toggle):
@@ -347,7 +351,7 @@ class App(Gtk.Window):
         cf.wallpaper = path
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
-        print("Selected image path:", cf.wallpaper)
+        print(MSG_PATH, cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
         change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
         cf.save()
@@ -376,7 +380,7 @@ class App(Gtk.Window):
             shutil.rmtree(cache_folder)
             os.makedirs(cache_folder)
         except OSError as e:
-            print(f"Error deleting cache '{cache_folder}': {e}")
+            print(f"{ERR_CACHE} '{cache_folder}': {e}")
         threading.Thread(target=self.process_images).start()
 
 
@@ -404,6 +408,9 @@ class App(Gtk.Window):
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
 
+        elif event.keyval == Gdk.KEY_f:
+            self.choose_folder()
+
         elif event.keyval == Gdk.KEY_g:
             self.selected_index = 0
             self.load_image_grid()
@@ -412,10 +419,14 @@ class App(Gtk.Window):
             self.selected_index = len(self.image_paths) - 1
             self.load_image_grid()
 
+        elif event.keyval == Gdk.KEY_question:
+            message = MSG_HELP
+            self.show_message(message)
+
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
             cf.wallpaper = wallpaper_path
-            print("Selected image path:", cf.wallpaper)
+            print(MSG_PATH, cf.wallpaper)
             cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
             change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
             cf.save()

@@ -3,6 +3,8 @@
 import subprocess
 import time
 
+from waypaper.translations.en import *
+
 
 def change_wallpaper(image_path, fill_option, color, backend):
     """Run a system command to change the wallpaper depending on the backend"""
@@ -13,7 +15,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
             subprocess.Popen(["killall", "swaybg"])
             time.sleep(0.005)
             subprocess.Popen(["swaybg", "-i", image_path, "-m", fill, "-c", color])
-            print(f"Wallpaper was set with {backend}")
+            print(f"{MSG_SETWITH} {backend}")
 
         # swww backend:
         elif backend == "swww":
@@ -30,7 +32,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
             time.sleep(0.005)
             subprocess.Popen(["swww", "init"])
             subprocess.Popen(["swww", "img", image_path, "--resize", fill, "--fill-color", color])
-            print(f"Wallpaper was set with {backend}")
+            print(f"{MSG_SETWITH} {backend}")
 
         # feh backend:
         elif backend == "feh":
@@ -44,7 +46,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
             fill = fill_types[fill_option.lower()]
 
             subprocess.Popen(["feh", fill, "--image-bg", color, image_path])
-            print(f"Wallpaper was set with {backend}")
+            print(f"{MSG_SETWITH} {backend}")
 
         # wallutils backend:
         elif backend == "wallutils":
@@ -58,33 +60,10 @@ def change_wallpaper(image_path, fill_option, color, backend):
             fill = fill_types[fill_option.lower()]
 
             subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
-            print(f"Wallpaper was set with {backend}")
-
-        # wbg backend (unstable):
-        # elif backend == "wbg":
-            # subprocess.Popen(["killall", "swaybg"])
-            # subprocess.Popen(["killall", "swww"])
-            # subprocess.Popen(["killall", "wbg"])
-            # subprocess.Popen(["wbg", image_path])
-            # print("Image set with wbg")
-
-        # pcmanfm backend (unstable):
-        # elif backend == "pcmanfm":
-            # fill_types = {
-                    # "fill": "--wallpaper-mode=screen",
-                    # "fit": "--wallpaper-mode=fit",
-                    # "center": "--wallpaper-mode=center",
-                    # "stretch": "--wallpaper-mode=stretch",
-                    # "tile": "--wallpaper-mode=tile",
-                    # }
-            # fill = fill_types[fill_option.lower()]
-
-            # subprocess.Popen(["pcmanfm", "--desktop"])
-            # subprocess.Popen(["pcmanfm", "-w", image_path, fill])
-            # print("Image set with pcmanfm")
+            print(f"{MSG_SETWITH} {backend}")
 
         else:
-            print(f"The backend {backend} is not supported")
+            print(f"{ERR_NOTSUP} {backend}")
 
     except Exception as e:
-        print("Error changing wallpaper:", e)
+        print(ERR_WALL, e)
