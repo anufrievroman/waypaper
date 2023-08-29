@@ -3,7 +3,7 @@
 import subprocess
 import time
 
-from waypaper.translations.en import *
+from waypaper.translation_en import *
 
 
 def change_wallpaper(image_path, fill_option, color, backend):

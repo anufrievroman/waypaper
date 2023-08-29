@@ -3,10 +3,10 @@
 import argparse
 
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
-from waypaper.translations.en import *
+from waypaper.translation_en import *
 
 
-parser = argparse.ArgumentParser(prog = MSG_NAME, description = MSG_DESC, epilog = MSG_INFO)
+parser = argparse.ArgumentParser(prog = "waypaper", description = MSG_DESC, epilog = MSG_INFO)
 parser.add_argument("-v", "--version", help=MSG_ARG_HELP, action="store_true")
 parser.add_argument("--restore", help=MSG_ARG_REST, action="store_true")
 parser.add_argument("--fill", help=MSG_ARG_FILL, choices=FILL_OPTIONS)

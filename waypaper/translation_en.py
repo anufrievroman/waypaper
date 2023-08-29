@@ -1,6 +1,5 @@
 """English translations of the program interface"""
 
-MSG_NAME = "Waypaper"
 MSG_DESC = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, and swww."
 MSG_INFO = "For more information, visit:\nhttps://github.com/anufrievroman/waypaper"
 

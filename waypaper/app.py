@@ -13,7 +13,7 @@ from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_D
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
-from waypaper.translations.en import *
+from waypaper.translation_en import *
 
 
 def has_image_extension(file_path):
