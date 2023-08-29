@@ -409,7 +409,7 @@ class App(Gtk.Window):
             self.load_image_grid()
 
         elif event.keyval == Gdk.KEY_G:
-            self.selected_index = len(self.image_paths)
+            self.selected_index = len(self.image_paths) - 1
             self.load_image_grid()
 
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
