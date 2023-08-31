@@ -19,6 +19,7 @@ class Config:
         self.sort_option = "name"
         self.backend = "swaybg"
         self.color = "#ffffff"
+        self.is_random = False
         self.include_subfolders = False
         self.config_folder  = str(pathlib.Path.home()) + "/.config/waypaper"
         self.config_file  = self.config_folder + "/config.ini"
@@ -82,6 +83,8 @@ class Config:
             self.backend = args.backend
         if args.fill:
             self.fill_option = args.fill
+        if args.random:
+            self.is_random = args.random
 
 
 cf = Config()
