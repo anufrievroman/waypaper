@@ -8,7 +8,7 @@ import gi
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf
-from waypaper.common import get_image_paths
+from waypaper.common import get_image_paths, get_random_file
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
 
 gi.require_version("Gtk", "3.0")
@@ -123,6 +123,10 @@ class App(Gtk.Window):
         self.refresh_button = Gtk.Button(label=MSG_REFRESH)
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
 
+        # Create random button:
+        self.random_button = Gtk.Button(label=MSG_RANDOM)
+        self.random_button.connect("clicked", self.on_random_clicked)
+
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         self.bottom_button_box.set_margin_bottom(10)
@@ -141,6 +145,7 @@ class App(Gtk.Window):
         self.options_box = Gtk.HBox(spacing=10)
         self.options_box.pack_end(self.exit_button, False, False, 0)
         self.options_box.pack_end(self.refresh_button, False, False, 0)
+        self.options_box.pack_end(self.random_button, False, False, 0)
         self.options_box.pack_end(self.include_subfolders_checkbox, False, False, 0)
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_end(self.color_picker_button, False, False, 0)
@@ -340,6 +345,11 @@ class App(Gtk.Window):
         self.clear_cache()
 
 
+    def on_random_clicked(self, widget):
+        """On clicking random button, set random wallpaper"""
+        self.set_random_wallpaper()
+
+
     def on_exit_clicked(self, widget):
         """On clicking exit button, exit"""
         self.exit_app()
@@ -349,6 +359,17 @@ class App(Gtk.Window):
         """Save the data and quit"""
         cf.save()
         Gtk.main_quit()
+
+
+    def set_random_wallpaper(self):
+        """Choose a random image and set it as the wallpaper"""
+        cf.wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
+        if cf.wallpaper is None:
+            return
+        print(MSG_PATH, cf.wallpaper)
+        cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
+        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
+        cf.save()
 
 
     def clear_cache(self):
@@ -369,6 +390,9 @@ class App(Gtk.Window):
 
         elif event.keyval == Gdk.KEY_r:
             self.clear_cache()
+
+        elif event.keyval == Gdk.KEY_R:
+            self.set_random_wallpaper()
 
         elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
             self.selected_index = max(self.selected_index - 1, 0)

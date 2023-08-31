@@ -67,7 +67,7 @@ class Config:
         config = configparser.ConfigParser()
         config.read(self.config_file)
         config.set("Settings", "folder", cf.image_folder)
-        config.set("Settings", "wallpaper", cf.wallpaper)
+        config.set("Settings", "wallpaper", str(cf.wallpaper))
         config.set("Settings", "fill", cf.fill_option)
         config.set("Settings", "sort", cf.sort_option)
         config.set("Settings", "backend", cf.backend)

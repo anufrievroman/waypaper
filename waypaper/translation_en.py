@@ -12,7 +12,7 @@ MSG_ARG_RAND = "set a random wallpaper"
 MSG_PATH = "Selected image path:"
 MSG_SELECT = "Select"
 MSG_REFRESH = "Refresh"
-MSG_RANDOM = "RANDOM"
+MSG_RANDOM = "Random"
 MSG_EXIT = "Exit"
 MSG_SUBFOLDERS = "Subfolders"
 MSG_CHANGEFOLDER = "Change wallpaper folder"
@@ -20,7 +20,7 @@ MSG_CACHING = "Caching wallpapers..."
 MSG_SETWITH = "Wallpaper was set with"
 
 MSG_HELP = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\n"
-MSG_HELP += "g - Scroll to top\nG - Scroll to bottom\n"
+MSG_HELP += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
 MSG_HELP += "s - Include/exclude images in subfolders\n? - Help\nq - Exit\n\n"
 MSG_HELP += MSG_INFO
 
