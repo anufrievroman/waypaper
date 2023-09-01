@@ -1,6 +1,6 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils` and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils` and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
 
 ![screenshot](screenshot.jpg)
 
@@ -8,10 +8,10 @@ GUI wallpaper setter for Wayland and X11 window managers. It works as a frontend
 
 - GUI wallpaper selection
 - Support for GIF animations (with `swww`)
+- Vim keys
 - Works on both Wayland (with `swaybg` or `swww` or `wallutils`) and Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
-- Vim keys
   
 ## Installation
 
@@ -69,8 +69,6 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 ## Troubleshooting
 
-- If waypaper always looses focus on Hyprland try to add this to your config `windowrulev2 = stayfocused, class:(waypaper)
-`. However, other issues might occur.
 - If wallpaper does not change, first, try to launch waypaper in the terminal and see the output. Also, try to change it via command line using chosen backend to make sure that backend by itself works correctly.
 - If application does not run, make sure to install `gobject` library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
 - Please understand that not all backends work on all systems. `feh` is only for Xorg, while `swww` and `swaybg` are only for Wayland.
@@ -79,10 +77,11 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 ## Roadmap
 
 - ~Improve loading of folders with many images~.
-- Additional options for ~search in subfolders~, ~background color~, ~sorting~, and setting a uniform color.
-- Support for other backends like ~swww~, ~feh~, ~wallutils~, wbg, and hyprpaper.
+- Additional options for ~subfolders~, ~color~, ~sorting~, ~randomizing~ and setting a uniform color.
+- ~Support for other backends like swww, feh, wallutils~, and maybe hyprpaper.
 - ~Better keyboard-driven experience and hjkl support.~
 - Support for multiple monitors
+- Support for some backend-specific features
 
 ## Contributions
 

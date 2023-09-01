@@ -238,10 +238,10 @@ class App(Gtk.Window):
         for child in self.grid.get_children():
             self.grid.remove(child)
 
-        row = 0
-        col = 0
-
         for index, [thumbnail, name, path] in enumerate(zip(self.thumbnails, self.image_names, self.image_paths)):
+
+            row = index // 3
+            column = index % 3
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
@@ -255,13 +255,8 @@ class App(Gtk.Window):
             button.add(image)
 
             # Add button to the grid and connect clicked event:
-            self.grid.attach(button, col, row, 1, 1)
+            self.grid.attach(button, column, row, 1, 1)
             button.connect("clicked", self.on_image_clicked, path)
-
-            col += 1
-            if col >= 3:
-                col = 0
-                row += 1
 
         self.show_all()
         self.scroll_to_selected_image()
