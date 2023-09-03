@@ -31,7 +31,7 @@ def change_wallpaper(image_path, fill_option, color, backend):
             subprocess.Popen(["killall", "swaybg"])
             time.sleep(0.005)
             subprocess.Popen(["swww", "init"])
-            subprocess.Popen(["swww", "img", image_path, "--resize", fill, "--fill-color", color])
+            subprocess.Popen(["swww", "img", image_path, "--resize", fill, "--fill-color", color, "--transition-step", str(10)])
             print(f"{MSG_SETWITH} {backend}")
 
         # feh backend:
