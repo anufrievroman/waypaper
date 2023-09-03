@@ -19,7 +19,7 @@ class Config:
         self.sort_option = "name"
         self.backend = "swaybg"
         self.color = "#ffffff"
-        self.monitor = ""
+        self.monitor = "All"
         self.is_random = False
         self.include_subfolders = False
         self.config_folder  = str(pathlib.Path.home()) + "/.config/waypaper"

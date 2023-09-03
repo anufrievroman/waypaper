@@ -165,15 +165,19 @@ class App(Gtk.Window):
 
 
     def monitor_option_display(self):
-        """Display monitor option if swww is installed and current backend supports it"""
+        """Display monitor option backend is swww"""
         self.options_box.remove(self.monitor_option_combo)
-        if "swww" not in self.missing_backends and cf.backend not in ["wallutils", "feh"]:
+        # if "swww" not in self.missing_backends and cf.backend not in ["wallutils", "feh"]:
+        if cf.backend == "swww":
 
             # Check available monitors:
             monitor_names = ["All"]
             try:
-                monitors = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
-                monitor_names.append(monitors.split(':')[0])
+                subprocess.Popen(["swww", "init"])
+                query_output = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
+                monitors = query_output.split("\n")
+                for monitor in monitors[:-1]:
+                    monitor_names.append(monitor.split(':')[0])
             except Exception as e:
                 print(f"{ERR_DISP} {e}")
 
@@ -348,6 +352,7 @@ class App(Gtk.Window):
     def on_backend_option_changed(self, combo):
         """Save backend parameter whet it is changed"""
         cf.backend = combo.get_active_text()
+        cf.monitor = "All"
         self.monitor_option_display()
         self.show_all()
 

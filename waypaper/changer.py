@@ -15,9 +15,11 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             fill = fill_option.lower()
             subprocess.Popen(["killall", "swaybg"])
             time.sleep(0.005)
-            command = ["swaybg", "-i", image_path, "-m", fill, "-c", color]
-            if monitor not in ["All", ""]:
-                command.extend(["--output", monitor])
+            command = ["swaybg"]
+            # if monitor != "All":
+                # command.extend(["-o", monitor])
+            command.extend(["-i", image_path])
+            command.extend(["-m", fill, "-c", color])
             subprocess.Popen(command)
             print(f"{MSG_SETWITH} {backend}")
 
@@ -38,7 +40,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             command.extend(["--resize", fill])
             command.extend(["--fill-color", color])
             command.extend(["--transition-step", str(10)])
-            if monitor not in ["All", ""]:
+            if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)
             print(f"{MSG_SETWITH} {backend}")
@@ -53,8 +55,9 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
                     "tile": "--bg-tile",
                     }
             fill = fill_types[fill_option.lower()]
-
-            subprocess.Popen(["feh", fill, "--image-bg", color, image_path])
+            command = ["feh", fill, "--image-bg", color]
+            command.extend([image_path])
+            subprocess.Popen([command])
             print(f"{MSG_SETWITH} {backend}")
 
         # wallutils backend:
