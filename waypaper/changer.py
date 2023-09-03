@@ -6,15 +6,19 @@ import time
 from waypaper.translation_en import *
 
 
-def change_wallpaper(image_path, fill_option, color, backend):
+def change_wallpaper(image_path, fill_option, color, backend, monitor):
     """Run a system command to change the wallpaper depending on the backend"""
+
     try:
         # swaybg backend:
         if backend == "swaybg":
             fill = fill_option.lower()
             subprocess.Popen(["killall", "swaybg"])
             time.sleep(0.005)
-            subprocess.Popen(["swaybg", "-i", image_path, "-m", fill, "-c", color])
+            command = ["swaybg", "-i", image_path, "-m", fill, "-c", color]
+            if monitor not in ["All", ""]:
+                command.extend(["--output", monitor])
+            subprocess.Popen(command)
             print(f"{MSG_SETWITH} {backend}")
 
         # swww backend:
@@ -27,11 +31,16 @@ def change_wallpaper(image_path, fill_option, color, backend):
                     "tile": "no",
                     }
             fill = fill_types[fill_option.lower()]
-
             subprocess.Popen(["killall", "swaybg"])
             time.sleep(0.005)
             subprocess.Popen(["swww", "init"])
-            subprocess.Popen(["swww", "img", image_path, "--resize", fill, "--fill-color", color, "--transition-step", str(10)])
+            command = ["swww", "img", image_path]
+            command.extend(["--resize", fill])
+            command.extend(["--fill-color", color])
+            command.extend(["--transition-step", str(10)])
+            if monitor not in ["All", ""]:
+                command.extend(["--outputs", monitor])
+            subprocess.Popen(command)
             print(f"{MSG_SETWITH} {backend}")
 
         # feh backend:
@@ -66,4 +75,4 @@ def change_wallpaper(image_path, fill_option, color, backend):
             print(f"{ERR_NOTSUP} {backend}")
 
     except Exception as e:
-        print(ERR_WALL, e)
+        print(f"{ERR_WALL} {e}")

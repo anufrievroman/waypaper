@@ -5,7 +5,7 @@ from waypaper.common import get_random_file
 from waypaper.arguments import args
 
 
-__version__ = "1.8.1"
+__version__ = "1.8.2"
 
 
 def run():
@@ -18,7 +18,7 @@ def run():
     # Set the wallpaper and quit:
     if args.restore:
         if cf.wallpaper is not None:
-            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
+            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
         exit()
 
     # Print the version and quit:

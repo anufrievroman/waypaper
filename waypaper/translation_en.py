@@ -16,6 +16,7 @@ MSG_RANDOM = "Random"
 MSG_EXIT = "Exit"
 MSG_SUBFOLDERS = "Subfolders"
 MSG_CHANGEFOLDER = "Change wallpaper folder"
+MSG_CHOOSEFOLDER = "Please choose a folder"
 MSG_CACHING = "Caching wallpapers..."
 MSG_SETWITH = "Wallpaper was set with"
 
@@ -30,5 +31,6 @@ ERR_BACKEND += "Use your package manager to install at least one of these backen
 ERR_BACKEND += "- swaybg (for Wayland)\n- swww (for Wayland)\n"
 ERR_BACKEND += "- feh (for Xorg)\n- wallutils (for Xorg & Wayland)\n\n"
 ERR_BACKEND += MSG_INFO
-ERR_WALL = "Error changing wallpaper: "
+ERR_WALL = "Error changing wallpaper:"
 ERR_NOTSUP = "The backend is not supported:"
+ERR_DISP = "Error determining monitor names:"

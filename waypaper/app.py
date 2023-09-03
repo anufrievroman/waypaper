@@ -1,5 +1,6 @@
 """Module that runs GUI app"""
 
+import subprocess
 import threading
 import os
 import shutil
@@ -141,6 +142,9 @@ class App(Gtk.Window):
         self.button_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
         self.bottom_button_box.pack_start(self.button_row_alignment, True, False, 0)
 
+        # Create a monitor option dropdown menu:
+        self.monitor_option_combo = Gtk.ComboBoxText()
+
         # Create a horizontal box for display option and exit button:
         self.options_box = Gtk.HBox(spacing=10)
         self.options_box.pack_end(self.exit_button, False, False, 0)
@@ -150,12 +154,38 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_end(self.color_picker_button, False, False, 0)
         self.options_box.pack_end(self.fill_option_combo, False, False, 0)
-        self.options_box.pack_end(self.backend_option_combo, False, False, 0)
+        self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
+
+        self.monitor_option_display()
 
         # Connect the "q" key press event to exit the application
         self.connect("key-press-event", self.on_key_pressed)
         self.show_all()
+
+
+    def monitor_option_display(self):
+        """Display monitor option if swww is installed and current backend supports it"""
+        self.options_box.remove(self.monitor_option_combo)
+        if "swww" not in self.missing_backends and cf.backend not in ["wallutils", "feh"]:
+
+            # Check available monitors:
+            monitor_names = ["All"]
+            try:
+                monitors = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
+                monitor_names.append(monitors.split(':')[0])
+            except Exception as e:
+                print(f"{ERR_DISP} {e}")
+
+            # Create a monitor option dropdown menu:
+            self.monitor_option_combo = Gtk.ComboBoxText()
+            for monitor in monitor_names:
+                self.monitor_option_combo.append_text(monitor)
+                self.monitor_option_combo.set_active(0)
+                self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
+
+            # Add it to the row of buttons:
+            self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
 
     def check_backends(self):
@@ -275,7 +305,7 @@ class App(Gtk.Window):
         """Choosing the folder of images, saving the path, and reloading images"""
 
         dialog = Gtk.FileChooserDialog(
-            "Please choose a folder", self, Gtk.FileChooserAction.SELECT_FOLDER,
+            MSG_CHOOSEFOLDER, self, Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, MSG_SELECT, Gtk.ResponseType.OK)
         )
         response = dialog.run()
@@ -298,8 +328,13 @@ class App(Gtk.Window):
 
 
     def on_fill_option_changed(self, combo):
-        """Save fill parameter whet it is changed"""
+        """Save fill parameter when it was changed"""
         cf.fill_option = combo.get_active_text()
+
+
+    def on_monitor_option_changed(self, combo):
+        """Save monitor parameter when it was changed"""
+        cf.monitor = combo.get_active_text()
 
 
     def on_sort_option_changed(self, combo):
@@ -313,6 +348,8 @@ class App(Gtk.Window):
     def on_backend_option_changed(self, combo):
         """Save backend parameter whet it is changed"""
         cf.backend = combo.get_active_text()
+        self.monitor_option_display()
+        self.show_all()
 
 
     def on_color_set(self, color_button):
@@ -331,7 +368,7 @@ class App(Gtk.Window):
         self.load_image_grid()
         print(MSG_PATH, cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
+        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
         cf.save()
 
 
@@ -363,7 +400,7 @@ class App(Gtk.Window):
             return
         print(MSG_PATH, cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
+        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, monitor)
         cf.save()
 
 
@@ -425,7 +462,7 @@ class App(Gtk.Window):
             cf.wallpaper = wallpaper_path
             print(MSG_PATH, cf.wallpaper)
             cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend)
+            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
             cf.save()
 
         # Prevent other default key handling:
