@@ -57,7 +57,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             fill = fill_types[fill_option.lower()]
             command = ["feh", fill, "--image-bg", color]
             command.extend([image_path])
-            subprocess.Popen([command])
+            subprocess.Popen(command)
             print(f"{MSG_SETWITH} {backend}")
 
         # wallutils backend:
