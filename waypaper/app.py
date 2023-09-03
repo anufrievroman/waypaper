@@ -405,7 +405,7 @@ class App(Gtk.Window):
             return
         print(MSG_PATH, cf.wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, monitor)
+        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
         cf.save()
 
 
