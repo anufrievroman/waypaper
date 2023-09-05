@@ -14,16 +14,17 @@ class Config:
         self.image_folder = str(pathlib.Path.home())
         if os.path.exists(str(pathlib.Path.home()) + "/Pictures"):
             self.image_folder = str(pathlib.Path.home()) + "/Pictures"
-        self.wallpaper = None
+        self.selected_wallpaper = None
+        self.selected_monitor = "All"
         self.fill_option = "fill"
         self.sort_option = "name"
         self.backend = "swaybg"
         self.color = "#ffffff"
-        self.monitor = "All"
-        self.is_random = False
+        self.monitors = [self.selected_monitor]
+        self.wallpaper = []
         self.include_subfolders = False
-        self.config_folder  = str(pathlib.Path.home()) + "/.config/waypaper"
-        self.config_file  = self.config_folder + "/config.ini"
+        self.config_folder = str(pathlib.Path.home()) + "/.config/waypaper"
+        self.config_file = self.config_folder + "/config.ini"
 
 
     def create(self):
@@ -36,7 +37,8 @@ class Config:
                 "backend": str(self.backend),
                 "color": str(self.color),
                 "subfolders": str(self.include_subfolders),
-                "wallpaper": str(self.wallpaper),
+                "wallpaper": str(self.selected_wallpaper),
+                "monitors": str(self.selected_monitor),
                 }
         with open(cf.config_file, "w") as configfile:
             config.write(configfile)
@@ -48,7 +50,6 @@ class Config:
             config = configparser.ConfigParser()
             config.read(self.config_file, 'utf-8')
             self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
-            self.wallpaper = config.get("Settings", "wallpaper", fallback=self.wallpaper)
             self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
             if self.fill_option not in FILL_OPTIONS:
                 self.sort_option = FILL_OPTIONS[0]
@@ -58,22 +59,44 @@ class Config:
             self.backend = config.get("Settings", "backend", fallback=self.backend)
             self.color  = config.get("Settings", "color", fallback=self.color)
             self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
+
+            self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
+            if self.monitors_str is not None:
+                self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
+
+            self.wallpaper_str = config.get("Settings", "wallpaper", fallback=self.wallpaper, raw=True)
+            if self.wallpaper_str is not None:
+                self.wallpaper = [str(paper) for paper in self.wallpaper_str.split(",")]
         except Exception as e:
             print(e)
             exit()
 
 
     def save(self):
-        """Save the parameters to the configuration file"""
+        """Update the parameters and save them to the configuration file"""
+
+        # If only certain monitor was affected, change only its wallpaper:
+        if self.selected_monitor == "All":
+            self.monitors = [self.selected_monitor]
+            self.wallpaper = [self.selected_wallpaper]
+        elif self.selected_monitor in self.monitors:
+            index = self.monitors.index(self.selected_monitor)
+            self.wallpaper[index] = self.selected_wallpaper
+        else:
+            self.monitors.append(self.selected_monitor)
+            self.wallpaper.append(self.selected_wallpaper)
+
+        # Write configuration to the file:
         config = configparser.ConfigParser()
         config.read(self.config_file)
         config.set("Settings", "folder", cf.image_folder)
-        config.set("Settings", "wallpaper", str(cf.wallpaper))
         config.set("Settings", "fill", cf.fill_option)
         config.set("Settings", "sort", cf.sort_option)
         config.set("Settings", "backend", cf.backend)
         config.set("Settings", "color", cf.color)
         config.set("Settings", "subfolders", str(cf.include_subfolders))
+        config.set("Settings", "wallpaper", ",".join(self.wallpaper))
+        config.set("Settings", "monitors", ",".join(self.monitors))
         with open(cf.config_file, "w") as configfile:
             config.write(configfile)
 
@@ -84,8 +107,6 @@ class Config:
             self.backend = args.backend
         if args.fill:
             self.fill_option = args.fill
-        if args.random:
-            self.is_random = args.random
 
 
 cf = Config()

@@ -165,7 +165,7 @@ class App(Gtk.Window):
 
 
     def monitor_option_display(self):
-        """Display monitor option backend is swww"""
+        """Display monitor option if backend is swww"""
         self.options_box.remove(self.monitor_option_combo)
         # if "swww" not in self.missing_backends and cf.backend not in ["wallutils", "feh"]:
         if cf.backend == "swww":
@@ -315,7 +315,6 @@ class App(Gtk.Window):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             cf.image_folder = dialog.get_filename()
-            cf.save()
             threading.Thread(target=self.process_images).start()
         dialog.destroy()
 
@@ -338,7 +337,7 @@ class App(Gtk.Window):
 
     def on_monitor_option_changed(self, combo):
         """Save monitor parameter when it was changed"""
-        cf.monitor = combo.get_active_text()
+        cf.selected_monitor = combo.get_active_text()
 
 
     def on_sort_option_changed(self, combo):
@@ -352,7 +351,7 @@ class App(Gtk.Window):
     def on_backend_option_changed(self, combo):
         """Save backend parameter whet it is changed"""
         cf.backend = combo.get_active_text()
-        cf.monitor = "All"
+        cf.selected_monitor = "All"
         self.monitor_option_display()
         self.show_all()
 
@@ -368,12 +367,12 @@ class App(Gtk.Window):
 
     def on_image_clicked(self, widget, path):
         """On clicking an image, set it as a wallpaper and save"""
-        cf.wallpaper = path
+        cf.selected_wallpaper = path
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
-        print(MSG_PATH, cf.wallpaper)
+        print(MSG_PATH, cf.selected_wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
+        change_wallpaper(cf.selected_wallpaper, cf.fill_option, cf.color, cf.backend, cf.selected_monitor)
         cf.save()
 
 
@@ -389,23 +388,17 @@ class App(Gtk.Window):
 
     def on_exit_clicked(self, widget):
         """On clicking exit button, exit"""
-        self.exit_app()
-
-
-    def exit_app(self):
-        """Save the data and quit"""
-        cf.save()
         Gtk.main_quit()
 
 
     def set_random_wallpaper(self):
         """Choose a random image and set it as the wallpaper"""
-        cf.wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
-        if cf.wallpaper is None:
+        cf.selected_wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
+        if cf.selected_wallpaper is None:
             return
-        print(MSG_PATH, cf.wallpaper)
+        print(MSG_PATH, cf.selected_wallpaper)
         cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
+        change_wallpaper(cf.selected_wallpaper, cf.fill_option, cf.color, cf.backend, cf.selected_monitor)
         cf.save()
 
 
@@ -423,7 +416,7 @@ class App(Gtk.Window):
     def on_key_pressed(self, widget, event):
         """Process various key bindigns"""
         if event.keyval == Gdk.KEY_q:
-            self.exit_app()
+            Gtk.main_quit()
 
         elif event.keyval == Gdk.KEY_r:
             self.clear_cache()
@@ -464,10 +457,10 @@ class App(Gtk.Window):
 
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
-            cf.wallpaper = wallpaper_path
-            print(MSG_PATH, cf.wallpaper)
+            cf.selected_wallpaper = wallpaper_path
+            print(MSG_PATH, cf.selected_wallpaper)
             cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
+            change_wallpaper(cf.selected_wallpaper, cf.fill_option, cf.color, cf.backend, cf.selected_monitor)
             cf.save()
 
         # Prevent other default key handling:

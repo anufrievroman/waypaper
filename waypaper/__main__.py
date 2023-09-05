@@ -1,3 +1,7 @@
+"""Main module that runs the program and either runs GUI or just changer wallpaper"""
+
+import time
+
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
 from waypaper.config import cf
@@ -5,20 +9,23 @@ from waypaper.common import get_random_file
 from waypaper.arguments import args
 
 
-__version__ = "1.8.2"
+__version__ = "1.9"
 
 
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
 
-    # Pick random wallpaper:
-    if args.random:
-        cf.wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
-
     # Set the wallpaper and quit:
     if args.restore:
-        if cf.wallpaper is not None:
-            change_wallpaper(cf.wallpaper, cf.fill_option, cf.color, cf.backend, cf.monitor)
+        for wallpaper, monitor in zip(cf.wallpaper, cf.monitors):
+
+            if args.random:
+                wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
+
+            if wallpaper is None:
+                continue
+            change_wallpaper(wallpaper, cf.fill_option, cf.color, cf.backend, monitor)
+            time.sleep(0.1)
         exit()
 
     # Print the version and quit:

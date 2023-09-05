@@ -6,10 +6,10 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 
 ## Features
 
-- GUI wallpaper selection
-- Support for GIF animations (with `swww`)
 - Vim keys
-- Works on both Wayland (with `swaybg` or `swww` or `wallutils`) and Xorg (with `feh` or `wallutils`)
+- Support for GIF animations (with `swww`)
+- Support for multiple monitors (with `swww`)
+- Works on both Wayland (with `swww` or `swaybg` or `wallutils`) and Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
   
@@ -19,7 +19,7 @@ You need to install at least one of the backends and Waypaper, which works as a 
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swaybg](https://github.com/swaywm/swaybg) or [swww](https://github.com/Horus645/swww) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [wallutils](https://github.com/xyproto/wallutils) on both.
+Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [wallutils](https://github.com/xyproto/wallutils) on both.
 
 ### 2. Install Waypaper
 
@@ -40,7 +40,7 @@ The [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is a
 
 ### Dependencies
 
-- `swaybg` or `swww` or `feh` or `wallutils`
+- `swww` or `swaybg` or `feh` or `wallutils`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 
 ## Usage
@@ -82,7 +82,8 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 - Additional options for ~subfolders~, ~color~, ~sorting~, ~randomizing~ and setting a uniform color.
 - ~Support for other backends like swww, feh, wallutils~, and maybe hyprpaper.
 - ~Better keyboard-driven experience and hjkl support.~
-- Support for multiple monitors
+- ~Support for multiple monitors with swww~
+- Support for multiple monitors with swaybg
 - Support for some backend-specific features
 
 ## Contributions
