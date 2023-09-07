@@ -25,18 +25,21 @@ Install a preferred backend from your package manager: [swww](https://github.com
 
 Waypaper is available as a package in different repositories listed below:
 
-#### From PyPi
+#### On all distributions
 
 `pipx install waypaper`
 
 If `pipx` is not found, you first need to install `pipx` from your package manager, it's sometimes called `python-pipx`.
 
-#### From AUR
+#### On Arch-based distributions
 
 `yay -S waypaper-git`
 
 The [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is available in AUR, thanks to *metak*. Please upvote to support the project.
 
+#### On NixOS
+
+The `waypaper` package is available thanks to Basil Keeler.
 
 ### Dependencies
 
@@ -78,16 +81,15 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 ## Roadmap
 
-- ~Improve loading of folders with many images~.
 - Additional options for ~subfolders~, ~color~, ~sorting~, ~randomizing~ and setting a uniform color.
 - ~Support for other backends like swww, feh, wallutils~, and maybe hyprpaper.
 - ~Better keyboard-driven experience and hjkl support.~
-- ~Support for multiple monitors with swww~
-- Support for multiple monitors with swaybg
-- Support for some backend-specific features
+- ~Support for multiple monitors with swww~ and swaybg
+- Display animated previews of gif wallpapers
+- Translations
 
 ## Contributions
 
-Feel free to propose PR and suggest the improvements. I'll also appreciate any help with packaging for various distributions.
+Feel free to propose PR and suggest the improvements. I'll also appreciate any help with packaging for various distributions. Also, if you wish to contribute with translation into your language, plese translate `translation_en.py` file, and I'll do the rest.
 
 If you'd like to support the development, consider [donations](https://www.buymeacoffee.com/angryprofessor).
