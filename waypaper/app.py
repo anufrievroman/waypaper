@@ -302,7 +302,6 @@ class App(Gtk.Window):
             button.connect("clicked", self.on_image_clicked, path)
 
         self.show_all()
-        self.scroll_to_selected_image()
 
 
     def scroll_to_selected_image(self):
@@ -436,18 +435,22 @@ class App(Gtk.Window):
         elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
             self.selected_index = max(self.selected_index - 1, 0)
             self.load_image_grid()
+            self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
             self.selected_index = min(self.selected_index + 3, len(self.image_paths) - 1)
             self.load_image_grid()
+            self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
             self.selected_index = max(self.selected_index - 3, 0)
             self.load_image_grid()
+            self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_l, Gdk.KEY_Right]:
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
+            self.scroll_to_selected_image()
 
         elif event.keyval == Gdk.KEY_f:
             self.choose_folder()
@@ -455,10 +458,12 @@ class App(Gtk.Window):
         elif event.keyval == Gdk.KEY_g:
             self.selected_index = 0
             self.load_image_grid()
+            self.scroll_to_selected_image()
 
         elif event.keyval == Gdk.KEY_G:
             self.selected_index = len(self.image_paths) - 1
             self.load_image_grid()
+            self.scroll_to_selected_image()
 
         elif event.keyval == Gdk.KEY_question:
             message = MSG_HELP
