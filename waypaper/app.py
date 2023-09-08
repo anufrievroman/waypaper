@@ -272,10 +272,19 @@ class App(Gtk.Window):
         for child in self.grid.get_children():
             self.grid.remove(child)
 
+        current_y = 0
+        current_row_heights = [0, 0, 0]
         for index, [thumbnail, name, path] in enumerate(zip(self.thumbnails, self.image_names, self.image_paths)):
 
             row = index // 3
             column = index % 3
+
+            # Calculate current y coordinate in the scroll window:
+            aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
+            current_row_heights[column] = int(240 / aspect_ratio)
+            if column == 0:
+                current_y += max(current_row_heights)
+                current_row_heights = [0, 0, 0]
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
@@ -283,7 +292,7 @@ class App(Gtk.Window):
             button = Gtk.Button()
             if index == self.selected_index:
                 button.set_relief(Gtk.ReliefStyle.NORMAL)
-                self.highlighted_image_row = row
+                self.highlighted_image_y = current_y
             else:
                 button.set_relief(Gtk.ReliefStyle.NONE)
             button.add(image)
@@ -299,8 +308,8 @@ class App(Gtk.Window):
     def scroll_to_selected_image(self):
         """Scroll the window to see the highlighed image"""
         scrolled_window_height = self.scrolled_window.get_vadjustment().get_page_size()
-        current_y = self.highlighted_image_row * 180
-        subscreen_num = current_y // scrolled_window_height
+        # current_y = self.highlighted_image_row * 180
+        subscreen_num = self.highlighted_image_y // scrolled_window_height
         scroll = scrolled_window_height * subscreen_num
         self.scrolled_window.get_vadjustment().set_value(scroll)
 
