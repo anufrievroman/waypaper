@@ -283,7 +283,7 @@ class App(Gtk.Window):
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
             current_row_heights[column] = int(240 / aspect_ratio)
             if column == 0:
-                current_y += max(current_row_heights)
+                current_y += max(current_row_heights) + 10
                 current_row_heights = [0, 0, 0]
 
             # Create a button with an image and add tooltip:

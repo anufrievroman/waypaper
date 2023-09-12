@@ -20,7 +20,7 @@ MSG_CHOOSEFOLDER = "Please choose a folder"
 MSG_CACHING = "Caching wallpapers..."
 MSG_SETWITH = "Wallpaper was set with"
 
-MSG_HELP = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\n"
+MSG_HELP = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nf - Change wallpaper folder\n"
 MSG_HELP += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
 MSG_HELP += "s - Include/exclude images in subfolders\n? - Help\nq - Exit\n\n"
 MSG_HELP += MSG_INFO
