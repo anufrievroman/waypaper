@@ -9,7 +9,7 @@ from waypaper.common import get_random_file
 from waypaper.arguments import args
 
 
-__version__ = "1.9"
+__version__ = "1.9.1"
 
 
 def run():

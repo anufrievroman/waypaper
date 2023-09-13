@@ -34,3 +34,13 @@ ERR_BACKEND += MSG_INFO
 ERR_WALL = "Error changing wallpaper:"
 ERR_NOTSUP = "The backend is not supported:"
 ERR_DISP = "Error determining monitor names:"
+
+TIP_SUBFOLDER = "Include/exclude images in subfolders"
+TIP_REFRESH = "Recache the folder of images"
+TIP_FILL = "Choose fill type"
+TIP_BACKEND = "Choose backend"
+TIP_SORTING = "Choose sorting type"
+TIP_DISPLAY = "Choose display"
+TIP_COLOR = "Choose background color"
+TIP_RANDOM = "Set random wallpaper"
+TIP_EXIT = "Exit the application"

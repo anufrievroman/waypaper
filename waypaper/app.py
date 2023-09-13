@@ -76,6 +76,7 @@ class App(Gtk.Window):
         self.include_subfolders_checkbox = Gtk.ToggleButton(label=MSG_SUBFOLDERS)
         self.include_subfolders_checkbox.set_active(cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
+        self.include_subfolders_checkbox.set_tooltip_text(TIP_SUBFOLDER)
 
         # Create a backend dropdown menu:
         self.backend_option_combo = Gtk.ComboBoxText()
@@ -91,6 +92,7 @@ class App(Gtk.Window):
             active_num = 0
         self.backend_option_combo.set_active(active_num)
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
+        self.backend_option_combo.set_tooltip_text(TIP_BACKEND)
 
         # Create a fill option dropdown menu:
         self.fill_option_combo = Gtk.ComboBoxText()
@@ -99,6 +101,7 @@ class App(Gtk.Window):
             self.fill_option_combo.append_text(capitalized_option)
         self.fill_option_combo.set_active(0)
         self.fill_option_combo.connect("changed", self.on_fill_option_changed)
+        self.fill_option_combo.set_tooltip_text(TIP_FILL)
 
         # Create a color picker:
         self.color_picker_button = Gtk.ColorButton()
@@ -107,6 +110,7 @@ class App(Gtk.Window):
         rgba_color.parse(cf.color)
         self.color_picker_button.set_rgba(rgba_color)
         self.color_picker_button.connect("color-set", self.on_color_set)
+        self.color_picker_button.set_tooltip_text(TIP_COLOR)
 
         # Create a sort option dropdown menu:
         self.sort_option_combo = Gtk.ComboBoxText()
@@ -115,18 +119,23 @@ class App(Gtk.Window):
         active_num = SORT_OPTIONS.index(cf.sort_option)
         self.sort_option_combo.set_active(active_num)
         self.sort_option_combo.connect("changed", self.on_sort_option_changed)
+        self.sort_option_combo.set_tooltip_text(TIP_SORTING)
+
 
         # Create exit button:
         self.exit_button = Gtk.Button(label=MSG_EXIT)
         self.exit_button.connect("clicked", self.on_exit_clicked)
+        self.exit_button.set_tooltip_text(TIP_EXIT)
 
         # Create refresh button:
         self.refresh_button = Gtk.Button(label=MSG_REFRESH)
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
+        self.refresh_button.set_tooltip_text(TIP_REFRESH)
 
         # Create random button:
         self.random_button = Gtk.Button(label=MSG_RANDOM)
         self.random_button.connect("clicked", self.on_random_clicked)
+        self.random_button.set_tooltip_text(TIP_RANDOM)
 
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
@@ -187,6 +196,7 @@ class App(Gtk.Window):
                 self.monitor_option_combo.append_text(monitor)
                 self.monitor_option_combo.set_active(0)
                 self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
+                self.monitor_option_combo.set_tooltip_text(TIP_DISPLAY)
 
             # Add it to the row of buttons:
             self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
