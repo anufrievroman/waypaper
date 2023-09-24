@@ -13,8 +13,11 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
         # swaybg backend:
         if backend == "swaybg":
             fill = fill_option.lower()
-            subprocess.Popen(["killall", "swaybg"])
-            time.sleep(0.005)
+            try:
+                subprocess.Popen(["killall", "swaybg"])
+                time.sleep(0.005)
+            except Exception as e:
+                print(e)
             command = ["swaybg"]
             # if monitor != "All":
                 # command.extend(["-o", monitor])
@@ -33,8 +36,11 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
                     "tile": "no",
                     }
             fill = fill_types[fill_option.lower()]
-            subprocess.Popen(["killall", "swaybg"])
-            time.sleep(0.005)
+            try:
+                subprocess.Popen(["killall", "swaybg"])
+                time.sleep(0.005)
+            except Exception as e:
+                print(e)
             subprocess.Popen(["swww", "init"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
