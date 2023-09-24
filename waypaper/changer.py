@@ -17,7 +17,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
                 subprocess.Popen(["killall", "swaybg"])
                 time.sleep(0.005)
             except Exception as e:
-                print(e)
+                print(f"{ERR_KILL} {e}")
             command = ["swaybg"]
             # if monitor != "All":
                 # command.extend(["-o", monitor])
@@ -40,7 +40,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
                 subprocess.Popen(["killall", "swaybg"])
                 time.sleep(0.005)
             except Exception as e:
-                print(e)
+                print(f"{ERR_KILL} {e}")
             subprocess.Popen(["swww", "init"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])

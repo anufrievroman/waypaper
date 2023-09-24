@@ -18,7 +18,7 @@ MSG_SUBFOLDERS = "Subfolders"
 MSG_CHANGEFOLDER = "Change wallpaper folder"
 MSG_CHOOSEFOLDER = "Please choose a folder"
 MSG_CACHING = "Caching wallpapers..."
-MSG_SETWITH = "Wallpaper was set with"
+MSG_SETWITH = "Sent command to set wallpaper was set with"
 
 MSG_HELP = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nf - Change wallpaper folder\n"
 MSG_HELP += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
@@ -34,6 +34,7 @@ ERR_BACKEND += MSG_INFO
 ERR_WALL = "Error changing wallpaper:"
 ERR_NOTSUP = "The backend is not supported:"
 ERR_DISP = "Error determining monitor names:"
+ERR_KILL = "Warning related to killall:"
 
 TIP_SUBFOLDER = "Include/exclude images in subfolders"
 TIP_REFRESH = "Recache the folder of images"
