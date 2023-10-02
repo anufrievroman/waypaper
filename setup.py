@@ -24,14 +24,13 @@ setuptools.setup(
     },
     install_requires=["PyGObject"],
     version=version,
-    python_requires='>3.10',
+    python_requires='>3.9',
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Environment :: Console",
         "Natural Language :: English",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -39,5 +38,8 @@ setuptools.setup(
         "Topic :: Utilities",
     ],
     packages=["waypaper"],
+    package_data={
+        'waypaper': ['data/waypaper.desktop', 'data/waypaper.svg']
+    },
     include_package_data=True,
 )
