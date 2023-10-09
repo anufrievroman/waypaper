@@ -17,6 +17,12 @@ from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 if cf.lang == "de":
     from waypaper.translation_de import *
+elif cf.lang == "fr":
+    from waypaper.translation_fr import *
+elif cf.lang == "ru":
+    from waypaper.translation_ru import *
+elif cf.lang == "pl":
+    from waypaper.translation_pl import *
 else:
     from waypaper.translation_en import *
 
