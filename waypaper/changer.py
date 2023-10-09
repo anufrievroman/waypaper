@@ -3,7 +3,12 @@
 import subprocess
 import time
 
-from waypaper.translation_en import *
+from waypaper.config import cf
+
+if cf.lang == "de":
+    from waypaper.translation_de import *
+else:
+    from waypaper.translation_en import *
 
 
 def change_wallpaper(image_path, fill_option, color, backend, monitor):

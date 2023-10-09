@@ -15,7 +15,10 @@ from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_D
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
-from waypaper.translation_en import *
+if cf.lang == "de":
+    from waypaper.translation_de import *
+else:
+    from waypaper.translation_en import *
 
 
 def cache_image(image_path):

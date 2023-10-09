@@ -3,8 +3,12 @@
 import argparse
 
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
-from waypaper.translation_en import *
+from waypaper.config import cf
 
+if cf.lang == "de":
+    from waypaper.translation_de import *
+else:
+    from waypaper.translation_en import *
 
 parser = argparse.ArgumentParser(prog = "waypaper", description = MSG_DESC, epilog = MSG_INFO)
 parser.add_argument("-v", "--version", help=MSG_ARG_HELP, action="store_true")

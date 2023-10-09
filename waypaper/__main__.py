@@ -2,18 +2,21 @@
 
 import time
 
+
+from waypaper.config import cf
+from waypaper.arguments import args
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
-from waypaper.config import cf
 from waypaper.common import get_random_file
-from waypaper.arguments import args
 
 
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 
 
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
+
+    cf.read_parameters_from_user_arguments(args)
 
     # Set the wallpaper and quit:
     if args.restore:

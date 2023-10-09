@@ -4,7 +4,6 @@ import configparser
 import pathlib
 import os
 
-from waypaper.arguments import args
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS
 
 
@@ -20,6 +19,7 @@ class Config:
         self.sort_option = "name"
         self.backend = "swaybg"
         self.color = "#ffffff"
+        self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpaper = []
         self.include_subfolders = False
@@ -36,6 +36,7 @@ class Config:
                 "sort": str(self.sort_option),
                 "backend": str(self.backend),
                 "color": str(self.color),
+                "language": str(self.lang),
                 "subfolders": str(self.include_subfolders),
                 "wallpaper": str(self.selected_wallpaper),
                 "monitors": str(self.selected_monitor),
@@ -57,7 +58,8 @@ class Config:
             if self.sort_option not in SORT_OPTIONS:
                 self.sort_option = SORT_OPTIONS[0]
             self.backend = config.get("Settings", "backend", fallback=self.backend)
-            self.color  = config.get("Settings", "color", fallback=self.color)
+            self.color = config.get("Settings", "color", fallback=self.color)
+            self.lang = config.get("Settings", "language", fallback=self.lang)
             self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
 
             self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -94,6 +96,7 @@ class Config:
         config.set("Settings", "sort", cf.sort_option)
         config.set("Settings", "backend", cf.backend)
         config.set("Settings", "color", cf.color)
+        config.set("Settings", "language", cf.lang)
         config.set("Settings", "subfolders", str(cf.include_subfolders))
         config.set("Settings", "wallpaper", ",".join(self.wallpaper))
         config.set("Settings", "monitors", ",".join(self.monitors))
@@ -101,7 +104,7 @@ class Config:
             config.write(configfile)
 
 
-    def read_parameters_from_user_arguments(self):
+    def read_parameters_from_user_arguments(self, args):
         """Read user arguments provided at the run. These values take priority over config.ini"""
         if args.backend:
             self.backend = args.backend
@@ -125,4 +128,3 @@ if not os.path.exists(cf.config_file):
 
 # Read config file:
 cf.read()
-cf.read_parameters_from_user_arguments()
