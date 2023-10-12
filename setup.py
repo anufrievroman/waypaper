@@ -18,7 +18,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     license='GPL',
     entry_points={
-        "console_scripts": [
+        "gui_scripts": [
             "waypaper = waypaper.__main__:run"
         ]
     },
