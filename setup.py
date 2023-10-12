@@ -42,4 +42,12 @@ setuptools.setup(
         'waypaper': ['data/waypaper.desktop', 'data/waypaper.svg']
     },
     include_package_data=True,
+    data_files=[
+        ('share/icons/hicolor/scalable/apps',
+         ['data/waypaper.svg']
+         ),
+        ('share/applications',
+         ['data/waypaper.desktop']
+         )
+    ],
 )
