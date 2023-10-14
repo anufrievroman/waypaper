@@ -12,6 +12,7 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Works on both Wayland (with `swww` or `swaybg` or `wallutils`) and Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
+- Translated in en, fr, de, ru, pl
   
 ## Installation
 
@@ -60,7 +61,7 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 `exec waypaper --restore`
  
- To see the list of hotkeys, press `?`.
+To see the list of hotkeys, press `?`.
 
 ### Options
 
@@ -71,6 +72,8 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 `--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, `feh`, or `wallutils`. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
 
 `--fill XXX` - specifies filling type, which can be eiher `fill`, `stretch`, `fit`, `center`, or `tile`.
+
+If you wish to change language, change `laguage` variable in `.config/waypaper/config.ini` file. Supported options are `en`, `de`, `fr`, `ru`, `pl`.
 
 ## Troubleshooting
 
