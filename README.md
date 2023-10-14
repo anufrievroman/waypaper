@@ -46,6 +46,7 @@ The `waypaper` package is available thanks to Basil Keeler.
 
 - `swww` or `swaybg` or `feh` or `wallutils`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
+- `python-importlib_metadata`
 
 ## Usage
 
