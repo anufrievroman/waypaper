@@ -22,7 +22,7 @@ setuptools.setup(
             "waypaper = waypaper.__main__:run"
         ]
     },
-    install_requires=["PyGObject", "importlib_metadata"],
+    install_requires=["PyGObject", "importlib_metadata", "platformdirs"],
     version=version,
     python_requires='>3.9',
     classifiers=[

@@ -18,7 +18,7 @@ def get_image_paths(root_folder, include_subfolders=False, depth=None):
         if not include_subfolders and root != root_folder:
             continue
         if depth is not None and root != root_folder:
-            current_depth = root.count(os.path.sep) - root_folder.count(os.path.sep)
+            current_depth = root.count(os.path.sep) - str(root_folder).count(os.path.sep)
             if current_depth > depth:
                 continue
         for filename in files:

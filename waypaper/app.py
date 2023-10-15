@@ -5,38 +5,28 @@ import threading
 import os
 import shutil
 import gi
+from pathlib import Path
+from platformdirs import user_cache_path
 
+from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
-from waypaper.config import cf
+from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
-if cf.lang == "de":
-    from waypaper.translation_de import *
-elif cf.lang == "fr":
-    from waypaper.translation_fr import *
-elif cf.lang == "ru":
-    from waypaper.translation_ru import *
-elif cf.lang == "pl":
-    from waypaper.translation_pl import *
-elif cf.lang == "zh":
-    from waypaper.translation_zh import *
-else:
-    from waypaper.translation_en import *
 
-
-def cache_image(image_path):
+def cache_image(image_path, cachedir):
     """Resize and cache images using gtk library"""
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file(image_path)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
     aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
     scaled_width = 240
     scaled_height = int(scaled_width / aspect_ratio)
     scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-    output_file = f"{cf.config_folder}/.cache/{os.path.basename(image_path)}"
-    scaled_pixbuf.savev(output_file, "jpeg", [], [])
+    output_file = cachedir / Path(os.path.basename(image_path))
+    scaled_pixbuf.savev(str(output_file), "jpeg", [], [])
 
 
 class App(Gtk.Window):
@@ -46,14 +36,28 @@ class App(Gtk.Window):
         super().__init__(title="Waypaper")
         self.check_backends()
         self.set_default_size(780, 600)
-        self.init_ui()
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
         self.highlighted_image_row = 0
+        self.aboutData = AboutData()
+        self.cachePath = user_cache_path(self.aboutData.applicationName())
+        self.cf = Config()
+        if self.cf.lang == "de":
+            from waypaper.translation_de import *
+        elif self.cf.lang == "fr":
+            from waypaper.translation_fr import *
+        elif self.cf.lang == "ru":
+            from waypaper.translation_ru import *
+        elif self.cf.lang == "pl":
+            from waypaper.translation_pl import *
+        elif cf.lang == "zh":
+            from waypaper.translation_zh import *
+        else:
+            from waypaper.translation_en import *
+        self.init_ui()
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
-
 
     def init_ui(self):
         """Initialize the UI elements of the application"""
@@ -84,7 +88,7 @@ class App(Gtk.Window):
 
         # Create subfolder toggle:
         self.include_subfolders_checkbox = Gtk.ToggleButton(label=MSG_SUBFOLDERS)
-        self.include_subfolders_checkbox.set_active(cf.include_subfolders)
+        self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
         self.include_subfolders_checkbox.set_tooltip_text(TIP_SUBFOLDER)
 
@@ -97,7 +101,7 @@ class App(Gtk.Window):
         # Set as active line the backend from config, if it is installed:
         try:
             installed_backends = [value for value, miss in zip(BACKEND_OPTIONS, self.missing_backends) if not miss]
-            active_num = installed_backends.index(cf.backend)
+            active_num = installed_backends.index(self.cf.backend)
         except:
             active_num = 0
         self.backend_option_combo.set_active(active_num)
@@ -117,7 +121,7 @@ class App(Gtk.Window):
         self.color_picker_button = Gtk.ColorButton()
         self.color_picker_button.set_use_alpha(True)
         rgba_color = Gdk.RGBA()
-        rgba_color.parse(cf.color)
+        rgba_color.parse(self.cf.color)
         self.color_picker_button.set_rgba(rgba_color)
         self.color_picker_button.connect("color-set", self.on_color_set)
         self.color_picker_button.set_tooltip_text(TIP_COLOR)
@@ -126,7 +130,7 @@ class App(Gtk.Window):
         self.sort_option_combo = Gtk.ComboBoxText()
         for option in SORT_OPTIONS:
             self.sort_option_combo.append_text(SORT_DISPLAYS[option])
-        active_num = SORT_OPTIONS.index(cf.sort_option)
+        active_num = SORT_OPTIONS.index(self.cf.sort_option)
         self.sort_option_combo.set_active(active_num)
         self.sort_option_combo.connect("changed", self.on_sort_option_changed)
         self.sort_option_combo.set_tooltip_text(TIP_SORTING)
@@ -186,8 +190,8 @@ class App(Gtk.Window):
     def monitor_option_display(self):
         """Display monitor option if backend is swww"""
         self.options_box.remove(self.monitor_option_combo)
-        # if "swww" not in self.missing_backends and cf.backend not in ["wallutils", "feh"]:
-        if cf.backend == "swww":
+        # if "swww" not in self.missing_backends and self.cf.backend not in ["wallutils", "feh"]:
+        if self.cf.backend == "swww":
 
             # Check available monitors:
             monitor_names = ["All"]
@@ -242,13 +246,13 @@ class App(Gtk.Window):
 
     def sort_images(self):
         """Sort images depending on the sorting option"""
-        if cf.sort_option == "name":
+        if self.cf.sort_option == "name":
             self.image_paths.sort(key=lambda x: os.path.basename(x))
-        elif cf.sort_option == "namerev":
+        elif self.cf.sort_option == "namerev":
             self.image_paths.sort(key=lambda x: os.path.basename(x), reverse=True)
-        elif cf.sort_option == "date":
+        elif self.cf.sort_option == "date":
             self.image_paths.sort(key=lambda x: os.path.getmtime(x))
-        elif cf.sort_option == "daterev":
+        elif self.cf.sort_option == "daterev":
             self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
         else:
             pass
@@ -257,7 +261,7 @@ class App(Gtk.Window):
     def process_images(self):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
-        self.image_paths = get_image_paths(cf.image_folder, cf.include_subfolders, depth=1)
+        self.image_paths = get_image_paths(self.cf.image_folder, self.cf.include_subfolders, depth=1)
         self.sort_images()
 
         # Show caching label:
@@ -269,14 +273,13 @@ class App(Gtk.Window):
         self.image_names = []
 
         for image_path in self.image_paths:
-
             # If this image is not cached yet, resize and cache it:
-            if not os.path.exists(f"{cf.config_folder}/.cache/{os.path.basename(image_path)}"):
-                cache_image(image_path)
+            cached_image_path = self.cachePath/os.path.basename(image_path)
+            if not cached_image_path.exists():
+                cache_image(image_path, self.cachePath)
 
             # Load cached thumbnail:
-            cached_image_path = f"{cf.config_folder}/.cache/{os.path.basename(image_path)}"
-            thumbnail = GdkPixbuf.Pixbuf.new_from_file(cached_image_path)
+            thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
             self.thumbnails.append(thumbnail)
             self.image_names.append(os.path.basename(image_path))
 
@@ -342,7 +345,7 @@ class App(Gtk.Window):
         )
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            cf.image_folder = dialog.get_filename()
+            self.cf.image_folder = dialog.get_filename()
             threading.Thread(target=self.process_images).start()
         dialog.destroy()
 
@@ -372,14 +375,14 @@ class App(Gtk.Window):
         """Save sort parameter whet it is changed"""
         selected_option = combo.get_active_text()
         selected_option_num = list(SORT_DISPLAYS.values()).index(selected_option)
-        cf.sort_option =  list(SORT_DISPLAYS.keys())[selected_option_num]
+        self.cf.sort_option =  list(SORT_DISPLAYS.keys())[selected_option_num]
         threading.Thread(target=self.process_images).start()
 
 
     def on_backend_option_changed(self, combo):
         """Save backend parameter whet it is changed"""
-        cf.backend = combo.get_active_text()
-        cf.selected_monitor = "All"
+        self.cf.backend = combo.get_active_text()
+        self.cf.selected_monitor = "All"
         self.monitor_option_display()
         self.show_all()
 
@@ -390,18 +393,18 @@ class App(Gtk.Window):
         red = int(rgba_color.red * 255)
         green = int(rgba_color.green * 255)
         blue = int(rgba_color.blue * 255)
-        cf.color = "#{:02X}{:02X}{:02X}".format(red, green, blue)
+        self.cf.color = "#{:02X}{:02X}{:02X}".format(red, green, blue)
 
 
     def on_image_clicked(self, widget, path):
         """On clicking an image, set it as a wallpaper and save"""
-        cf.selected_wallpaper = path
+        self.cf.selected_wallpaper = path
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
-        print(MSG_PATH, cf.selected_wallpaper)
-        cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.selected_wallpaper, cf.fill_option, cf.color, cf.backend, cf.selected_monitor)
-        cf.save()
+        print(MSG_PATH, self.cf.selected_wallpaper)
+        self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
+        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color, self.cf.backend, self.cf.selected_monitor)
+        self.cf.save()
 
 
     def on_refresh_clicked(self, widget):
@@ -421,23 +424,22 @@ class App(Gtk.Window):
 
     def set_random_wallpaper(self):
         """Choose a random image and set it as the wallpaper"""
-        cf.selected_wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
-        if cf.selected_wallpaper is None:
+        self.cf.selected_wallpaper = get_random_file(self.cf.image_folder, self.cf.include_subfolders)
+        if self.cf.selected_wallpaper is None:
             return
-        print(MSG_PATH, cf.selected_wallpaper)
-        cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-        change_wallpaper(cf.selected_wallpaper, cf.fill_option, cf.color, cf.backend, cf.selected_monitor)
-        cf.save()
+        print(MSG_PATH, self.cf.selected_wallpaper)
+        self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
+        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color, self.cf.backend, self.cf.selected_monitor)
+        self.cf.save()
 
 
     def clear_cache(self):
         """Delete cache folder and reprocess the images"""
-        cache_folder = f"{cf.config_folder}/.cache"
         try:
-            shutil.rmtree(cache_folder)
-            os.makedirs(cache_folder)
+            shutil.rmtree(self.cachePath)
+            os.makedirs(self.cachePath)
         except OSError as e:
-            print(f"{ERR_CACHE} '{cache_folder}': {e}")
+            print(f"{ERR_CACHE} '{self.cachePath}': {e}")
         threading.Thread(target=self.process_images).start()
 
 
@@ -491,11 +493,12 @@ class App(Gtk.Window):
 
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
-            cf.selected_wallpaper = wallpaper_path
-            print(MSG_PATH, cf.selected_wallpaper)
-            cf.fill_option = self.fill_option_combo.get_active_text() or cf.fill_option
-            change_wallpaper(cf.selected_wallpaper, cf.fill_option, cf.color, cf.backend, cf.selected_monitor)
-            cf.save()
+            self.cf.selected_wallpaper = wallpaper_path
+            print(MSG_PATH, self.cf.selected_wallpaper)
+            self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
+            change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option,
+                             self.cf.color, self.cf.backend, self.cf.selected_monitor)
+            self.cf.save()
 
         # Prevent other default key handling:
         if event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
