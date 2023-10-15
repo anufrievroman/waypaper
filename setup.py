@@ -1,13 +1,8 @@
 from pathlib import Path
-import re
 import setuptools
 
 setup_dir = Path(__file__).resolve().parent
 
-version = re.search( r'__version__ = "(.*)"', Path(setup_dir, 'waypaper/__main__.py').open().read())
-if version is None:
-    raise SystemExit("Could not determine version to use")
-version = version.group(1)
 setuptools.setup(
     name='waypaper',
     author='Roman Anufriev',
@@ -23,7 +18,7 @@ setuptools.setup(
         ]
     },
     install_requires=["PyGObject", "importlib_metadata", "platformdirs"],
-    version=version,
+    version='0.0.2',
     python_requires='>3.9',
     classifiers=[
         "Development Status :: 4 - Beta",
