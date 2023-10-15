@@ -48,6 +48,8 @@ The `waypaper` package is available thanks to Basil Keeler.
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-importlib_metadata`
 - `python-platformdirs`
+- `gettext`
+- `setuptools-gettext`
 
 ## Usage
 

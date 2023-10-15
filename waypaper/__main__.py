@@ -2,7 +2,7 @@
 
 import time
 import argparse
-
+import gettext
 
 from waypaper.config import Config
 from waypaper.app import App
@@ -11,35 +11,32 @@ from waypaper.common import get_random_file
 from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 
-aboutData = AboutData()
 
-cf = Config()
-if cf.lang == "de":
-    from waypaper.translation_de import *
-elif cf.lang == "fr":
-    from waypaper.translation_fr import *
-elif cf.lang == "ru":
-    from waypaper.translation_ru import *
-elif cf.lang == "pl":
-    from waypaper.translation_pl import *
-else:
-    from waypaper.translation_en import *
-
-
-parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = MSG_DESC,
-                                 epilog = MSG_INFO)
-parser.add_argument("-v", "--version", help=MSG_ARG_HELP, action="store_true")
-parser.add_argument("--restore", help=MSG_ARG_REST, action="store_true")
-parser.add_argument("--random", help=MSG_ARG_RAND, action="store_true")
-parser.add_argument("--fill", help=MSG_ARG_FILL, action="store_true")
-parser.add_argument("--backend", help=MSG_ARG_BACK, choices=BACKEND_OPTIONS)
-args = parser.parse_args()
 
 
 
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
 
+    aboutData = AboutData()
+
+    gettext.install(aboutData.applicationName())
+
+    cf = Config()
+
+    parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description =
+                                     _("GUI wallpaper setter for Wayland and X11. It works as a frontend for {backends}".format(backends=BACKEND_OPTIONS)),
+                                     epilog = _("For more information, visit: {homePage}").
+                                     format(homePage=aboutData.homePage()))
+    parser.add_argument("-v", "--version", help=_("print version of the program"),
+                        action="store_true")
+    parser.add_argument("--restore", help=_("restore last wallpaper"), action="store_true")
+    parser.add_argument("--random", help=_("set a random wallpaper"), action="store_true")
+    parser.add_argument("--fill", help=_("specify how to fill the screen with chosen image"),
+                        action="store_true")
+    parser.add_argument("--backend", help=_("specify which backend to use to set wallpaper"),
+                        choices=BACKEND_OPTIONS)
+    args = parser.parse_args()
     cf.read_parameters_from_user_arguments(args)
 
     # Set the wallpaper and quit:
