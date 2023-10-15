@@ -273,6 +273,10 @@ class App(Gtk.Window):
         self.image_names = []
 
         for image_path in self.image_paths:
+            if os.path.getsize(image_path) == 0:
+                # Skip zero byte files inside the image_path
+                self.image_paths.remove(image_path)
+                continue
             # If this image is not cached yet, resize and cache it:
             cached_image_path = self.cachePath/os.path.basename(image_path)
             if not cached_image_path.exists():
