@@ -3,13 +3,23 @@ import setuptools
 
 setup_dir = Path(__file__).resolve().parent
 
+long_description = ''
+
+try:
+    long_description = \
+        Path(setup_dir, 'README.md').open().read()
+except:
+    # In case we don't find README.md ignore it,
+    # e.g. when we update translations
+    pass
+
 setuptools.setup(
     name='waypaper',
     author='Roman Anufriev',
     author_email='anufriev.roman@protonmail.com',
     url='https://github.com/anufrievroman/waypaper',
     description='GUI wallpaper setter for Wayland',
-    long_description=Path(setup_dir, 'README.md').open().read(),
+    long_description=long_description,
     long_description_content_type='text/markdown',
     license='GPL',
     entry_points={
