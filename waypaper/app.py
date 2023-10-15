@@ -20,7 +20,16 @@ from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 def cache_image(image_path, cachedir):
     """Resize and cache images using gtk library"""
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+    try:
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+    except GLib.Error as err:
+        if err.matches(GdkPixbuf.pixbuf_error_quark(), GdkPixbuf.PixbufError.CORRUPT_IMAGE):
+            # Ignore errors where GdkPixbuf tries to open an image by its extension
+            # but the extension doesn't match the real mime type
+            return False
+        else:
+            raise
+
     aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
     scaled_width = 240
     scaled_height = int(scaled_width / aspect_ratio)
@@ -278,7 +287,10 @@ class App(Gtk.Window):
             # If this image is not cached yet, resize and cache it:
             cached_image_path = self.cachePath/os.path.basename(image_path)
             if not cached_image_path.exists():
-                cache_image(image_path, self.cachePath)
+                if not cache_image(image_path, self.cachePath):
+                    # Cache image didn't work move on to next image
+                    self.image_paths.remove(image_path)
+                    continue
 
             # Load cached thumbnail:
             thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
