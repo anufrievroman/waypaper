@@ -97,6 +97,16 @@ If you wish to change language, change `laguage` variable in `.config/waypaper/c
 
 ## Contributions
 
-Feel free to propose PR and suggest the improvements. I'll also appreciate any help with packaging for various distributions. Also, if you wish to contribute with translation into your language, plese translate `translation_en.py` file, and I'll do the rest.
+Feel free to propose PR and suggest the improvements. I'll also appreciate any help with packaging for various distributions.
+
+If you wish to contribute with translation into your language, first make sure `gettext` is installed.
+After doing so switch your copy of the wayper sources, run the command below and follow the instructions:
+
+```
+cd po; msginit
+```
+
+For more information about the translation process visit the gettext [manual](https://www.gnu.org/software/gettext/manual/gettext.html).
+
 
 If you'd like to support the development, consider [donations](https://www.buymeacoffee.com/angryprofessor).
