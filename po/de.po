@@ -1,0 +1,233 @@
+# Language deDE translations for waypaper package.
+# This file is put in the public domain.
+# bidar <me@thaodan.de>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: waypaper 0.0.2\n"
+"Report-Msgid-Bugs-To: none@none\n"
+"POT-Creation-Date: 2023-10-16 03:54+0300\n"
+"PO-Revision-Date: 2023-10-16 18:43+0300\n"
+"Last-Translator: Björn Bidar <me@thaodan.de>\n"
+"Language-Team: Language de\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: waypaper/__main__.py:28
+#, python-brace-format
+msgid ""
+"GUI wallpaper setter for Wayland and X11. It works as a frontend for "
+"{backends}"
+msgstr ""
+"Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als "
+"Frontend für{backends}"
+
+#: waypaper/__main__.py:29
+#, python-brace-format
+msgid "For more information, visit: {homePage}"
+msgstr "Weitere Informationen finden Sie unter: {homePage}"
+
+#: waypaper/__main__.py:31
+msgid "print version of the program"
+msgstr "gibt die Programmversion aus"
+
+#: waypaper/__main__.py:33
+msgid "restore last wallpaper"
+msgstr "stellt das zuletzt verwendete Hintergrundbild wieder her"
+
+#: waypaper/__main__.py:34
+msgid "set a random wallpaper"
+msgstr "Ein zufälliges Hintergrundbild auswählen"
+
+#: waypaper/__main__.py:35
+msgid "specify how to fill the screen with chosen image"
+msgstr ""
+"legt fest, wie das Bild skaliert werden soll, um den gesamten Bildschirm "
+"auszufüllen"
+
+#: waypaper/__main__.py:37
+msgid "specify which backend to use to set wallpaper"
+msgstr ""
+"legt das Backend fest, welches zum Setzen des Hintergrundbildes verwendet "
+"werden soll"
+
+#: waypaper/changer.py:23 waypaper/changer.py:46
+#, python-brace-format
+msgid "Warning related to killall: {error}"
+msgstr "Warnung im Zusammenhang mit dem Befehl killall: {error}"
+
+#: waypaper/changer.py:84
+#, python-brace-format
+msgid "Sent command to set wallpaper was set with {backend}"
+msgstr "Hintergrundbild wurde mit folgendem Befehl gesetzt {backend}"
+
+#: waypaper/changer.py:88
+#, python-brace-format
+msgid "The backend is not supported: {backend}"
+msgstr "Das folgende Backend wird nicht unterstützt: {backend}"
+
+#: waypaper/changer.py:92
+#, python-brace-format
+msgid "Error changing wallpaper: {error}"
+msgstr "Fehler beim Ändern des Hintergrundbildes: {error}"
+
+#: waypaper/app.py:69
+msgid "Change wallpaper folder"
+msgstr "Hintergrundbild-Ordner ändern"
+
+#: waypaper/app.py:89
+msgid "Subfolders"
+msgstr "Unterordner"
+
+#: waypaper/app.py:92
+msgid "Include/exclude images in subfolders"
+msgstr "Wählen, ob Unterordner mit einbezogen werden sollen"
+
+#: waypaper/app.py:108
+msgid "Choose backen"
+msgstr "Backend auswählen"
+
+#: waypaper/app.py:112
+msgid "Fill"
+msgstr "Füllen"
+
+#: waypaper/app.py:113
+msgid "Stretch"
+msgstr "Dehnen"
+
+#: waypaper/app.py:114
+msgid "Fit"
+msgstr "Passen"
+
+#: waypaper/app.py:115
+msgid "Center"
+msgstr "Zentrieren"
+
+#: waypaper/app.py:116
+msgid "Tile"
+msgstr "Kacheln"
+
+#: waypaper/app.py:121
+msgid "Choose fill type"
+msgstr "Skalierungsart auswählen"
+
+#: waypaper/app.py:130
+msgid "Choose background color"
+msgstr "Hintergrundfarbe auswählen"
+
+#: waypaper/app.py:134 waypaper/app.py:135
+msgid "Name"
+msgstr "Name"
+
+#: waypaper/app.py:136 waypaper/app.py:137
+msgid "Date"
+msgstr "Datum"
+
+#: waypaper/app.py:144
+msgid "Choose sorting type"
+msgstr "Sortierungsart auswählen"
+
+#: waypaper/app.py:148
+msgid "Exit"
+msgstr "Beenden"
+
+#: waypaper/app.py:150
+msgid "Exit the application"
+msgstr "Das Programm beenden"
+
+#: waypaper/app.py:153
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: waypaper/app.py:156
+msgid "Reache the folder of images"
+msgstr "Erneutes einlesen des Hintergrundbild-Ordners"
+
+#: waypaper/app.py:159
+msgid "Random"
+msgstr "Zufällig"
+
+#: waypaper/app.py:161
+msgid "Set random wallpaper"
+msgstr "Ein zufälliges Hintergrundbild auswählen"
+
+#: waypaper/app.py:214
+#, python-brace-format
+msgid "Error determining monitor names: {error}"
+msgstr "Fehler beim Ermitteln der Monitor-Namen {error}"
+
+#: waypaper/app.py:222
+msgid "Choose Display"
+msgstr "Bildschirm auswählen"
+
+#: waypaper/app.py:239
+#, python-brace-format
+msgid ""
+"\n"
+"            Looks like none of the wallpaper backends is installed in the "
+"system.\n"
+"            Use your package manager to install at least one of these "
+"backends:\n"
+"            {backends}\n"
+"            For more information, visit: {url}"
+msgstr ""
+"\n"
+"Es sieht aus als würde keines der Hintergrund Backend\n"
+"installiert seit auf dem Systm\n"
+"Verwende deinen Paket-Manager um mindestens eines zu installieren:\n"
+"{backends}\n"
+"Für mehr Informationen, besuche: {url}"
+
+#: waypaper/app.py:282
+msgid "Caching wallpapers.."
+msgstr "Hintergrundbilder werden zwischengespeichert..."
+
+#: waypaper/app.py:364
+msgid "Please choose a folder"
+msgstr "Bitte wählen Sie einen Ordner aus"
+
+#: waypaper/app.py:365
+msgid "Select"
+msgstr "Auswählen"
+
+#: waypaper/app.py:425 waypaper/app.py:451 waypaper/app.py:530
+#, python-brace-format
+msgid "Selected image path: {image}"
+msgstr "Pfad zum ausgewählten Bild: {image}"
+
+#: waypaper/app.py:463
+#, fuzzy, python-brace-format
+msgid "Error deleting cache '{cacheDir}': '{error}'"
+msgstr "Fehler beim Löschen des Zwischenspeichers '{cacheDir}': '{error}'"
+
+#: waypaper/app.py:513
+#, fuzzy, python-brace-format
+msgid ""
+"Waypaper's hotkeys:\n"
+"            hjkl - Navigation (←↓↑→)\n"
+"            f - Change wallpaper folder\n"
+"            g - Scroll to top\n"
+"            G - Scroll to bottom\n"
+"            R - Set random wallpaper\n"
+"            r - Recache wallpapers\n"
+"            s - Include/exclude images in subfolders\n"
+"            ? - Help\n"
+"            q - Exit\n"
+"            For more information, visit:\n"
+"            {url}\n"
+"            "
+msgstr ""
+"Waypapers Tastenkürzel:\n"
+"Navigation (←↓↑→)\n"
+"f - Hintergrundbild-Ordner ändern\n"
+"g - Zum Anfang scrollen\\nG - Zum Ende scrollen\n"
+"G - Zum Ende scrollen\n"
+"R - Zufälliges Hintergrundbild\n"
+"r - Hintergrundbilder zwischenspeichern\n"
+"s - Unterordner mit einbeziehen\n"
+"? - Hilfe\n"
+"q - Beenden\n"
+"Weitere Informationen finden Sie unter:\n"
+"{url}\n"

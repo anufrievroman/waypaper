@@ -462,7 +462,7 @@ class App(Gtk.Window):
             os.makedirs(self.cachePath)
         except OSError as e:
             print(_("Error deleting cache '{cachePath}': '{error}'".format(
-                cacheDir=self.cachePath, error=e)))
+                cachePath=self.cachePath, error=e)))
         threading.Thread(target=self.process_images).start()
 
 
