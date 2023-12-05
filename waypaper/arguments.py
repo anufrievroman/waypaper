@@ -13,6 +13,8 @@ elif cf.lang == "ru":
     from waypaper.translation_ru import *
 elif cf.lang == "pl":
     from waypaper.translation_pl import *
+elif cf.lang == "zh":
+    from waypaper.translation_zh import *
 else:
     from waypaper.translation_en import *
 

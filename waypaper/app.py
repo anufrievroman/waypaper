@@ -4,7 +4,6 @@ import subprocess
 import threading
 import os
 import shutil
-import distutils.spawn
 import gi
 
 from waypaper.changer import change_wallpaper
@@ -23,6 +22,8 @@ elif cf.lang == "ru":
     from waypaper.translation_ru import *
 elif cf.lang == "pl":
     from waypaper.translation_pl import *
+elif cf.lang == "zh":
+    from waypaper.translation_zh import *
 else:
     from waypaper.translation_en import *
 
@@ -217,7 +218,7 @@ class App(Gtk.Window):
         for backend in BACKEND_OPTIONS:
             if backend == "wallutils":
                 backend = "setwallpaper"
-            is_backend_missing = not bool(distutils.spawn.find_executable(backend))
+            is_backend_missing = not bool(shutil.which(backend))
             self.missing_backends.append(is_backend_missing)
 
         # Show error message if no backends are installed:
