@@ -16,17 +16,17 @@ aboutData = AboutData()
 cf = Config()
 
 if cf.lang == "de":
-    txt = German
+    txt = German()
 elif cf.lang == "fr":
-    txt = French
+    txt = French()
 elif cf.lang == "ru":
-    txt = Russian
+    txt = Russian()
 elif cf.lang == "pl":
-    txt = Polish
+    txt = Polish()
 elif cf.lang == "zh":
-    txt = Chinese
+    txt = Chinese()
 else:
-    txt = English
+    txt = English()
 
 
 parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = txt.msg_desc,
