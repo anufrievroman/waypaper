@@ -1,5 +1,7 @@
 """Module to store acces application metadata"""
+
 from importlib_metadata import metadata
+
 
 class AboutData():
     """This class stores application about data in a central place"""
@@ -12,7 +14,7 @@ class AboutData():
     def applicationLogo(self):
         return str(self.__app_metadata['Name'])+".svg"
     def applicationVersion(self):
-        return self.__app_metadata['Version'] # pylint: disable=no-member
+        return self.__app_metadata['Version']
     def homePage(self):
         return self.__app_metadata['Home-page']
     def Author(self):

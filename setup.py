@@ -18,7 +18,7 @@ setuptools.setup(
         ]
     },
     install_requires=["PyGObject", "importlib_metadata", "platformdirs"],
-    version='0.0.2',
+    version='2.0.3',
     python_requires='>3.9',
     classifiers=[
         "Development Status :: 4 - Beta",

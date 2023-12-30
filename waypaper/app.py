@@ -79,7 +79,7 @@ class App(Gtk.Window):
         self.include_subfolders_checkbox = Gtk.ToggleButton(label=self.txt.msg_subfolders)
         self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
-        self.include_subfolders_checkbox.set_tooltip_text(TIP_SUBFOLDER)
+        self.include_subfolders_checkbox.set_tooltip_text(self.txt.tip_subfolder)
 
         # Create a backend dropdown menu:
         self.backend_option_combo = Gtk.ComboBoxText()
@@ -95,7 +95,7 @@ class App(Gtk.Window):
             active_num = 0
         self.backend_option_combo.set_active(active_num)
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
-        self.backend_option_combo.set_tooltip_text(TIP_BACKEND)
+        self.backend_option_combo.set_tooltip_text(self.txt.tip_backend)
 
         # Create a fill option dropdown menu:
         self.fill_option_combo = Gtk.ComboBoxText()
@@ -104,7 +104,7 @@ class App(Gtk.Window):
             self.fill_option_combo.append_text(capitalized_option)
         self.fill_option_combo.set_active(0)
         self.fill_option_combo.connect("changed", self.on_fill_option_changed)
-        self.fill_option_combo.set_tooltip_text(TIP_FILL)
+        self.fill_option_combo.set_tooltip_text(self.txt.tip_fill)
 
         # Create a color picker:
         self.color_picker_button = Gtk.ColorButton()
@@ -113,7 +113,7 @@ class App(Gtk.Window):
         rgba_color.parse(self.cf.color)
         self.color_picker_button.set_rgba(rgba_color)
         self.color_picker_button.connect("color-set", self.on_color_set)
-        self.color_picker_button.set_tooltip_text(TIP_COLOR)
+        self.color_picker_button.set_tooltip_text(self.txt.tip_color)
 
         # Create a sort option dropdown menu:
         self.sort_option_combo = Gtk.ComboBoxText()
@@ -122,23 +122,23 @@ class App(Gtk.Window):
         active_num = SORT_OPTIONS.index(self.cf.sort_option)
         self.sort_option_combo.set_active(active_num)
         self.sort_option_combo.connect("changed", self.on_sort_option_changed)
-        self.sort_option_combo.set_tooltip_text(TIP_SORTING)
+        self.sort_option_combo.set_tooltip_text(self.txt.tip_sorting)
 
 
         # Create exit button:
         self.exit_button = Gtk.Button(label=self.txt.msg_exit)
         self.exit_button.connect("clicked", self.on_exit_clicked)
-        self.exit_button.set_tooltip_text(TIP_EXIT)
+        self.exit_button.set_tooltip_text(self.txt.tip_exit)
 
         # Create refresh button:
         self.refresh_button = Gtk.Button(label=self.txt.msg_refresh)
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
-        self.refresh_button.set_tooltip_text(TIP_REFRESH)
+        self.refresh_button.set_tooltip_text(self.txt.tip_refresh)
 
         # Create random button:
         self.random_button = Gtk.Button(label=self.txt.msg_random)
         self.random_button.connect("clicked", self.on_random_clicked)
-        self.random_button.set_tooltip_text(TIP_RANDOM)
+        self.random_button.set_tooltip_text(self.txt.tip_random)
 
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
@@ -199,7 +199,7 @@ class App(Gtk.Window):
                 self.monitor_option_combo.append_text(monitor)
                 self.monitor_option_combo.set_active(0)
                 self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
-                self.monitor_option_combo.set_tooltip_text(TIP_DISPLAY)
+                self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
 
             # Add it to the row of buttons:
             self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
@@ -346,22 +346,23 @@ class App(Gtk.Window):
     def on_choose_folder_clicked(self, widget):
         """Choosing the folder of images, saving the path, and reloading images"""
         self.choose_folder()
+        self.cf.save()
 
 
     def on_include_subfolders_toggled(self, toggle):
         """On chosing to include subfolders"""
-        cf.include_subfolders = toggle.get_active()
+        self.cf.include_subfolders = toggle.get_active()
         threading.Thread(target=self.process_images).start()
 
 
     def on_fill_option_changed(self, combo):
         """Save fill parameter when it was changed"""
-        cf.fill_option = combo.get_active_text()
+        self.cf.fill_option = combo.get_active_text()
 
 
     def on_monitor_option_changed(self, combo):
         """Save monitor parameter when it was changed"""
-        cf.selected_monitor = combo.get_active_text()
+        self.cf.selected_monitor = combo.get_active_text()
 
 
     def on_sort_option_changed(self, combo):

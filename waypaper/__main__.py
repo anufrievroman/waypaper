@@ -12,7 +12,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 from waypaper.translations import English, German, French, Russian, Polish, Chinese
 
-aboutData = AboutData()
+about = AboutData()
 cf = Config()
 
 if cf.lang == "de":
@@ -29,7 +29,7 @@ else:
     txt = English()
 
 
-parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = txt.msg_desc,
+parser = argparse.ArgumentParser(prog = about.applicationName(), description = txt.msg_desc,
                                  epilog = txt.msg_info)
 parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true")
 parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
@@ -60,7 +60,7 @@ def run():
 
     # Print the version and quit:
     if args.version:
-        print(f"{aboutData.applicationName()} v.{aboutData.applicationVersion()}")
+        print(f"{about.applicationName()} v.{about.applicationVersion()}")
         exit(0)
 
     # Start GUI:
