@@ -10,22 +10,23 @@ from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
+from waypaper.translations import English, German, French, Russian, Polish, Chinese
 
 aboutData = AboutData()
 cf = Config()
 
 if cf.lang == "de":
-    from waypaper.translations import German as txt
+    txt = German
 elif cf.lang == "fr":
-    from waypaper.translations import French as txt
+    txt = French
 elif cf.lang == "ru":
-    from waypaper.translations import Russian as txt
+    txt = Russian
 elif cf.lang == "pl":
-    from waypaper.translations import Polish as txt
+    txt = Polish
 elif cf.lang == "zh":
-    from waypaper.translations import Chinese as txt
+    txt = Chinese
 else:
-    from waypaper.translations import English as txt
+    txt = English
 
 
 parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = txt.msg_desc,
