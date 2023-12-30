@@ -12,20 +12,20 @@ from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 
 aboutData = AboutData()
-
 cf = Config()
+
 if cf.lang == "de":
     from waypaper.translations import German as txt
 elif cf.lang == "fr":
-    from waypaper.translation_fr import French as txt
+    from waypaper.translations import French as txt
 elif cf.lang == "ru":
-    from waypaper.translation_ru import Russian as txt
+    from waypaper.translations import Russian as txt
 elif cf.lang == "pl":
-    from waypaper.translation_pl import Polish as txt
+    from waypaper.translations import Polish as txt
 elif cf.lang == "zh":
-    from waypaper.translation_pl import Chinese as txt
+    from waypaper.translations import Chinese as txt
 else:
-    from waypaper.translation_en import English as txt
+    from waypaper.translations import English as txt
 
 
 parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = txt.msg_desc,
