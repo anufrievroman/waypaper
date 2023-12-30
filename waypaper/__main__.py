@@ -15,24 +15,26 @@ aboutData = AboutData()
 
 cf = Config()
 if cf.lang == "de":
-    from waypaper.translation_de import *
+    from waypaper.translations import German as txt
 elif cf.lang == "fr":
-    from waypaper.translation_fr import *
+    from waypaper.translation_fr import French as txt
 elif cf.lang == "ru":
-    from waypaper.translation_ru import *
+    from waypaper.translation_ru import Russian as txt
 elif cf.lang == "pl":
-    from waypaper.translation_pl import *
+    from waypaper.translation_pl import Polish as txt
+elif cf.lang == "zh":
+    from waypaper.translation_pl import Chinese as txt
 else:
-    from waypaper.translation_en import *
+    from waypaper.translation_en import English as txt
 
 
-parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = MSG_DESC,
-                                 epilog = MSG_INFO)
-parser.add_argument("-v", "--version", help=MSG_ARG_HELP, action="store_true")
-parser.add_argument("--restore", help=MSG_ARG_REST, action="store_true")
-parser.add_argument("--random", help=MSG_ARG_RAND, action="store_true")
-parser.add_argument("--fill", help=MSG_ARG_FILL, action="store_true")
-parser.add_argument("--backend", help=MSG_ARG_BACK, choices=BACKEND_OPTIONS)
+parser = argparse.ArgumentParser(prog = aboutData.applicationName(), description = txt.msg_desc,
+                                 epilog = txt.msg_info)
+parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true")
+parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
+parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
+parser.add_argument("--fill", help=txt.msg_arg_fill, action="store_true")
+parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 args = parser.parse_args()
 
 
@@ -51,7 +53,7 @@ def run():
 
             if wallpaper is None:
                 continue
-            change_wallpaper(wallpaper, cf.fill_option, cf.color, cf.backend, monitor)
+            change_wallpaper(wallpaper, cf.fill_option, cf.color, cf.backend, monitor, txt)
             time.sleep(0.1)
         exit(0)
 
@@ -61,7 +63,7 @@ def run():
         exit(0)
 
     # Start GUI:
-    app = App()
+    app = App(txt)
     app.run()
 
 

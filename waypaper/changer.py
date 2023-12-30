@@ -3,23 +3,8 @@
 import subprocess
 import time
 
-from waypaper.config import cf
 
-if cf.lang == "de":
-    from waypaper.translation_de import *
-elif cf.lang == "fr":
-    from waypaper.translation_fr import *
-elif cf.lang == "ru":
-    from waypaper.translation_ru import *
-elif cf.lang == "pl":
-    from waypaper.translation_pl import *
-elif cf.lang == "zh":
-    from waypaper.translation_zh import *
-else:
-    from waypaper.translation_en import *
-
-
-def change_wallpaper(image_path, fill_option, color, backend, monitor):
+def change_wallpaper(image_path, fill_option, color, backend, monitor, txt):
     """Run a system command to change the wallpaper depending on the backend"""
 
     try:
@@ -37,7 +22,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             command.extend(["-i", image_path])
             command.extend(["-m", fill, "-c", color])
             subprocess.Popen(command)
-            print(f"{MSG_SETWITH} {backend}")
+            print(f"{txt.msg_setwith} {backend}")
 
         # swww backend:
         elif backend == "swww":
@@ -62,7 +47,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)
-            print(f"{MSG_SETWITH} {backend}")
+            print(f"{txt.msg_setwith} {backend}")
 
         # feh backend:
         elif backend == "feh":
@@ -77,7 +62,7 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             command = ["feh", fill, "--image-bg", color]
             command.extend([image_path])
             subprocess.Popen(command)
-            print(f"{MSG_SETWITH} {backend}")
+            print(f"{txt.msg_setwith} {backend}")
 
         # wallutils backend:
         elif backend == "wallutils":
@@ -91,10 +76,10 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor):
             fill = fill_types[fill_option.lower()]
 
             subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
-            print(f"{MSG_SETWITH} {backend}")
+            print(f"{txt.msg_setwith} {backend}")
 
         else:
-            print(f"{ERR_NOTSUP} {backend}")
+            print(f"{txt.err_notsup} {backend}")
 
     except Exception as e:
-        print(f"{ERR_WALL} {e}")
+        print(f"{txt.err_wall} {e}")

@@ -32,8 +32,9 @@ def cache_image(image_path, cachedir):
 class App(Gtk.Window):
     """Main application class that controls GUI"""
 
-    def __init__(self):
+    def __init__(self, txt):
         super().__init__(title="Waypaper")
+        self.txt = txt
         self.check_backends()
         self.set_default_size(780, 600)
         self.connect("delete-event", Gtk.main_quit)
@@ -42,18 +43,6 @@ class App(Gtk.Window):
         self.aboutData = AboutData()
         self.cachePath = user_cache_path(self.aboutData.applicationName())
         self.cf = Config()
-        if self.cf.lang == "de":
-            from waypaper.translation_de import *
-        elif self.cf.lang == "fr":
-            from waypaper.translation_fr import *
-        elif self.cf.lang == "ru":
-            from waypaper.translation_ru import *
-        elif self.cf.lang == "pl":
-            from waypaper.translation_pl import *
-        elif cf.lang == "zh":
-            from waypaper.translation_zh import *
-        else:
-            from waypaper.translation_en import *
         self.init_ui()
 
         # Start the image processing in a separate thread:
@@ -67,7 +56,7 @@ class App(Gtk.Window):
         self.add(self.main_box)
 
         # Create a button to open folder dialog:
-        self.choose_folder_button = Gtk.Button(label=MSG_CHANGEFOLDER)
+        self.choose_folder_button = Gtk.Button(label=self.txt.msg_changefolder)
         self.choose_folder_button.connect("clicked", self.on_choose_folder_clicked)
         self.main_box.pack_start(self.choose_folder_button, False, False, 0)
 
@@ -87,7 +76,7 @@ class App(Gtk.Window):
         self.scrolled_window.add(self.grid)
 
         # Create subfolder toggle:
-        self.include_subfolders_checkbox = Gtk.ToggleButton(label=MSG_SUBFOLDERS)
+        self.include_subfolders_checkbox = Gtk.ToggleButton(label=self.txt.msg_subfolders)
         self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
         self.include_subfolders_checkbox.set_tooltip_text(TIP_SUBFOLDER)
@@ -137,17 +126,17 @@ class App(Gtk.Window):
 
 
         # Create exit button:
-        self.exit_button = Gtk.Button(label=MSG_EXIT)
+        self.exit_button = Gtk.Button(label=self.txt.msg_exit)
         self.exit_button.connect("clicked", self.on_exit_clicked)
         self.exit_button.set_tooltip_text(TIP_EXIT)
 
         # Create refresh button:
-        self.refresh_button = Gtk.Button(label=MSG_REFRESH)
+        self.refresh_button = Gtk.Button(label=self.txt.msg_refresh)
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
         self.refresh_button.set_tooltip_text(TIP_REFRESH)
 
         # Create random button:
-        self.random_button = Gtk.Button(label=MSG_RANDOM)
+        self.random_button = Gtk.Button(label=self.txt.msg_random)
         self.random_button.connect("clicked", self.on_random_clicked)
         self.random_button.set_tooltip_text(TIP_RANDOM)
 
@@ -202,7 +191,7 @@ class App(Gtk.Window):
                 for monitor in monitors[:-1]:
                     monitor_names.append(monitor.split(':')[0])
             except Exception as e:
-                print(f"{ERR_DISP} {e}")
+                print(f"{self.txt.err_disp} {e}")
 
             # Create a monitor option dropdown menu:
             self.monitor_option_combo = Gtk.ComboBoxText()
@@ -227,7 +216,7 @@ class App(Gtk.Window):
 
         # Show error message if no backends are installed:
         if all(self.missing_backends):
-            self.show_message(ERR_BACKEND)
+            self.show_message(sefl.txt.err_backend)
             exit()
 
 
@@ -265,7 +254,7 @@ class App(Gtk.Window):
         self.sort_images()
 
         # Show caching label:
-        self.loading_label = Gtk.Label(label=MSG_CACHING)
+        self.loading_label = Gtk.Label(label=self.txt.msg_caching)
         self.bottom_loading_box.add(self.loading_label)
         self.show_all()
 
@@ -344,8 +333,8 @@ class App(Gtk.Window):
         """Choosing the folder of images, saving the path, and reloading images"""
 
         dialog = Gtk.FileChooserDialog(
-            MSG_CHOOSEFOLDER, self, Gtk.FileChooserAction.SELECT_FOLDER,
-            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, MSG_SELECT, Gtk.ResponseType.OK)
+            self.txt.msg_choosefolder, self, Gtk.FileChooserAction.SELECT_FOLDER,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, self.txt.msg_select, Gtk.ResponseType.OK)
         )
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -405,9 +394,10 @@ class App(Gtk.Window):
         self.cf.selected_wallpaper = path
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
-        print(MSG_PATH, self.cf.selected_wallpaper)
+        print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color, self.cf.backend, self.cf.selected_monitor)
+        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color,
+                         self.cf.backend, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
 
@@ -431,9 +421,10 @@ class App(Gtk.Window):
         self.cf.selected_wallpaper = get_random_file(self.cf.image_folder, self.cf.include_subfolders)
         if self.cf.selected_wallpaper is None:
             return
-        print(MSG_PATH, self.cf.selected_wallpaper)
+        print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color, self.cf.backend, self.cf.selected_monitor)
+        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color,
+                         self.cf.backend, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
 
@@ -443,7 +434,7 @@ class App(Gtk.Window):
             shutil.rmtree(self.cachePath)
             os.makedirs(self.cachePath)
         except OSError as e:
-            print(f"{ERR_CACHE} '{self.cachePath}': {e}")
+            print(f"{self.txt.err_cache} '{self.cachePath}': {e}")
         threading.Thread(target=self.process_images).start()
 
 
@@ -492,16 +483,16 @@ class App(Gtk.Window):
             self.scroll_to_selected_image()
 
         elif event.keyval == Gdk.KEY_question:
-            message = MSG_HELP
+            message = self.txt.msg_help
             self.show_message(message)
 
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
             self.cf.selected_wallpaper = wallpaper_path
-            print(MSG_PATH, self.cf.selected_wallpaper)
+            print(self.txt.msg_path, self.cf.selected_wallpaper)
             self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-            change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option,
-                             self.cf.color, self.cf.backend, self.cf.selected_monitor)
+            change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color,
+                             self.cf.backend, self.cf.selected_monitor, self.txt)
             self.cf.save()
 
         # Prevent other default key handling:
