@@ -7,7 +7,7 @@ from sys import exit
 from platformdirs import user_config_path, user_pictures_path, user_cache_path
 
 from waypaper.aboutdata import AboutData
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITIONS
 
 class Config:
     """User configuration loaded from the config.ini file"""
@@ -19,6 +19,7 @@ class Config:
         self.sort_option = "name"
         self.backend = "swaybg"
         self.color = "#ffffff"
+        self.swww_transition = "any"
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpaper = []
@@ -48,6 +49,9 @@ class Config:
             self.sort_option = SORT_OPTIONS[0]
         self.backend = config.get("Settings", "backend", fallback=self.backend)
         self.color = config.get("Settings", "color", fallback=self.color)
+        self.swww_transition = config.get("Settings", "swww_transition", fallback=self.swww_transition)
+        if self.swww_transition not in SWWW_TRANSITIONS:
+            self.swww_transition = "any"
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
 
@@ -84,6 +88,7 @@ class Config:
         config.set("Settings", "sort", self.sort_option)
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "color", self.color)
+        config.set("Settings", "swww_transition", self.swww_transition)
         config.set("Settings", "language", self.lang)
         config.set("Settings", "subfolders", str(self.include_subfolders))
         config.set("Settings", "wallpaper", ",".join(self.wallpaper))

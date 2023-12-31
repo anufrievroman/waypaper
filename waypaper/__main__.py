@@ -54,7 +54,7 @@ def run():
 
             if wallpaper is None:
                 continue
-            change_wallpaper(wallpaper, cf.fill_option, cf.color, cf.backend, monitor, txt)
+            change_wallpaper(wallpaper, cf.fill_option, cf.color, cf.backend, monitor, cf.swww_transition, txt)
             time.sleep(0.1)
         exit(0)
 

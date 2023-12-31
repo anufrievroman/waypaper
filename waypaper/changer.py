@@ -4,7 +4,7 @@ import subprocess
 import time
 
 
-def change_wallpaper(image_path, fill_option, color, backend, monitor, txt):
+def change_wallpaper(image_path, fill_option, color, backend, monitor, transition, txt):
     """Run a system command to change the wallpaper depending on the backend"""
 
     try:
@@ -43,7 +43,8 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor, txt):
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
             command.extend(["--fill-color", color])
-            command.extend(["--transition-step", str(10)])
+            command.extend(["--transition-type", transition])
+            # command.extend(["--transition-step", str(30)])
             if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)

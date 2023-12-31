@@ -14,3 +14,5 @@ IMAGE_EXTENSIONS = {
         BACKEND_OPTIONS[3]: ['.gif', '.jpg', '.jpeg', '.png'],
         }
 
+SWWW_TRANSITIONS = ["none", "simple", "fade", "wipe",  "left", "right", "top", "bottom",
+                                    "wave", "grow", "center", "any", "outer", "random"]
