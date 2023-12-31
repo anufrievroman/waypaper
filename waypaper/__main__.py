@@ -7,7 +7,7 @@ import argparse
 from waypaper.config import Config
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
-from waypaper.common import get_random_file
+from waypaper.common import get_random_file, check_missing_backends
 from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
 from waypaper.translations import English, German, French, Russian, Polish, Chinese
@@ -44,6 +44,7 @@ def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
 
     cf.read_parameters_from_user_arguments(args)
+    missing_backends = check_missing_backends()
 
     # Set the wallpaper and quit:
     if args.restore:
@@ -54,7 +55,7 @@ def run():
 
             if wallpaper is None:
                 continue
-            change_wallpaper(wallpaper, cf.fill_option, cf.color, cf.backend, monitor, cf.swww_transition, txt)
+            change_wallpaper(wallpaper, cf, monitor, txt, missing_backends)
             time.sleep(0.1)
         exit(0)
 

@@ -3,7 +3,6 @@
 import subprocess
 import threading
 import os
-import shutil
 import gi
 from pathlib import Path
 from platformdirs import user_cache_path
@@ -12,7 +11,7 @@ from PIL import Image
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_random_file
+from waypaper.common import get_image_paths, get_random_file, check_missing_backends
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
 
 gi.require_version("Gtk", "3.0")
@@ -221,12 +220,7 @@ class App(Gtk.Window):
 
     def check_backends(self):
         """Before running the app, check which backends are installed"""
-        self.missing_backends = []
-        for backend in BACKEND_OPTIONS:
-            if backend == "wallutils":
-                backend = "setwallpaper"
-            is_backend_missing = not bool(shutil.which(backend))
-            self.missing_backends.append(is_backend_missing)
+        self.missing_backends = check_missing_backends()
 
         # Show error message if no backends are installed:
         if all(self.missing_backends):
@@ -411,8 +405,7 @@ class App(Gtk.Window):
         self.load_image_grid()
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color,
-                         self.cf.backend, self.cf.selected_monitor, self.cf.swww_transition, self.txt)
+        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
         self.cf.save()
 
 
@@ -438,8 +431,7 @@ class App(Gtk.Window):
             return
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color,
-                         self.cf.backend, self.cf.selected_monitor, self.cf.swww_transition, self.txt)
+        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
         self.cf.save()
 
 
@@ -506,8 +498,7 @@ class App(Gtk.Window):
             self.cf.selected_wallpaper = wallpaper_path
             print(self.txt.msg_path, self.cf.selected_wallpaper)
             self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-            change_wallpaper(self.cf.selected_wallpaper, self.cf.fill_option, self.cf.color,
-                             self.cf.backend, self.cf.selected_monitor, self.cf.swww_transition, self.txt)
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
             self.cf.save()
 
         # Prevent other default key handling:

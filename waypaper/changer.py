@@ -3,9 +3,16 @@
 import subprocess
 import time
 
+from waypaper.options import BACKEND_OPTIONS
 
-def change_wallpaper(image_path, fill_option, color, backend, monitor, transition, txt):
+
+def change_wallpaper(image_path, cf, monitor, txt, missing_backends):
     """Run a system command to change the wallpaper depending on the backend"""
+
+    fill_option = cf.fill_option
+    color = cf.color
+    backend = cf.backend
+    swww_transition = cf.swww_transition
 
     try:
         # swaybg backend:
@@ -34,16 +41,19 @@ def change_wallpaper(image_path, fill_option, color, backend, monitor, transitio
                     "tile": "no",
                     }
             fill = fill_types[fill_option.lower()]
-            try:
-                subprocess.Popen(["killall", "swaybg"])
-                time.sleep(0.005)
-            except Exception as e:
-                print(f"{ERR_KILL} {e}")
+            is_swaybg_installed = not missing_backends[BACKEND_OPTIONS.index("swaybg")]
+            if is_swaybg_installed:
+                try:
+                    subprocess.Popen(["killall", "swaybg"])
+                    time.sleep(0.005)
+                except Exception as e:
+                    print(f"{ERR_KILL} {e}")
+            print(missing_backends)
             subprocess.Popen(["swww", "init"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
             command.extend(["--fill-color", color])
-            command.extend(["--transition-type", transition])
+            command.extend(["--transition-type", swww_transition])
             # command.extend(["--transition-step", str(30)])
             if monitor != "All":
                 command.extend(["--outputs", monitor])

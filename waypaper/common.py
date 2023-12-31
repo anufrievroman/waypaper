@@ -2,8 +2,9 @@
 
 import os
 import random
+import shutil
 
-from waypaper.options import IMAGE_EXTENSIONS
+from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 
 def has_image_extension(file_path, backend):
     """Check if the file has image extension"""
@@ -35,3 +36,14 @@ def get_random_file(folder, include_subfolders):
         return random.choice(image_paths)
     except:
         return None
+
+
+def check_missing_backends():
+    """Check which backends are installed in the system"""
+    missing_backends = []
+    for backend in BACKEND_OPTIONS:
+        if backend == "wallutils":
+            backend = "setwallpaper"
+        is_backend_missing = not bool(shutil.which(backend))
+        missing_backends.append(is_backend_missing)
+    return missing_backends
