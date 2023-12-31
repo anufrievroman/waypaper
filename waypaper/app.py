@@ -383,7 +383,7 @@ class App(Gtk.Window):
 
     def on_backend_option_changed(self, combo):
         """Save backend parameter whet it is changed"""
-        self.cf.backend = combo.get_active_text()
+        self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_monitor = "All"
         self.monitor_option_display()
         self.show_all()
@@ -400,7 +400,7 @@ class App(Gtk.Window):
 
     def on_image_clicked(self, widget, path):
         """On clicking an image, set it as a wallpaper and save"""
-        self.cf.backend = combo.get_active_text()
+        self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_wallpaper = path
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
@@ -427,7 +427,7 @@ class App(Gtk.Window):
 
     def set_random_wallpaper(self):
         """Choose a random image and set it as the wallpaper"""
-        self.cf.backend = combo.get_active_text()
+        self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_wallpaper = get_random_file(self.cf.image_folder, self.cf.include_subfolders)
         if self.cf.selected_wallpaper is None:
             return
@@ -499,7 +499,7 @@ class App(Gtk.Window):
             wallpaper_path = self.image_paths[self.selected_index]
             self.cf.selected_wallpaper = wallpaper_path
             print(self.txt.msg_path, self.cf.selected_wallpaper)
-            self.cf.backend = combo.get_active_text()
+            self.cf.backend = self.backend_option_combo.get_active_text()
             self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
             change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
             self.cf.save()
