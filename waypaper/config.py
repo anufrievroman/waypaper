@@ -13,7 +13,7 @@ class Config:
     """User configuration loaded from the config.ini file"""
     def __init__(self):
         self.image_folder = user_pictures_path()
-        self.selected_wallpaper = None
+        self.selected_wallpaper = ""
         self.selected_monitor = "All"
         self.fill_option = "fill"
         self.sort_option = "name"
@@ -21,38 +21,18 @@ class Config:
         self.color = "#ffffff"
         self.lang = "en"
         self.monitors = [self.selected_monitor]
-        self.wallpaper = str()
+        self.wallpaper = []
         self.include_subfolders = False
         self.aboutData = AboutData()
         self.cachePath = user_cache_path(self.aboutData.applicationName())
         self.configPath = user_config_path(self.aboutData.applicationName())
         self.config_file = self.configPath / "config.ini"
 
-        # Create all directories we use here
-        # Create config folder:
+        # Create config and cache folders:
         self.configPath.mkdir(parents=True, exist_ok=True)
-
-        # Create cache folder:
         self.cachePath.mkdir(parents=True,exist_ok=True)
 
         self.read()
-
-    def create(self):
-        """Create a default config.ini file if it does not exist"""
-        config = configparser.ConfigParser()
-        config["Settings"] = {
-                "folder": str(self.image_folder),
-                "fill": str(self.fill_option),
-                "sort": str(self.sort_option),
-                "backend": str(self.backend),
-                "color": str(self.color),
-                "language": str(self.lang),
-                "subfolders": str(self.include_subfolders),
-                "wallpaper": str(self.selected_wallpaper),
-                "monitors": str(self.selected_monitor),
-                }
-        with open(self.config_file, "w") as configfile:
-            config.write(configfile)
 
 
     def read(self):
@@ -75,9 +55,10 @@ class Config:
         if self.monitors_str is not None:
             self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
 
-        self.wallpaper_str = config.get("Settings", "wallpaper", fallback=self.wallpaper, raw=True)
+        self.wallpaper_str = config.get("Settings", "wallpaper", fallback="", raw=True)
         if self.wallpaper_str is not None:
             self.wallpaper = [str(paper) for paper in self.wallpaper_str.split(",")]
+
 
     def save(self):
         """Update the parameters and save them to the configuration file"""

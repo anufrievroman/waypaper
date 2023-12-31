@@ -17,8 +17,8 @@ setuptools.setup(
             "waypaper = waypaper.__main__:run"
         ]
     },
-    install_requires=["PyGObject", "importlib_metadata", "platformdirs"],
-    version='0.0.2',
+    install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow"],
+    version='2.0.3',
     python_requires='>3.9',
     classifiers=[
         "Development Status :: 4 - Beta",

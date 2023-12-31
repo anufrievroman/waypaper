@@ -3,15 +3,16 @@
 import os
 import random
 
+from waypaper.options import IMAGE_EXTENSIONS
 
-def has_image_extension(file_path):
+def has_image_extension(file_path, backend):
     """Check if the file has image extension"""
-    image_extensions = ['.gif', '.jpg', '.jpeg', '.png']
+    image_extensions = IMAGE_EXTENSIONS[backend]
     ext = os.path.splitext(file_path)[1].lower()
     return ext in image_extensions
 
 
-def get_image_paths(root_folder, include_subfolders=False, depth=None):
+def get_image_paths(backend, root_folder, include_subfolders=False, depth=None):
     """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
     image_paths = []
     for root, directories, files in os.walk(root_folder):
@@ -22,7 +23,7 @@ def get_image_paths(root_folder, include_subfolders=False, depth=None):
             if current_depth > depth:
                 continue
         for filename in files:
-            if has_image_extension(filename):
+            if has_image_extension(filename, backend):
                 image_paths.append(os.path.join(root, filename))
     return image_paths
 

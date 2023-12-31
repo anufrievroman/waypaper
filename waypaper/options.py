@@ -6,3 +6,11 @@ SORT_DISPLAYS = {
                 "namerev": "Name ↑",
                 "date": "Date ↓",
                 "daterev": "Date ↑"}
+
+IMAGE_EXTENSIONS = {
+        BACKEND_OPTIONS[0]: ['.gif', '.jpg', '.jpeg', '.png'],
+        BACKEND_OPTIONS[1]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
+        BACKEND_OPTIONS[2]: ['.gif', '.jpg', '.jpeg', '.png', '.bmp', '.pnm', '.tiff'],
+        BACKEND_OPTIONS[3]: ['.gif', '.jpg', '.jpeg', '.png'],
+        }
+
