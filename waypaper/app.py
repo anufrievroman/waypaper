@@ -4,14 +4,14 @@ import subprocess
 import threading
 import os
 import gi
+import shutil
 from pathlib import Path
-from platformdirs import user_cache_path
 from PIL import Image
 
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_random_file, check_missing_backends
+from waypaper.common import get_image_paths, get_random_file
 from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
 
 gi.require_version("Gtk", "3.0")
@@ -27,7 +27,7 @@ def read_webp_image(image_path):
     return pixbuf
 
 
-def cache_image(image_path, cachedir):
+def cache_image(image_path, cache_dir):
     """Resize and cache images using gtk library"""
     ext = os.path.splitext(image_path)[1].lower()
     if ext == ".webp":
@@ -38,7 +38,7 @@ def cache_image(image_path, cachedir):
     scaled_width = 240
     scaled_height = int(scaled_width / aspect_ratio)
     scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-    output_file = cachedir / Path(os.path.basename(image_path))
+    output_file = cache_dir / Path(os.path.basename(image_path))
     scaled_pixbuf.savev(str(output_file), "jpeg", [], [])
 
 
@@ -47,15 +47,14 @@ class App(Gtk.Window):
 
     def __init__(self, txt):
         super().__init__(title="Waypaper")
+        self.cf = Config()
+        self.about = AboutData()
         self.txt = txt
         self.check_backends()
         self.set_default_size(780, 600)
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
         self.highlighted_image_row = 0
-        self.aboutData = AboutData()
-        self.cachePath = user_cache_path(self.aboutData.applicationName())
-        self.cf = Config()
         self.init_ui()
 
         # Start the image processing in a separate thread:
@@ -96,16 +95,13 @@ class App(Gtk.Window):
 
         # Create a backend dropdown menu:
         self.backend_option_combo = Gtk.ComboBoxText()
-        for backend, is_missing in zip(BACKEND_OPTIONS, self.missing_backends):
-            if not is_missing:
-                self.backend_option_combo.append_text(backend)
+        for backend in self.cf.installed_backends:
+            self.backend_option_combo.append_text(backend)
 
         # Set as active line the backend from config, if it is installed:
-        try:
-            installed_backends = [value for value, miss in zip(BACKEND_OPTIONS, self.missing_backends) if not miss]
-            active_num = installed_backends.index(self.cf.backend)
-        except:
-            active_num = 0
+        active_num = 0
+        if self.cf.backend in self.cf.installed_backends:
+            active_num = self.cf.installed_backends.index(self.cf.backend)
         self.backend_option_combo.set_active(active_num)
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
         self.backend_option_combo.set_tooltip_text(self.txt.tip_backend)
@@ -192,7 +188,6 @@ class App(Gtk.Window):
     def monitor_option_display(self):
         """Display monitor option if backend is swww"""
         self.options_box.remove(self.monitor_option_combo)
-        # if "swww" not in self.missing_backends and self.cf.backend not in ["wallutils", "feh"]:
         if self.cf.backend == "swww":
 
             # Check available monitors:
@@ -219,12 +214,9 @@ class App(Gtk.Window):
 
 
     def check_backends(self):
-        """Before running the app, check which backends are installed"""
-        self.missing_backends = check_missing_backends()
-
-        # Show error message if no backends are installed:
-        if all(self.missing_backends):
-            self.show_message(sefl.txt.err_backend)
+        """Before running the app, check which backends are installed or show the error"""
+        if not self.cf.installed_backends:
+            self.show_message(self.txt.err_backend)
             exit()
 
 
@@ -275,9 +267,9 @@ class App(Gtk.Window):
                 self.image_paths.remove(image_path)
                 continue
             # If this image is not cached yet, resize and cache it:
-            cached_image_path = self.cachePath/os.path.basename(image_path)
+            cached_image_path = self.cf.cache_dir / os.path.basename(image_path)
             if not cached_image_path.exists():
-                cache_image(image_path, self.cachePath)
+                cache_image(image_path, self.cf.cache_dir)
 
             # Load cached thumbnail:
             thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
@@ -406,7 +398,7 @@ class App(Gtk.Window):
         self.load_image_grid()
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
+        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
 
@@ -433,17 +425,17 @@ class App(Gtk.Window):
             return
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
+        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
 
     def clear_cache(self):
         """Delete cache folder and reprocess the images"""
         try:
-            shutil.rmtree(self.cachePath)
-            os.makedirs(self.cachePath)
+            shutil.rmtree(self.cf.cache_dir)
+            os.makedirs(self.cf.cache_dir)
         except OSError as e:
-            print(f"{self.txt.err_cache} '{self.cachePath}': {e}")
+            print(f"{self.txt.err_cache} '{self.cf.cache_dir}': {e}")
         threading.Thread(target=self.process_images).start()
 
 
@@ -501,7 +493,7 @@ class App(Gtk.Window):
             print(self.txt.msg_path, self.cf.selected_wallpaper)
             self.cf.backend = self.backend_option_combo.get_active_text()
             self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
-            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt, self.missing_backends)
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
             self.cf.save()
 
         # Prevent other default key handling:

@@ -7,31 +7,34 @@ from sys import exit
 from platformdirs import user_config_path, user_pictures_path, user_cache_path
 
 from waypaper.aboutdata import AboutData
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITIONS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITIONS, BACKEND_OPTIONS
+from waypaper.common import check_installed_backends
+
 
 class Config:
     """User configuration loaded from the config.ini file"""
     def __init__(self):
         self.image_folder = user_pictures_path()
+        self.installed_backends = check_installed_backends()
         self.selected_wallpaper = ""
         self.selected_monitor = "All"
-        self.fill_option = "fill"
-        self.sort_option = "name"
-        self.backend = "swaybg"
+        self.fill_option = FILL_OPTIONS[0]
+        self.sort_option = SORT_OPTIONS[0]
+        self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
         self.color = "#ffffff"
-        self.swww_transition = "any"
+        self.swww_transition = SWWW_TRANSITIONS[0]
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpaper = []
         self.include_subfolders = False
-        self.aboutData = AboutData()
-        self.cachePath = user_cache_path(self.aboutData.applicationName())
-        self.configPath = user_config_path(self.aboutData.applicationName())
-        self.config_file = self.configPath / "config.ini"
+        self.about = AboutData()
+        self.cache_dir = user_cache_path(self.about.applicationName())
+        self.config_dir = user_config_path(self.about.applicationName())
+        self.config_file = self.config_dir / "config.ini"
 
         # Create config and cache folders:
-        self.configPath.mkdir(parents=True, exist_ok=True)
-        self.cachePath.mkdir(parents=True,exist_ok=True)
+        self.config_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_dir.mkdir(parents=True,exist_ok=True)
 
         self.read()
 

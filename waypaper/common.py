@@ -38,12 +38,15 @@ def get_random_file(folder, include_subfolders):
         return None
 
 
-def check_missing_backends():
+def check_installed_backends():
     """Check which backends are installed in the system"""
-    missing_backends = []
+    installed_backends = []
     for backend in BACKEND_OPTIONS:
         if backend == "wallutils":
-            backend = "setwallpaper"
-        is_backend_missing = not bool(shutil.which(backend))
-        missing_backends.append(is_backend_missing)
-    return missing_backends
+            binary_name = "setwallpaper"
+        else:
+            binary_name = backend
+        is_installed = bool(shutil.which(binary_name))
+        if is_installed:
+            installed_backends.append(backend)
+    return installed_backends

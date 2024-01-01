@@ -6,13 +6,14 @@ import time
 from waypaper.options import BACKEND_OPTIONS
 
 
-def change_wallpaper(image_path, cf, monitor, txt, missing_backends):
-    """Run a system command to change the wallpaper depending on the backend"""
+def change_wallpaper(image_path, cf, monitor, txt):
+    """Run system commands to change the wallpaper depending on the backend"""
 
     fill_option = cf.fill_option
     color = cf.color
     backend = cf.backend
     swww_transition = cf.swww_transition
+    installed_backends = cf.installed_backends
 
     try:
         # swaybg backend:
@@ -41,14 +42,12 @@ def change_wallpaper(image_path, cf, monitor, txt, missing_backends):
                     "tile": "no",
                     }
             fill = fill_types[fill_option.lower()]
-            is_swaybg_installed = not missing_backends[BACKEND_OPTIONS.index("swaybg")]
-            if is_swaybg_installed:
+            if "swaybg" in installed_backends:
                 try:
                     subprocess.Popen(["killall", "swaybg"])
                     time.sleep(0.005)
                 except Exception as e:
                     print(f"{ERR_KILL} {e}")
-            print(missing_backends)
             subprocess.Popen(["swww", "init"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
