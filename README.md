@@ -12,7 +12,7 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Works on both Wayland (with `swww` or `swaybg` or `wallutils`) and Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
-- Translated in en, fr, de, ru, pl
+- Translated in en, fr, de, ru, pl, zh
   
 ## Installation
 
@@ -86,15 +86,12 @@ If you wish to change language, change `laguage` variable in `.config/waypaper/c
 
 ## Roadmap
 
-- Additional options for ~subfolders~, ~color~, ~sorting~, ~randomizing~ and setting a uniform color.
-- ~Support for other backends like swww, feh, wallutils~, and maybe hyprpaper.
-- ~Better keyboard-driven experience and hjkl support.~
-- ~Support for multiple monitors with swww~ and swaybg
+- Possible support for other backends like mpvpaper, and maybe hyprpaper.
+- Support for various `swww` options
 - Display animated previews of gif wallpapers
-- Translations
 
 ## Contributions
 
-Feel free to propose PR and suggest the improvements. I'll also appreciate any help with packaging for various distributions. Also, if you wish to contribute with translation into your language, plese translate `translation_en.py` file, and I'll do the rest.
+Feel free to propose PR and suggest the improvements. I'll highly appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file.
 
 If you'd like to support the development, consider [donations](https://www.buymeacoffee.com/angryprofessor).

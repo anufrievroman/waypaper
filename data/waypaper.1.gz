@@ -1,0 +1,41 @@
+.TH WAYPAPER 2024-01-01
+.nh
+.SH NAME
+waypaper \- GUI wallpaper manager for Wayland and X11
+.SH SYNOPSIS
+.B waypaper
+[ \fIOPTION\fR ]
+.SH DESCRIPTION
+.B Waypaper
+is a TUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like swaybg, swww, wallutils and feh.  \fIhttps://anufrievroman.gitbook.com/waypaper \fR
+.SH OPTIONS
+
+.TP
+\fB\-v \fP
+Print version.
+
+.TP
+\fB\-h \fP
+Print help.
+
+.TP
+\fB\-\-restore \fP
+Restore the last chosen wallpaper. Useful at launch of the window manager.
+
+.TP
+\fB\-\-random \fP
+Set a random wallpaper.
+
+.TP
+\fB\-\-backend XXX \fP
+Specify which backend to use, which can be either \fIswaybg, swww, feh\fR, or \fIwallutils\fR. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
+
+.TP
+\fB\-\-fill XXX \fP
+Specifies filling type, which can be eiher \fIfill, stretch, fit, center\fR, or \fItile\fR.
+
+.SH COMMANDS DURING USE
+Press '\fB?\fP' during use to get a list of keybindings.
+.br
+.SH AUTHOR
+Written by Roman Anufriev. For more information, visit \fIhttps://anufrievroman.gitbook.com/waypaper\fR
