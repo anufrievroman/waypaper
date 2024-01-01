@@ -43,9 +43,9 @@ setuptools.setup(
          ),
         ('share/applications',
          ['data/waypaper.desktop']
-         )
+         ),
         ('share/man/man1',
          ['data/waypaper.1.gz']
-         )
+         ),
     ],
 )
