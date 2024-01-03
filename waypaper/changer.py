@@ -85,10 +85,14 @@ def change_wallpaper(image_path, cf, monitor, txt):
         else:
             print(f"{txt.err_notsup} {cf.backend}")
 
+        # Run a post command:
         if cf.post_command:
             command = cf.post_command.split(" ")
+            for index, word in enumerate(command):
+                if word == "$wallpaper":
+                    command[index] = image_path
             subprocess.Popen(command)
-            print(f"{cf.post_command} executed")
+            print(f'{" ".join(command)} executed')
 
     except Exception as e:
         print(f"{txt.err_wall} {e}")
