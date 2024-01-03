@@ -26,6 +26,7 @@ class Config:
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpaper = []
+        self.post_command = ""
         self.include_subfolders = False
         self.about = AboutData()
         self.cache_dir = user_cache_path(self.about.applicationName())
@@ -52,6 +53,7 @@ class Config:
             self.sort_option = SORT_OPTIONS[0]
         self.backend = config.get("Settings", "backend", fallback=self.backend)
         self.color = config.get("Settings", "color", fallback=self.color)
+        self.post_command = config.get("Settings", "post_command", fallback=self.post_command)
         self.swww_transition = config.get("Settings", "swww_transition", fallback=self.swww_transition)
         if self.swww_transition not in SWWW_TRANSITIONS:
             self.swww_transition = "any"
@@ -96,6 +98,7 @@ class Config:
         config.set("Settings", "subfolders", str(self.include_subfolders))
         config.set("Settings", "wallpaper", ",".join(self.wallpaper))
         config.set("Settings", "monitors", ",".join(self.monitors))
+        config.set("Settings", "post_command", self.post_command)
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
 
