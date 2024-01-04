@@ -50,23 +50,25 @@ The `waypaper` package is available thanks to Basil Keeler.
 
 ## Usage
 
-`waypaper` command will run GUI application. Make sure to choose the backend that you installed.
+`waypaper` command will run GUI application.
+
+### Options
+
 To restore your wallpaper at launch, add `waypaper --restore` to your startup config.
+
 See more [details on user arguments in the documentation](https://anufrievroman.gitbook.io/waypaper/usage).
 
 ### Configuration
 
 See [configuration details in the documentation](https://anufrievroman.gitbook.io/waypaper/configuration).
 
-## Troubleshooting
+### Troubleshooting
 
 See typical problems [explained in the documentation](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
 
-## Contributions
+## Contribution and support
 
 Feel free to propose PR and suggest the improvements. I'll highly appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file.
-
-## Support
 
 I am not a professional developer and work on open-source projects in my free time. If you'd like to support the development, consider donations via [buymeacoffee](https://www.buymeacoffee.com/angryprofessor) or cryptocurrencies:
 
