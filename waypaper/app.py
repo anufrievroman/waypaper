@@ -420,7 +420,7 @@ class App(Gtk.Window):
     def set_random_wallpaper(self):
         """Choose a random image and set it as the wallpaper"""
         self.cf.backend = self.backend_option_combo.get_active_text()
-        self.cf.selected_wallpaper = get_random_file(self.cf.image_folder, self.cf.include_subfolders)
+        self.cf.selected_wallpaper = get_random_file(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders)
         if self.cf.selected_wallpaper is None:
             return
         print(self.txt.msg_path, self.cf.selected_wallpaper)

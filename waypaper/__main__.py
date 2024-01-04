@@ -49,7 +49,7 @@ def run():
         for wallpaper, monitor in zip(cf.wallpaper, cf.monitors):
 
             if args.random:
-                wallpaper = get_random_file(cf.image_folder, cf.include_subfolders)
+                wallpaper = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders)
 
             if wallpaper is None:
                 continue

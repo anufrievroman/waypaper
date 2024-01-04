@@ -29,10 +29,10 @@ def get_image_paths(backend, root_folder, include_subfolders=False, depth=None):
     return image_paths
 
 
-def get_random_file(folder, include_subfolders):
+def get_random_file(backend, folder, include_subfolders):
     """Pick a random file from the folder"""
     try:
-        image_paths = get_image_paths(folder, include_subfolders, depth=1)
+        image_paths = get_image_paths(backend, folder, include_subfolders, depth=1)
         return random.choice(image_paths)
     except:
         return None
