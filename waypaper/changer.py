@@ -22,7 +22,7 @@ def change_wallpaper(image_path, cf, monitor, txt):
             # if monitor != "All":
                 # command.extend(["-o", monitor])
             command.extend(["-i", image_path])
-            command.extend(["-m", fill, "-c", color])
+            command.extend(["-m", fill, "-c", cf.color])
             subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
 
