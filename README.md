@@ -1,6 +1,6 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils` and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils` and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/). See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screenshot.jpg)
 
@@ -51,43 +51,16 @@ The `waypaper` package is available thanks to Basil Keeler.
 ## Usage
 
 `waypaper` command will run GUI application. Make sure to choose the backend that you installed.
+To restore your wallpaper at launch, add `waypaper --restore` to your startup config.
+See more [details on user arguments in the documentation](https://anufrievroman.gitbook.io/waypaper/usage).
 
-To restore your wallpaper at launch, add `waypaper --restore` to your startup config. For example:
+### Configuration
 
-**In Hyprland**
-
-`exec-once=waypaper --restore`
-
-**In Sway or I3**
-
-`exec waypaper --restore`
- 
-To see the list of hotkeys, press `?`.
-
-### Options
-
-`--restore` - sets the last chosen wallpaper. Useful at launch of the window manager.
-
-`--random` - sets a random wallpaper. Makes sense only together with `--restore` key.
-
-`--backend XXX` - specifies which backend to use, which can be either `swaybg`, `swww`, `feh`, or `wallutils`. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
-
-`--fill XXX` - specifies filling type, which can be eiher `fill`, `stretch`, `fit`, `center`, or `tile`.
-
-If you wish to change language, change `laguage` variable in `.config/waypaper/config.ini` file. Supported options are `en`, `de`, `fr`, `ru`, `pl`, `zh`.
+See [configuration details in the documentation](https://anufrievroman.gitbook.io/waypaper/configuration).
 
 ## Troubleshooting
 
-- If wallpaper does not change, first, try to launch waypaper in the terminal and see the output. Also, try to change it via command line using chosen backend to make sure that backend by itself works correctly.
-- If application does not run, make sure to install `gobject` library (it might be called `python-gobject` or `python3-gi` in your package manager). Although it is supposed to be installed automatically with the package.
-- Please understand that not all backends work on all systems. `feh` is only for Xorg, while `swww` and `swaybg` are only for Wayland.
-- If you use different WMs on the same system, specify the backend when you restore the wallpaper at launch. For example: `waypaper --restore --backend feh` or use `wallutils` which works on both Wayland and Xorg.
-
-## Roadmap
-
-- Possible support for other backends like mpvpaper, and maybe hyprpaper.
-- Support for various `swww` options
-- Display animated previews of gif wallpapers
+See typical problems [explained in the documentation](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
 
 ## Contributions
 
