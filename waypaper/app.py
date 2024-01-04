@@ -30,10 +30,17 @@ def read_webp_image(image_path):
 def cache_image(image_path, cache_dir):
     """Resize and cache images using gtk library"""
     ext = os.path.splitext(image_path)[1].lower()
-    if ext == ".webp":
-        pixbuf = read_webp_image(str(image_path))
-    else:
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+    try:
+        if ext == ".webp":
+            pixbuf = read_webp_image(str(image_path))
+        else:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+
+    # If image processing failed, create a black placeholder:
+    except GLib.Error:
+        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1280, 720)
+        pixbuf.fill(0x0)
+
     aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
     scaled_width = 240
     scaled_height = int(scaled_width / aspect_ratio)
