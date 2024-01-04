@@ -46,8 +46,10 @@ def change_wallpaper(image_path, cf, monitor, txt):
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
             command.extend(["--fill-color", cf.color])
-            command.extend(["--transition-type", cf.swww_transition])
-            # command.extend(["--transition-step", str(30)])
+            command.extend(["--transition-type", cf.swww_transition_type])
+            command.extend(["--transition-step", str(cf.swww_transition_step)])
+            command.extend(["--transition-angle", str(cf.swww_transition_angle)])
+            command.extend(["--transition-duration", str(cf.swww_transition_duration)])
             if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)
