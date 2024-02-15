@@ -110,7 +110,6 @@ class Config:
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
         config.set("Settings", "folder", self.image_folder)
-        print(f'HELLO: {self.wallpaper}')
         config.set("Settings", "wallpaper", ",".join(self.wallpaper))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "monitors", ",".join(self.monitors))
