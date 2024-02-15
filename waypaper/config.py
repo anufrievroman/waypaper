@@ -1,25 +1,18 @@
 """Module responsible for reading and saving the configuration file"""
 
 import configparser
-import os
 import pathlib
+import os
 from sys import exit
-
-from platformdirs import user_cache_path, user_config_path, user_pictures_path
+from platformdirs import user_config_path, user_pictures_path, user_cache_path
 
 from waypaper.aboutdata import AboutData
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
 from waypaper.common import check_installed_backends
-from waypaper.options import (
-    BACKEND_OPTIONS,
-    FILL_OPTIONS,
-    SORT_OPTIONS,
-    SWWW_TRANSITION_TYPES,
-)
 
 
 class Config:
     """User configuration loaded from the config.ini file"""
-
     def __init__(self):
         self.image_folder = user_pictures_path()
         self.installed_backends = check_installed_backends()
@@ -27,11 +20,7 @@ class Config:
         self.selected_monitor = "All"
         self.fill_option = FILL_OPTIONS[0]
         self.sort_option = SORT_OPTIONS[0]
-        self.backend = (
-            self.installed_backends[0]
-            if self.installed_backends
-            else BACKEND_OPTIONS[0]
-        )
+        self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
         self.color = "#ffffff"
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
         self.swww_transition_step = 90
@@ -49,15 +38,16 @@ class Config:
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self.cache_dir.mkdir(parents=True,exist_ok=True)
 
         self.read()
         self.check_validity()
 
+
     def read(self):
         """Load data from the config.ini or use default if it does not exists"""
         config = configparser.ConfigParser()
-        config.read(self.config_file, "utf-8")
+        config.read(self.config_file, 'utf-8')
 
         # Read parameters:
         self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
@@ -65,30 +55,14 @@ class Config:
         self.sort_option = config.get("Settings", "sort", fallback=self.sort_option)
         self.backend = config.get("Settings", "backend", fallback=self.backend)
         self.color = config.get("Settings", "color", fallback=self.color)
-        self.post_command = config.get(
-            "Settings", "post_command", fallback=self.post_command
-        )
-        self.swww_transition_type = config.get(
-            "Settings", "swww_transition_type", fallback=self.swww_transition_type
-        )
-        self.swww_transition_step = config.get(
-            "Settings", "swww_transition_step", fallback=self.swww_transition_step
-        )
-        self.swww_transition_angle = config.get(
-            "Settings", "swww_transition_angle", fallback=self.swww_transition_angle
-        )
-        self.swww_transition_duration = config.get(
-            "Settings",
-            "swww_transition_duration",
-            fallback=self.swww_transition_duration,
-        )
+        self.post_command = config.get("Settings", "post_command", fallback=self.post_command)
+        self.swww_transition_type = config.get("Settings", "swww_transition_type", fallback=self.swww_transition_type)
+        self.swww_transition_step = config.get("Settings", "swww_transition_step", fallback=self.swww_transition_step)
+        self.swww_transition_angle = config.get("Settings", "swww_transition_angle", fallback=self.swww_transition_angle)
+        self.swww_transition_duration = config.get("Settings", "swww_transition_duration", fallback=self.swww_transition_duration)
         self.lang = config.get("Settings", "language", fallback=self.lang)
-        self.include_subfolders = config.getboolean(
-            "Settings", "subfolders", fallback=self.include_subfolders
-        )
-        self.monitors_str = config.get(
-            "Settings", "monitors", fallback=self.selected_monitor, raw=True
-        )
+        self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
+        self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpaper_str = config.get("Settings", "wallpaper", fallback="", raw=True)
 
         # Convert strings to lists:
@@ -100,11 +74,7 @@ class Config:
     def check_validity(self):
         """Check if the config parameters are valid and correct them if needed"""
         if self.backend not in BACKEND_OPTIONS:
-            self.backend = (
-                self.installed_backends[0]
-                if self.installed_backends
-                else BACKEND_OPTIONS[0]
-            )
+            self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
         if self.sort_option not in SORT_OPTIONS:
             self.sort_option = SORT_OPTIONS[0]
         if self.fill_option not in FILL_OPTIONS:
@@ -140,6 +110,7 @@ class Config:
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
         config.set("Settings", "folder", self.image_folder)
+        print(f'HELLO: {self.wallpaper}')
         config.set("Settings", "wallpaper", ",".join(self.wallpaper))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "monitors", ",".join(self.monitors))
@@ -151,11 +122,10 @@ class Config:
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
-        config.set(
-            "Settings", "swww_transition_duration", str(self.swww_transition_duration)
-        )
+        config.set("Settings", "swww_transition_duration", str(self.swww_transition_duration))
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
+
 
     def read_parameters_from_user_arguments(self, args):
         """Read user arguments provided at the run. These values take priority over config.ini"""
@@ -163,3 +133,4 @@ class Config:
             self.backend = args.backend
         if args.fill:
             self.fill_option = args.fill
+

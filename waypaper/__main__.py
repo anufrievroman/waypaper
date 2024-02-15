@@ -47,7 +47,7 @@ def run():
 
     # Set the wallpaper and quit:
     if args.restore or args.random:
-        for i, (wallpaper, monitor) in enumerate(zip(cf.wallpaper, cf.monitors)):
+        for wallpaper, monitor in zip(cf.wallpaper, cf.monitors):
             w = wallpaper
 
             if args.random:

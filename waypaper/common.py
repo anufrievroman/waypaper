@@ -4,8 +4,7 @@ import os
 import random
 import shutil
 
-from waypaper.options import BACKEND_OPTIONS, IMAGE_EXTENSIONS
-
+from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 
 def has_image_extension(file_path, backend):
     """Check if the file has image extension"""
@@ -21,9 +20,7 @@ def get_image_paths(backend, root_folder, include_subfolders=False, depth=None):
         if not include_subfolders and root != root_folder:
             continue
         if depth is not None and root != root_folder:
-            current_depth = root.count(os.path.sep) - str(root_folder).count(
-                os.path.sep
-            )
+            current_depth = root.count(os.path.sep) - str(root_folder).count(os.path.sep)
             if current_depth > depth:
                 continue
         for filename in files:
