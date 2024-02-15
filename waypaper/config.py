@@ -122,7 +122,6 @@ class Config:
     def save(self):
         """Update the parameters and save them to the configuration file"""
 
-        print(f"ANOTHER ONE: {self.wallpaper}")
         # If only certain monitor was affected, change only its wallpaper:
         if self.selected_monitor == "All":
             self.monitors = [self.selected_monitor]
@@ -141,7 +140,6 @@ class Config:
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
         config.set("Settings", "folder", self.image_folder)
-        print(f"HELLO: {self.wallpaper}")
         config.set("Settings", "wallpaper", ",".join(self.wallpaper))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "monitors", ",".join(self.monitors))
