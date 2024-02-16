@@ -1,16 +1,16 @@
 """Main module that runs the program and either runs GUI or just changer wallpaper"""
 
-import time
 import argparse
+import sys
+import time
 
-
-from waypaper.config import Config
+from waypaper.aboutdata import AboutData
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
-from waypaper.aboutdata import AboutData
-from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS
-from waypaper.translations import English, German, French, Russian, Polish, Chinese
+from waypaper.config import Config
+from waypaper.options import BACKEND_OPTIONS
+from waypaper.translations import Chinese, English, French, German, Polish, Russian
 
 about = AboutData()
 cf = Config()
@@ -29,8 +29,9 @@ else:
     txt = English()
 
 
-parser = argparse.ArgumentParser(prog = about.applicationName(), description = txt.msg_desc,
-                                 epilog = txt.msg_info)
+parser = argparse.ArgumentParser(
+    prog=about.applicationName(), description=txt.msg_desc, epilog=txt.msg_info
+)
 parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true")
 parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
 parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
@@ -45,22 +46,27 @@ def run():
     cf.read_parameters_from_user_arguments(args)
 
     # Set the wallpaper and quit:
-    if args.restore:
+    if args.restore or args.random:
         for wallpaper, monitor in zip(cf.wallpaper, cf.monitors):
+            w = wallpaper
 
             if args.random:
-                wallpaper = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders)
+                w = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders)
+                cf.selected_wallpaper = str(w)
+                cf.save()
 
-            if wallpaper is None:
+            if w is None:
                 continue
-            change_wallpaper(wallpaper, cf, monitor, txt)
+
+
+            change_wallpaper(w, cf, monitor, txt)
             time.sleep(0.1)
-        exit(0)
+        sys.exit(0)
 
     # Print the version and quit:
     if args.version:
         print(f"{about.applicationName()} v.{about.applicationVersion()}")
-        exit(0)
+        sys.exit(0)
 
     # Start GUI:
     app = App(txt)
