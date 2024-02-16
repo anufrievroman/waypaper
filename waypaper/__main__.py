@@ -52,12 +52,12 @@ def run():
 
             if args.random:
                 w = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders)
+                cf.selected_wallpaper = str(w)
+                cf.save()
 
             if w is None:
                 continue
 
-            cf.selected_wallpaper = w
-            cf.save()
 
             change_wallpaper(w, cf, monitor, txt)
             time.sleep(0.1)
