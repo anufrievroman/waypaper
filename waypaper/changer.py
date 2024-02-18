@@ -17,14 +17,14 @@ def change_wallpaper(image_path, cf, monitor, txt):
                 subprocess.Popen(["killall", "swaybg"])
                 time.sleep(0.005)
             except Exception as e:
-                print(f"{ERR_KILL} {e}")
+                print(f"{txt.err_kill} {e}")
             command = ["swaybg"]
             # if monitor != "All":
                 # command.extend(["-o", monitor])
             command.extend(["-i", image_path])
             command.extend(["-m", fill, "-c", cf.color])
-            subprocess.Popen(command)
-            print(f"{txt.msg_setwith} {cf.backend}")
+            # subprocess.Popen(command)
+            # print(f"{txt.msg_setwith} {cf.backend}")
 
         # swww backend:
         elif cf.backend == "swww":
@@ -41,7 +41,7 @@ def change_wallpaper(image_path, cf, monitor, txt):
                     subprocess.Popen(["killall", "swaybg"])
                     time.sleep(0.005)
                 except Exception as e:
-                    print(f"{ERR_KILL} {e}")
+                    print(f"{txt.err_kill} {e}")
             subprocess.Popen(["swww", "init"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
@@ -93,8 +93,8 @@ def change_wallpaper(image_path, cf, monitor, txt):
             for index, word in enumerate(command):
                 if word == "$wallpaper":
                     command[index] = image_path
-            subprocess.Popen(command)
-            print(f'{" ".join(command)} executed')
+            subprocess.Popen(f'{" ".join(command)}', shell=True).wait()
+            print(f'Post command {" ".join(command)} executed')
 
     except Exception as e:
         print(f"{txt.err_wall} {e}")
