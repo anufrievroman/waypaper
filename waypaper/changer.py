@@ -23,8 +23,8 @@ def change_wallpaper(image_path, cf, monitor, txt):
                 # command.extend(["-o", monitor])
             command.extend(["-i", image_path])
             command.extend(["-m", fill, "-c", cf.color])
-            # subprocess.Popen(command)
-            # print(f"{txt.msg_setwith} {cf.backend}")
+            subprocess.Popen(command)
+            print(f"{txt.msg_setwith} {cf.backend}")
 
         # swww backend:
         elif cf.backend == "swww":

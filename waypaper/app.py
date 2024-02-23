@@ -12,7 +12,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file
-from waypaper.options import FILL_OPTIONS, BACKEND_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -58,7 +58,7 @@ class App(Gtk.Window):
         self.about = AboutData()
         self.txt = txt
         self.check_backends()
-        self.set_default_size(780, 600)
+        self.set_default_size(820, 600)
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
         self.highlighted_image_row = 0
