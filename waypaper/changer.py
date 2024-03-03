@@ -92,7 +92,7 @@ def change_wallpaper(image_path, cf, monitor, txt):
             command = cf.post_command.split(" ")
             for index, word in enumerate(command):
                 if word == "$wallpaper":
-                    command[index] = image_path
+                    command[index] = image_path.replace(" ", "\\ ")
             subprocess.Popen(f'{" ".join(command)}', shell=True).wait()
             print(f'Post command {" ".join(command)} executed')
 
