@@ -89,12 +89,10 @@ def change_wallpaper(image_path, cf, monitor, txt):
 
         # Run a post command:
         if cf.post_command:
-            command = cf.post_command.split(" ")
-            for index, word in enumerate(command):
-                if word == "$wallpaper":
-                    command[index] = image_path.replace(" ", "\\ ")
-            subprocess.Popen(f'{" ".join(command)}', shell=True).wait()
-            print(f'Post command {" ".join(command)} executed')
+            modified_image_path = image_path.replace(" ", "\\ ")
+            post_command = cf.post_command.replace("$wallpaper", modified_image_path)
+            subprocess.Popen(post_command, shell=True).wait()
+            print(f'Post command {post_command} executed')
 
     except Exception as e:
         print(f"{txt.err_wall} {e}")
