@@ -41,6 +41,10 @@ The [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is a
 
 The `waypaper` package is available thanks to Basil Keeler.
 
+#### On OpenSUSE
+
+Users of OpenSUSE [reported issue with installation](https://github.com/anufrievroman/waypaper/issues/30) via `pipx install waypaper`. This might be resolved by installing the `python311-pycairo-devel` package.
+
 ### Dependencies
 
 - `swww` or `swaybg` or `feh` or `wallutils`
