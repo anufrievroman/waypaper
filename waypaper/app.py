@@ -257,7 +257,7 @@ class App(Gtk.Window):
     def process_images(self):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
-        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders, depth=1)
+        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders, self.cf.show_hidden, depth=1)
         self.sort_images()
 
         # Show caching label:
@@ -436,6 +436,13 @@ class App(Gtk.Window):
         self.cf.save()
 
 
+    def toggle_hidden_files(self):
+        """Toggle visibility of hidden files"""
+        self.cf.show_hidden = not self.cf.show_hidden
+        threading.Thread(target=self.process_images).start()
+        self.cf.save()
+
+
     def clear_cache(self):
         """Delete cache folder and reprocess the images"""
         try:
@@ -456,6 +463,9 @@ class App(Gtk.Window):
 
         elif event.keyval == Gdk.KEY_R:
             self.set_random_wallpaper()
+
+        elif event.keyval in [Gdk.KEY_period]:
+            self.toggle_hidden_files()
 
         elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
             self.selected_index = max(self.selected_index - 1, 0)

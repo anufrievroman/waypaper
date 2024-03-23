@@ -13,7 +13,7 @@ def has_image_extension(file_path, backend):
     return ext in image_extensions
 
 
-def get_image_paths(backend, root_folder, include_subfolders=False, depth=None):
+def get_image_paths(backend, root_folder, include_subfolders=False, include_hidden=False, depth=None):
     """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
     image_paths = []
     for root, directories, files in os.walk(root_folder):
@@ -24,15 +24,18 @@ def get_image_paths(backend, root_folder, include_subfolders=False, depth=None):
             if current_depth > depth:
                 continue
         for filename in files:
-            if has_image_extension(filename, backend):
-                image_paths.append(os.path.join(root, filename))
+            if not has_image_extension(filename, backend):
+                continue
+            if filename.startswith('.') and not include_hidden:
+                continue
+            image_paths.append(os.path.join(root, filename))
     return image_paths
 
 
-def get_random_file(backend, folder, include_subfolders):
+def get_random_file(backend, folder, include_subfolders, include_hidden=False):
     """Pick a random file from the folder"""
     try:
-        image_paths = get_image_paths(backend, folder, include_subfolders, depth=1)
+        image_paths = get_image_paths(backend, folder, include_subfolders, include_hidden, depth=1)
         return random.choice(image_paths)
     except:
         return None

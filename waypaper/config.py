@@ -28,9 +28,10 @@ class Config:
         self.swww_transition_duration = 2
         self.lang = "en"
         self.monitors = [self.selected_monitor]
-        self.wallpaper = []
+        self.wallpapers = []
         self.post_command = ""
         self.include_subfolders = False
+        self.show_hidden = False
         self.about = AboutData()
         self.cache_dir = user_cache_path(self.about.applicationName())
         self.config_dir = user_config_path(self.about.applicationName())
@@ -62,14 +63,15 @@ class Config:
         self.swww_transition_duration = config.get("Settings", "swww_transition_duration", fallback=self.swww_transition_duration)
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
+        self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
-        self.wallpaper_str = config.get("Settings", "wallpaper", fallback="", raw=True)
+        self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
 
         # Convert strings to lists:
         if self.monitors_str is not None:
             self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
-        if self.wallpaper_str is not None:
-            self.wallpaper = [str(paper) for paper in self.wallpaper_str.split(",")]
+        if self.wallpapers_str is not None:
+            self.wallpapers = [str(paper) for paper in self.wallpapers_str.split(",")]
 
     def check_validity(self):
         """Check if the config parameters are valid and correct them if needed"""
@@ -95,13 +97,13 @@ class Config:
         # If only certain monitor was affected, change only its wallpaper:
         if self.selected_monitor == "All":
             self.monitors = [self.selected_monitor]
-            self.wallpaper = [self.selected_wallpaper]
+            self.wallpapers = [self.selected_wallpaper]
         elif self.selected_monitor in self.monitors:
             index = self.monitors.index(self.selected_monitor)
-            self.wallpaper[index] = self.selected_wallpaper
+            self.wallpapers[index] = self.selected_wallpaper
         else:
             self.monitors.append(self.selected_monitor)
-            self.wallpaper.append(self.selected_wallpaper)
+            self.wallpapers.append(self.selected_wallpaper)
 
         # Write configuration to the file:
         config = configparser.ConfigParser()
@@ -110,13 +112,14 @@ class Config:
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
         config.set("Settings", "folder", self.image_folder)
-        config.set("Settings", "wallpaper", ",".join(self.wallpaper))
+        config.set("Settings", "wallpaper", ",".join(self.wallpapers))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "monitors", ",".join(self.monitors))
         config.set("Settings", "fill", self.fill_option)
         config.set("Settings", "sort", self.sort_option)
         config.set("Settings", "color", self.color)
         config.set("Settings", "subfolders", str(self.include_subfolders))
+        config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "post_command", self.post_command)
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))

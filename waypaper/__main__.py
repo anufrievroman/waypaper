@@ -47,19 +47,17 @@ def run():
 
     # Set the wallpaper and quit:
     if args.restore or args.random:
-        for wallpaper, monitor in zip(cf.wallpaper, cf.monitors):
-            w = wallpaper
+        for wallpaper, monitor in zip(cf.wallpapers, cf.monitors):
 
             if args.random:
-                w = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders)
-                cf.selected_wallpaper = str(w)
+                wallpaper = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders, cf.show_hidden)
+                cf.selected_wallpaper = str(wallpaper)
                 cf.save()
 
-            if w is None:
+            if wallpaper is None:
                 continue
 
-
-            change_wallpaper(w, cf, monitor, txt)
+            change_wallpaper(wallpaper, cf, monitor, txt)
             time.sleep(0.1)
         sys.exit(0)
 
