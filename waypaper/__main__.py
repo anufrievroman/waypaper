@@ -9,7 +9,7 @@ from waypaper.app import App
 from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.config import Config
-from waypaper.options import BACKEND_OPTIONS
+from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
 
 about = AboutData()
@@ -35,7 +35,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true")
 parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
 parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
-parser.add_argument("--fill", help=txt.msg_arg_fill, action="store_true")
+parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 args = parser.parse_args()
 
