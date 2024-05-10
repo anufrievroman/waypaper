@@ -200,7 +200,7 @@ class App(Gtk.Window):
             # Check available monitors:
             monitor_names = ["All"]
             try:
-                subprocess.Popen(["swww", "init"])
+                subprocess.Popen(["swww-daemon"])
                 query_output = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
                 monitors = query_output.split("\n")
                 for monitor in monitors[:-1]:

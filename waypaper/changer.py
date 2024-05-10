@@ -42,7 +42,7 @@ def change_wallpaper(image_path, cf, monitor, txt):
                     time.sleep(0.005)
                 except Exception as e:
                     print(f"{txt.err_kill} {e}")
-            subprocess.Popen(["swww", "init"])
+            subprocess.Popen(["swww-daemon"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
             command.extend(["--fill-color", cf.color])
