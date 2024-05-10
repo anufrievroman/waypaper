@@ -18,7 +18,7 @@ setuptools.setup(
         ]
     },
     install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow"],
-    version='2.1.1',
+    version='2.1.2',
     python_requires='>3.9',
     classifiers=[
         "Development Status :: 4 - Beta",
