@@ -22,6 +22,7 @@ class Config:
         self.sort_option = SORT_OPTIONS[0]
         self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
         self.color = "#ffffff"
+        self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
         self.swww_transition_step = 90
         self.swww_transition_angle = 0
@@ -66,6 +67,11 @@ class Config:
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
+        self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
+        try:
+            self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
+        except Exception:
+            self.number_of_columns = 3
 
         # Convert strings to lists:
         if self.monitors_str is not None:
@@ -121,6 +127,7 @@ class Config:
         config.set("Settings", "subfolders", str(self.include_subfolders))
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "post_command", self.post_command)
+        config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))

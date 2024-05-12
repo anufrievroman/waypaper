@@ -296,18 +296,18 @@ class App(Gtk.Window):
             self.grid.remove(child)
 
         current_y = 0
-        current_row_heights = [0, 0, 0]
+        current_row_heights = [0]*self.cf.number_of_columns
         for index, [thumbnail, name, path] in enumerate(zip(self.thumbnails, self.image_names, self.image_paths)):
 
-            row = index // 3
-            column = index % 3
+            row = index // self.cf.number_of_columns
+            column = index % self.cf.number_of_columns
 
             # Calculate current y coordinate in the scroll window:
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
             current_row_heights[column] = int(240 / aspect_ratio)
             if column == 0:
                 current_y += max(current_row_heights) + 10
-                current_row_heights = [0, 0, 0]
+                current_row_heights = [0]*self.cf.number_of_columns
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
@@ -473,12 +473,12 @@ class App(Gtk.Window):
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
-            self.selected_index = min(self.selected_index + 3, len(self.image_paths) - 1)
+            self.selected_index = min(self.selected_index + self.cf.number_of_columns, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
-            self.selected_index = max(self.selected_index - 3, 0)
+            self.selected_index = max(self.selected_index - self.cf.number_of_columns, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
