@@ -14,6 +14,7 @@ from waypaper.common import check_installed_backends
 class Config:
     """User configuration loaded from the config.ini file"""
     def __init__(self):
+        self.home_path = pathlib.Path.home()
         self.image_folder = user_pictures_path()
         self.installed_backends = check_installed_backends()
         self.selected_wallpaper = ""
@@ -45,6 +46,12 @@ class Config:
         self.read()
         self.check_validity()
 
+    def shorten_path(self, path):
+        """Replace home part of paths with tilde"""
+        if str(path).startswith(str(self.home_path)):
+            return str(path).replace(str(self.home_path), "~", 1)
+        else:
+            return str(path)
 
     def read(self):
         """Load data from the config.ini or use default if it does not exists"""
@@ -53,6 +60,7 @@ class Config:
 
         # Read parameters:
         self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
+        self.image_folder = pathlib.Path(self.image_folder).expanduser()
         self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
         self.sort_option = config.get("Settings", "sort", fallback=self.sort_option)
         self.backend = config.get("Settings", "backend", fallback=self.backend)
@@ -68,6 +76,8 @@ class Config:
         self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
         self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
+
+        # Check the validity of the number of columns:
         try:
             self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
         except Exception:
@@ -77,7 +87,7 @@ class Config:
         if self.monitors_str is not None:
             self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
         if self.wallpapers_str is not None:
-            self.wallpapers = [str(paper) for paper in self.wallpapers_str.split(",")]
+            self.wallpapers = [str(pathlib.Path(paper).expanduser()) for paper in self.wallpapers_str.split(",")]
 
     def check_validity(self):
         """Check if the config parameters are valid and correct them if needed"""
@@ -102,14 +112,14 @@ class Config:
 
         # If only certain monitor was affected, change only its wallpaper:
         if self.selected_monitor == "All":
-            self.monitors = [self.selected_monitor]
-            self.wallpapers = [self.selected_wallpaper]
+            self.monitors = [self.shorten_path(self.selected_monitor)]
+            self.wallpapers = [self.shorten_path(self.selected_wallpaper)]
         elif self.selected_monitor in self.monitors:
             index = self.monitors.index(self.selected_monitor)
-            self.wallpapers[index] = self.selected_wallpaper
+            self.wallpapers[index] = self.shorten_path(self.selected_wallpaper)
         else:
             self.monitors.append(self.selected_monitor)
-            self.wallpapers.append(self.selected_wallpaper)
+            self.wallpapers.append(self.shorten_path(self.selected_wallpaper))
 
         # Write configuration to the file:
         config = configparser.ConfigParser()
@@ -117,7 +127,7 @@ class Config:
         if not config.has_section("Settings"):
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
-        config.set("Settings", "folder", self.image_folder)
+        config.set("Settings", "folder", self.shorten_path(self.image_folder))
         config.set("Settings", "wallpaper", ",".join(self.wallpapers))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "monitors", ",".join(self.monitors))
