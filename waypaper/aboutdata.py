@@ -10,9 +10,9 @@ class AboutData():
     def applicationSummary(self):
         return self.__app_metadata['Summary']
     def applicationLogo(self):
-        return str(self.__app_metadata['Name'])+".svg"
+        return str(self.__app_metadata['Name']) + ".svg"
     def applicationVersion(self):
-        return self.__app_metadata['Version'] # pylint: disable=no-member
+        return self.__app_metadata['Version']
     def homePage(self):
         return self.__app_metadata['Home-page']
     def Author(self):

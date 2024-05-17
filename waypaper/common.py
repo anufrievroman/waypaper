@@ -17,16 +17,28 @@ def get_image_paths(backend, root_folder, include_subfolders=False, include_hidd
     """Get a list of file paths depending of weather we include subfolders and how deep we scan"""
     image_paths = []
     for root, directories, files in os.walk(root_folder):
+
+        # Remove hidden files from consideration:
+        for directory in directories:
+            if directory.startswith('.') and not include_hidden:
+                directories.remove(directory)
+        for file in files:
+            if file.startswith('.') and not include_hidden:
+                files.remove(file)
+
+        # Remove subfolders from consideration:
         if not include_subfolders and str(root) != str(root_folder):
             continue
+
+        # Remove deep subfolders from consideration:
         if depth is not None and root != root_folder:
             current_depth = root.count(os.path.sep) - str(root_folder).count(os.path.sep)
             if current_depth > depth:
                 continue
+
+        # Remove files that are not images from consideration:
         for filename in files:
             if not has_image_extension(filename, backend):
-                continue
-            if filename.startswith('.') and not include_hidden:
                 continue
             image_paths.append(os.path.join(root, filename))
     return image_paths
