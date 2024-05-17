@@ -66,6 +66,10 @@ See more [details on user arguments in the documentation](https://anufrievroman.
 
 See [configuration details in the documentation](https://anufrievroman.gitbook.io/waypaper/configuration).
 
+### Keybindings
+
+See [list of keybindings in the documentation](https://anufrievroman.gitbook.io/waypaper/keybindings).
+
 ### Troubleshooting
 
 See typical problems [explained in the documentation](https://anufrievroman.gitbook.io/waypaper/troubleshooting)

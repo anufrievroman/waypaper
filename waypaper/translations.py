@@ -23,7 +23,7 @@ class English:
         self.msg_caching = "Caching wallpapers..."
         self.msg_setwith = "Sent command to set wallpaper was set with"
 
-        self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nf - Change wallpaper folder\n"
+        self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
         self.msg_help += ". - Include/exclude hidden images\ns - Include/exclude images in subfolders\n? - Help\nq - Exit\n\n"
         self.msg_help += self.msg_info
