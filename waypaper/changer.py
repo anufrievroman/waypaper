@@ -84,6 +84,9 @@ def change_wallpaper(image_path, cf, monitor, txt):
             subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
             print(f"{txt.msg_setwith} {cf.backend}")
 
+        elif cf.backend == "none":
+            pass
+
         else:
             print(f"{txt.err_notsup} {cf.backend}")
 

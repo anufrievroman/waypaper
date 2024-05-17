@@ -222,7 +222,7 @@ class App(Gtk.Window):
 
     def check_backends(self):
         """Before running the app, check which backends are installed or show the error"""
-        if not self.cf.installed_backends:
+        if len(self.cf.installed_backends) == 1:
             self.show_message(self.txt.err_backend)
             exit()
 

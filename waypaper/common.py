@@ -55,8 +55,10 @@ def get_random_file(backend, folder, include_subfolders, include_hidden=False):
 
 def check_installed_backends():
     """Check which backends are installed in the system"""
-    installed_backends = []
+    installed_backends = ["none"]
     for backend in BACKEND_OPTIONS:
+        if backend == "none":
+            continue
         if backend == "wallutils":
             binary_name = "setwallpaper"
         else:
