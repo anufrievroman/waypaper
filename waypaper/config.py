@@ -87,7 +87,7 @@ class Config:
         if self.monitors_str is not None:
             self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
         if self.wallpapers_str is not None:
-            self.wallpapers = [str(pathlib.Path(paper).expanduser()) for paper in self.wallpapers_str.split(",")]
+            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
 
     def check_validity(self):
         """Check if the config parameters are valid and correct them if needed"""
@@ -112,7 +112,7 @@ class Config:
 
         # If only certain monitor was affected, change only its wallpaper:
         if self.selected_monitor == "All":
-            self.monitors = [self.shorten_path(self.selected_monitor)]
+            self.monitors = [self.selected_monitor]
             self.wallpapers = [self.shorten_path(self.selected_wallpaper)]
         elif self.selected_monitor in self.monitors:
             index = self.monitors.index(self.selected_monitor)
