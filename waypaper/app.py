@@ -221,9 +221,9 @@ class App(Gtk.Window):
 
 
     def monitor_option_display(self):
-        """Display monitor option if backend is swww"""
+        """Display monitor option if backend is swww or hyprpaper (with swww installed)"""
         self.options_box.remove(self.monitor_option_combo)
-        if self.cf.backend == "swww":
+        if self.cf.backend == "swww" or (self.cf.backend == "hyprpaper" and "swww" in self.cf.installed_backends):
 
             # Check available monitors:
             monitor_names = ["All"]
