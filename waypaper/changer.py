@@ -84,6 +84,21 @@ def change_wallpaper(image_path, cf, monitor, txt):
             subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
             print(f"{txt.msg_setwith} {cf.backend}")
 
+        # hyprpaper backend:
+        elif cf.backend == "hyprpaper":
+            try:
+                subprocess.Popen(["hyprpaper"])
+                time.sleep(0.01)
+            except Exception as e:
+                print(f"{txt.err_kill} {e}")
+            preload_command = ["hyprctl", "hyprpaper", "preload", image_path]
+            if monitor == "All":
+                monitor = ""
+            wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{monitor},{image_path}"]
+            subprocess.Popen(preload_command)
+            subprocess.Popen(wallpaper_command)
+            
+
         elif cf.backend == "none":
             pass
 
