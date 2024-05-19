@@ -7,6 +7,7 @@ import gi
 import shutil
 from pathlib import Path
 from PIL import Image
+import re
 
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
@@ -223,10 +224,10 @@ class App(Gtk.Window):
     def monitor_option_display(self):
         """Display monitor option if backend is swww or hyprpaper (with swww installed)"""
         self.options_box.remove(self.monitor_option_combo)
-        if self.cf.backend == "swww" or (self.cf.backend == "hyprpaper" and "swww" in self.cf.installed_backends):
+        # Check available monitors:
+        monitor_names = ["All"]
+        if self.cf.backend == "swww":
 
-            # Check available monitors:
-            monitor_names = ["All"]
             try:
                 subprocess.Popen(["swww-daemon"])
                 query_output = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
@@ -236,16 +237,35 @@ class App(Gtk.Window):
             except Exception as e:
                 print(f"{self.txt.err_disp} {e}")
 
-            # Create a monitor option dropdown menu:
-            self.monitor_option_combo = Gtk.ComboBoxText()
-            for monitor in monitor_names:
-                self.monitor_option_combo.append_text(monitor)
-                self.monitor_option_combo.set_active(0)
-                self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
-                self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
+        elif self.cf.backend == "hyprpaper":
+            try:
+                # Query hyprctl for motitors
+                query_output = str(subprocess.check_output(["hyprctl", "monitors"], encoding='utf-8'))
+                # Get lines from output
+                query_output = query_output.split('\n')
+                # Use a regular expression to get the lines that contain the monitor names
+                query_output = list(filter(lambda line:  re.match(r"Monitor [a-zA-Z-0-9]+ \(ID \d+\):", line),query_output))
+                for line in query_output:
+                    # Append monitor names to monitor_names
+                    monitor_names.append(line.split(' ')[1])
+            except Exception as e:
+                print(f"{self.txt.err_disp} {e}")
 
-            # Add it to the row of buttons:
-            self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
+        else:
+            return
+        
+        # Create a monitor option dropdown menu:
+        self.monitor_option_combo = Gtk.ComboBoxText()
+        for monitor in monitor_names:
+            self.monitor_option_combo.append_text(monitor)
+            self.monitor_option_combo.set_active(0)
+            self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
+            self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
+
+        # Add it to the row of buttons:
+        self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
+
+
 
 
     def check_backends(self):
