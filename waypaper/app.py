@@ -94,12 +94,6 @@ class App(Gtk.Window):
         self.grid.set_column_spacing(0)
         self.scrolled_window.add(self.grid)
 
-        # Create subfolder toggle:
-        self.include_subfolders_checkbox = Gtk.ToggleButton(label=self.txt.msg_subfolders)
-        self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
-        self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
-        self.include_subfolders_checkbox.set_tooltip_text(self.txt.tip_subfolder)
-
         # Create a backend dropdown menu:
         self.backend_option_combo = Gtk.ComboBoxText()
         for backend in self.cf.installed_backends:
@@ -140,7 +134,6 @@ class App(Gtk.Window):
         self.sort_option_combo.connect("changed", self.on_sort_option_changed)
         self.sort_option_combo.set_tooltip_text(self.txt.tip_sorting)
 
-
         # Create exit button:
         self.exit_button = Gtk.Button(label=self.txt.msg_exit)
         self.exit_button.connect("clicked", self.on_exit_clicked)
@@ -173,12 +166,16 @@ class App(Gtk.Window):
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
 
+        # Create the options menu button:
+        self.options_button = Gtk.Button(label="Options")
+        self.options_button.connect("clicked", self.on_options_button_clicked)
+
         # Create a horizontal box for display option and exit button:
         self.options_box = Gtk.HBox(spacing=10)
         self.options_box.pack_end(self.exit_button, False, False, 0)
+        self.options_box.pack_end(self.options_button, False, False, 0)
         self.options_box.pack_end(self.refresh_button, False, False, 0)
         self.options_box.pack_end(self.random_button, False, False, 0)
-        self.options_box.pack_end(self.include_subfolders_checkbox, False, False, 0)
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_end(self.color_picker_button, False, False, 0)
         self.options_box.pack_end(self.fill_option_combo, False, False, 0)
@@ -190,6 +187,37 @@ class App(Gtk.Window):
         # Connect the "q" key press event to exit the application
         self.connect("key-press-event", self.on_key_pressed)
         self.show_all()
+
+
+    def create_menu(self):
+        """Create a GTK menu and items inside it"""
+        self.menu = Gtk.Menu()
+
+        # Create gifs toggle:
+        self.filter_gifs_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_gifs)
+        self.filter_gifs_checkbox.set_active(self.cf.show_gifs_only)
+        self.filter_gifs_checkbox.connect("toggled", self.on_filter_gifs_toggled)
+
+        # Create subfolder toggle:
+        self.include_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_subfolders)
+        self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
+        self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
+
+        # Create hidden toggle:
+        self.include_hidden_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_hidden)
+        self.include_hidden_checkbox.set_active(self.cf.show_hidden)
+        self.include_hidden_checkbox.connect("toggled", self.on_hidden_files_toggled)
+
+        self.menu.append(self.filter_gifs_checkbox)
+        self.menu.append(self.include_subfolders_checkbox)
+        self.menu.append(self.include_hidden_checkbox)
+        self.menu.show_all()
+
+
+    def on_options_button_clicked(self, widget):
+        '''Position the menu at the button and show it'''
+        self.create_menu()
+        self.menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
 
 
     def monitor_option_display(self):
@@ -257,7 +285,8 @@ class App(Gtk.Window):
     def process_images(self):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
-        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders, self.cf.show_hidden, depth=1)
+        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders,
+                                           self.cf.show_hidden, self.cf.show_gifs_only, depth=1)
         self.sort_images()
 
         # Show caching label:
@@ -338,7 +367,6 @@ class App(Gtk.Window):
 
     def choose_folder(self):
         """Choosing the folder of images, saving the path, and reloading images"""
-
         dialog = Gtk.FileChooserDialog(
             self.txt.msg_choosefolder, self, Gtk.FileChooserAction.SELECT_FOLDER,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, self.txt.msg_select, Gtk.ResponseType.OK)
@@ -356,9 +384,33 @@ class App(Gtk.Window):
         self.cf.save()
 
 
+    def on_filter_gifs_toggled(self, toggle):
+        """Toggle only gifs checkbox via menu"""
+        self.cf.show_gifs_only = toggle.get_active()
+        threading.Thread(target=self.process_images).start()
+
+
     def on_include_subfolders_toggled(self, toggle):
-        """On chosing to include subfolders"""
+        """Toggle subfolders visibility via menu"""
         self.cf.include_subfolders = toggle.get_active()
+        threading.Thread(target=self.process_images).start()
+
+
+    def toggle_include_subfolders(self):
+        """Toggle subfolders visibility via key"""
+        self.cf.include_subfolders = not self.cf.include_subfolders
+        threading.Thread(target=self.process_images).start()
+
+
+    def on_hidden_files_toggled(self, toggle):
+        """Toggle visibility of hidden files via menu"""
+        self.cf.show_hidden = toggle.get_active()
+        threading.Thread(target=self.process_images).start()
+
+
+    def toggle_hidden_files(self):
+        """Toggle visibility of hidden files via keys"""
+        self.cf.show_hidden = not self.cf.show_hidden
         threading.Thread(target=self.process_images).start()
 
 
@@ -436,13 +488,6 @@ class App(Gtk.Window):
         self.cf.save()
 
 
-    def toggle_hidden_files(self):
-        """Toggle visibility of hidden files"""
-        self.cf.show_hidden = not self.cf.show_hidden
-        threading.Thread(target=self.process_images).start()
-        self.cf.save()
-
-
     def clear_cache(self):
         """Delete cache folder and reprocess the images"""
         try:
@@ -466,6 +511,9 @@ class App(Gtk.Window):
 
         elif event.keyval in [Gdk.KEY_period]:
             self.toggle_hidden_files()
+
+        elif event.keyval in [Gdk.KEY_s]:
+            self.toggle_include_subfolders()
 
         elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
             self.selected_index = max(self.selected_index - 1, 0)
@@ -514,7 +562,7 @@ class App(Gtk.Window):
             self.cf.save()
 
         # Prevent other default key handling:
-        if event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
+        if event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]:
             return True
 
 

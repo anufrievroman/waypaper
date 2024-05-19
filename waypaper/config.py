@@ -34,6 +34,7 @@ class Config:
         self.post_command = ""
         self.include_subfolders = False
         self.show_hidden = False
+        self.show_gifs_only = False
         self.about = AboutData()
         self.cache_dir = user_cache_path(self.about.applicationName())
         self.config_dir = user_config_path(self.about.applicationName())
@@ -73,6 +74,7 @@ class Config:
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
+        self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
         self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
         self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
@@ -107,10 +109,10 @@ class Config:
         if 0 > int(self.swww_transition_duration):
             self.swww_transition_duration = 2
 
-    def save(self):
-        """Update the parameters and save them to the configuration file"""
-
-        # If only certain monitor was affected, change only its wallpaper:
+    def attribute_selected_wallpaper(self):
+        """If only certain monitor was affected, change only its wallpaper"""
+        if self.selected_wallpaper == "":
+            return
         if self.selected_monitor == "All":
             self.monitors = [self.selected_monitor]
             self.wallpapers = [self.shorten_path(self.selected_wallpaper)]
@@ -120,6 +122,11 @@ class Config:
         else:
             self.monitors.append(self.selected_monitor)
             self.wallpapers.append(self.shorten_path(self.selected_wallpaper))
+
+    def save(self):
+        """Update the parameters and save them to the configuration file"""
+
+        self.attribute_selected_wallpaper()
 
         # Write configuration to the file:
         config = configparser.ConfigParser()
@@ -136,6 +143,7 @@ class Config:
         config.set("Settings", "color", self.color)
         config.set("Settings", "subfolders", str(self.include_subfolders))
         config.set("Settings", "show_hidden", str(self.show_hidden))
+        config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "post_command", self.post_command)
         config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))

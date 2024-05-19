@@ -17,7 +17,9 @@ class English:
         self.msg_refresh = "Refresh"
         self.msg_random = "Random"
         self.msg_exit = "Exit"
-        self.msg_subfolders = "Subfolders"
+        self.msg_subfolders = "Show subfolders"
+        self.msg_hidden = "Show hidden"
+        self.msg_gifs = "Show gifs only"
         self.msg_changefolder = "Change wallpaper folder"
         self.msg_choosefolder = "Please choose a folder"
         self.msg_caching = "Caching wallpapers..."
@@ -25,7 +27,7 @@ class English:
 
         self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
-        self.msg_help += ". - Include/exclude hidden images\ns - Include/exclude images in subfolders\n? - Help\nq - Exit\n\n"
+        self.msg_help += ". - Toggle hidden images\ns - Toggle images in subfolders\n? - Help\nq - Exit\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Error deleting cache"
@@ -39,7 +41,6 @@ class English:
         self.err_disp = "Error determining monitor names:"
         self.err_kill = "Warning related to killall:"
 
-        self.tip_subfolder = "Include/exclude images in subfolders"
         self.tip_refresh = "Recache the folder of images"
         self.tip_fill = "Choose fill type"
         self.tip_backend = "Choose backend"
@@ -67,6 +68,8 @@ class German:
         self.msg_random = "Zufällig"
         self.msg_exit = "Beenden"
         self.msg_subfolders = "Unterordner"
+        self.msg_hidden = "Hidden"
+        self.msg_gifs = "Show only gifs"
         self.msg_changefolder = "Hintergrundbild-Ordner ändern"
         self.msg_choosefolder = "Bitte wählen Sie einen Ordner aus"
         self.msg_caching = "Hintergrundbilder werden zwischengespeichert..."
@@ -88,7 +91,6 @@ class German:
         self.err_disp = "Fehler beim Ermitteln der Monitor-Namen:"
         self.err_kill = "Warnung im Zusammenhang mit dem Befehl killall:"
 
-        self.tip_subfolder = "Wählen, ob Unterordner mit einbezogen werden sollen"
         self.tip_refresh = "Erneutes einlesen des Hintergrundbild-Ordners"
         self.tip_fill = "Skalierungsart auswählen"
         self.tip_backend = "Backend auswählen"
@@ -116,6 +118,8 @@ class French:
         self.msg_random = "Aléatoire"
         self.msg_exit = "Quitter"
         self.msg_subfolders = "Sous-dossiers"
+        self.msg_hidden = "Hidden"
+        self.msg_gifs = "Show only gifs"
         self.msg_changefolder = "Changer de dossier de papier peint"
         self.msg_choosefolder = "Veuillez choisir un dossier"
         self.msg_caching = "Mise en cache des papiers peints..."
@@ -137,7 +141,6 @@ class French:
         self.err_disp = "Erreur lors de la détermination des noms des moniteurs :"
         self.err_kill = "Avertissement lié à killall :"
 
-        self.tip_subfolder = "Inclure/exclure les images des sous-dossiers"
         self.tip_refresh = "Recréer le dossier d'images"
         self.tip_fill = "Choisir le type de remplissage"
         self.tip_backend = "Choisir le backend"
@@ -165,6 +168,8 @@ class Polish:
         self.msg_random = "Losowo"
         self.msg_exit = "Wyjście"
         self.msg_subfolders = "Podkatalogi"
+        self.msg_hidden = "Hidden"
+        self.msg_gifs = "Show only gifs"
         self.msg_changefolder = "Zmień folder z tapetami"
         self.msg_choosefolder = "Proszę wybrać folder"
         self.msg_caching = "Kasowanie tapet..."
@@ -186,7 +191,6 @@ class Polish:
         self.err_disp = "Błąd podczas określania nazw monitorów:"
         self.err_kill = "Ostrzeżenie związane z poleceniem killall:"
 
-        self.tip_subfolder = "Dołącz/wyłącz obrazy z podkatalogów"
         self.tip_refresh = "Odśwież folder z obrazami"
         self.tip_fill = "Wybierz typ wypełnienia"
         self.tip_backend = "Wybierz backend"
@@ -213,7 +217,9 @@ class Russian:
         self.msg_refresh = "Обновить"
         self.msg_random = "Случайно"
         self.msg_exit = "Выход"
-        self.msg_subfolders = "Подпапки"
+        self.msg_subfolders = "Показать подпапки"
+        self.msg_hidden = "Показать скрытые"
+        self.msg_gifs = "Показать только gif"
         self.msg_changefolder = "Изменить папку с обоями"
         self.msg_choosefolder = "Пожалуйста, выберите папку"
         self.msg_caching = "Кэширование обоев..."
@@ -221,12 +227,12 @@ class Russian:
 
         self.msg_help = "Горячие клавиши Waypaper:\n\nhjkl - Навигация (←↓↑→)\nf - Изменить папку с обоями\n"
         self.msg_help += "g - Прокрутка в начало\nG - Прокрутка в конец\nR - Установить случайные обои\nr - Обновить кэш обоев\n"
-        self.msg_help += ". - Включить/исключить скрытые файлы \ns - Включить/исключить подпапки\n? - Справка\nq - Выход\n\n"
+        self.msg_help += ". - Показать/скрыть скрытые файлы \ns - Показать/скрыть вложенные папки\n? - Справка\nq - Выход\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Ошибка при удалении кэша"
         self.err_backend = "Похоже, что ни один из бэкендов для установки обоев не установлен в системе.\n"
-        self.err_backend += "Используйте менеджер пакетов для установки хотя бы одного из этих бэкендов:\n\n"
+        self.err_backend += "Используйте менеджер пакетов для установки хотя бы одного из следующих бэкендов:\n\n"
         self.err_backend += "- swaybg (для Wayland)\n- swww (для Wayland)\n"
         self.err_backend += "- feh (для Xorg)\n- wallutils (для Xorg и Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -235,7 +241,6 @@ class Russian:
         self.err_disp = "Ошибка определения названий мониторов:"
         self.err_kill = "Предупреждение связанное с killall:"
 
-        self.tip_subfolder = "Включить/отключить изображения в подпапках"
         self.tip_refresh = "Обновить папку с изображениями"
         self.tip_fill = "Выбрать тип заполнения"
         self.tip_backend = "Выбрать бэкенд"
@@ -263,6 +268,8 @@ class Chinese:
         self.msg_random = "随机"
         self.msg_exit = "退出"
         self.msg_subfolders = "子文件夹"
+        self.msg_hidden = "Show hidden"
+        self.msg_gifs = "Show only gifs"
         self.msg_changefolder = "更改壁纸文件夹"
         self.msg_choosefolder = "请选择一个文件夹"
         self.msg_caching = "缓存壁纸..."
@@ -284,7 +291,6 @@ class Chinese:
         self.err_disp = "确定监视器名称时出错："
         self.err_kill = "与killall相关的警告："
 
-        self.tip_subfolder = "在子文件夹中包含/排除图像"
         self.tip_refresh = "重新缓存图像文件夹"
         self.tip_fill = "选择填充类型"
         self.tip_backend = "选择后端"
