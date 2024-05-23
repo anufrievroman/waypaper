@@ -84,8 +84,11 @@ def change_wallpaper(image_path, cf, monitor, txt):
 
         # hyprpaper backend:
         elif cf.backend == "hyprpaper":
-            subprocess.Popen(["hyprpaper"])
-            time.sleep(0.01)
+            try:
+                str(subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8'))
+            except Exception:
+                subprocess.Popen(["hyprpaper"])
+                time.sleep(1)
             preload_command = ["hyprctl", "hyprpaper", "preload", image_path]
             if monitor == "All":
                 monitor = ""
