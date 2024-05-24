@@ -178,12 +178,12 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.refresh_button, False, False, 0)
         self.options_box.pack_end(self.random_button, False, False, 0)
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
-        self.options_box.pack_end(self.color_picker_button, False, False, 0)
-        self.options_box.pack_end(self.fill_option_combo, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
 
         self.monitor_option_display()
+        self.fill_option_display()
+        self.color_picker_display()
 
         # Connect the "q" key press event to exit the application
         self.connect("key-press-event", self.on_key_pressed)
@@ -253,7 +253,7 @@ class App(Gtk.Window):
 
         else:
             return
-        
+
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
         for monitor in monitor_names:
@@ -266,7 +266,17 @@ class App(Gtk.Window):
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
 
+    def fill_option_display(self):
+        """Display fill option if backend is not hyprpaper"""
+        self.options_box.remove(self.fill_option_combo)
+        if self.cf.backend not in ['hyprpaper', 'none']:
+            self.options_box.pack_end(self.fill_option_combo, False, False, 0)
 
+    def color_picker_display(self):
+        """Display color option if backend is not hyprpaper"""
+        self.options_box.remove(self.color_picker_button)
+        if self.cf.backend not in ['hyprpaper', 'none']:
+            self.options_box.pack_end(self.color_picker_button, False, False, 0)
 
     def check_backends(self):
         """Before running the app, check which backends are installed or show the error"""
@@ -457,6 +467,8 @@ class App(Gtk.Window):
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_monitor = "All"
         self.monitor_option_display()
+        self.fill_option_display()
+        self.color_picker_display()
         self.show_all()
 
 
