@@ -2,9 +2,11 @@
 
 import subprocess
 import time
+from waypaper.config import Config
+from waypaper.translations import Chinese, English, French, German, Polish, Russian
 
 
-def change_wallpaper(image_path, cf, monitor, txt):
+def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian):
     """Run system commands to change the wallpaper depending on the backend"""
 
     try:

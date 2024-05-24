@@ -14,12 +14,13 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
+from waypaper.translations import Chinese, English, French, German, Polish, Russian
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 
-def read_webp_image(image_path):
+def read_webp_image(image_path: str) -> GdkPixbuf:
     """Read webp images using Pillow library and convert it to pixbuf format"""
     img = Image.open(image_path)
     data = img.tobytes()
@@ -28,7 +29,7 @@ def read_webp_image(image_path):
     return pixbuf
 
 
-def cache_image(image_path, cache_dir):
+def cache_image(image_path: str, cache_dir: Path) -> None:
     """Resize and cache images using gtk library"""
     ext = os.path.splitext(image_path)[1].lower()
     try:
@@ -53,7 +54,7 @@ def cache_image(image_path, cache_dir):
 class App(Gtk.Window):
     """Main application class that controls GUI"""
 
-    def __init__(self, txt):
+    def __init__(self, txt: Chinese|English|French|German|Polish|Russian) -> None:
         super().__init__(title="Waypaper")
         self.cf = Config()
         self.about = AboutData()
@@ -68,7 +69,7 @@ class App(Gtk.Window):
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
 
-    def init_ui(self):
+    def init_ui(self) -> None:
         """Initialize the UI elements of the application"""
 
         # Create a vertical box for layout:
@@ -190,7 +191,7 @@ class App(Gtk.Window):
         self.show_all()
 
 
-    def create_menu(self):
+    def create_menu(self) -> None:
         """Create a GTK menu and items inside it"""
         self.menu = Gtk.Menu()
 
@@ -215,13 +216,13 @@ class App(Gtk.Window):
         self.menu.show_all()
 
 
-    def on_options_button_clicked(self, widget):
+    def on_options_button_clicked(self, widget) -> None:
         '''Position the menu at the button and show it'''
         self.create_menu()
         self.menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
 
 
-    def monitor_option_display(self):
+    def monitor_option_display(self) -> None:
         """Display monitor option if backend is swww or hyprpaper (with swww installed)"""
         self.options_box.remove(self.monitor_option_combo)
         # Check available monitors:
@@ -268,14 +269,14 @@ class App(Gtk.Window):
 
 
 
-    def check_backends(self):
+    def check_backends(self) -> None:
         """Before running the app, check which backends are installed or show the error"""
         if len(self.cf.installed_backends) == 1:
             self.show_message(self.txt.err_backend)
             exit()
 
 
-    def show_message(self, message):
+    def show_message(self, message: str) -> None:
         """If no backends are installed, show a message"""
         dialog = Gtk.MessageDialog(
             parent=self,
@@ -288,7 +289,7 @@ class App(Gtk.Window):
         dialog.destroy()
 
 
-    def sort_images(self):
+    def sort_images(self) -> None:
         """Sort images depending on the sorting option"""
         if self.cf.sort_option == "name":
             self.image_paths.sort(key=lambda x: os.path.basename(x))
@@ -302,7 +303,7 @@ class App(Gtk.Window):
             pass
 
 
-    def process_images(self):
+    def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
         self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders,
@@ -337,7 +338,7 @@ class App(Gtk.Window):
         GLib.idle_add(self.load_image_grid)
 
 
-    def load_image_grid(self):
+    def load_image_grid(self) -> None:
         """Reload the grid of images"""
 
         # Clear existing images:
@@ -376,8 +377,8 @@ class App(Gtk.Window):
         self.show_all()
 
 
-    def scroll_to_selected_image(self):
-        """Scroll the window to see the highlighed image"""
+    def scroll_to_selected_image(self) -> None:
+        """Scroll the window to see the highlighted image"""
         scrolled_window_height = self.scrolled_window.get_vadjustment().get_page_size()
         # current_y = self.highlighted_image_row * 180
         subscreen_num = self.highlighted_image_y // scrolled_window_height
@@ -385,7 +386,7 @@ class App(Gtk.Window):
         self.scrolled_window.get_vadjustment().set_value(scroll)
 
 
-    def choose_folder(self):
+    def choose_folder(self) -> None:
         """Choosing the folder of images, saving the path, and reloading images"""
         dialog = Gtk.FileChooserDialog(
             self.txt.msg_choosefolder, self, Gtk.FileChooserAction.SELECT_FOLDER,
@@ -398,53 +399,53 @@ class App(Gtk.Window):
         dialog.destroy()
 
 
-    def on_choose_folder_clicked(self, widget):
+    def on_choose_folder_clicked(self, widget) -> None:
         """Choosing the folder of images, saving the path, and reloading images"""
         self.choose_folder()
         self.cf.save()
 
 
-    def on_filter_gifs_toggled(self, toggle):
+    def on_filter_gifs_toggled(self, toggle) -> None:
         """Toggle only gifs checkbox via menu"""
         self.cf.show_gifs_only = toggle.get_active()
         threading.Thread(target=self.process_images).start()
 
 
-    def on_include_subfolders_toggled(self, toggle):
+    def on_include_subfolders_toggled(self, toggle) -> None:
         """Toggle subfolders visibility via menu"""
         self.cf.include_subfolders = toggle.get_active()
         threading.Thread(target=self.process_images).start()
 
 
-    def toggle_include_subfolders(self):
+    def toggle_include_subfolders(self) -> None:
         """Toggle subfolders visibility via key"""
         self.cf.include_subfolders = not self.cf.include_subfolders
         threading.Thread(target=self.process_images).start()
 
 
-    def on_hidden_files_toggled(self, toggle):
+    def on_hidden_files_toggled(self, toggle) -> None:
         """Toggle visibility of hidden files via menu"""
         self.cf.show_hidden = toggle.get_active()
         threading.Thread(target=self.process_images).start()
 
 
-    def toggle_hidden_files(self):
+    def toggle_hidden_files(self) -> None:
         """Toggle visibility of hidden files via keys"""
         self.cf.show_hidden = not self.cf.show_hidden
         threading.Thread(target=self.process_images).start()
 
 
-    def on_fill_option_changed(self, combo):
+    def on_fill_option_changed(self, combo) -> None:
         """Save fill parameter when it was changed"""
         self.cf.fill_option = combo.get_active_text()
 
 
-    def on_monitor_option_changed(self, combo):
+    def on_monitor_option_changed(self, combo) -> None:
         """Save monitor parameter when it was changed"""
         self.cf.selected_monitor = combo.get_active_text()
 
 
-    def on_sort_option_changed(self, combo):
+    def on_sort_option_changed(self, combo) -> None:
         """Save sort parameter whet it is changed"""
         selected_option = combo.get_active_text()
         selected_option_num = list(SORT_DISPLAYS.values()).index(selected_option)
@@ -452,7 +453,7 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
-    def on_backend_option_changed(self, combo):
+    def on_backend_option_changed(self, combo) -> None:
         """Save backend parameter whet it is changed"""
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_monitor = "All"
@@ -469,7 +470,7 @@ class App(Gtk.Window):
         self.cf.color = "#{:02X}{:02X}{:02X}".format(red, green, blue)
 
 
-    def on_image_clicked(self, widget, path):
+    def on_image_clicked(self, widget, path: str) -> str:
         """On clicking an image, set it as a wallpaper and save"""
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_wallpaper = path
@@ -481,22 +482,22 @@ class App(Gtk.Window):
         self.cf.save()
 
 
-    def on_refresh_clicked(self, widget):
+    def on_refresh_clicked(self, widget) -> None:
         """On clicking refresh button, clear cache"""
         self.clear_cache()
 
 
-    def on_random_clicked(self, widget):
+    def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""
         self.set_random_wallpaper()
 
 
-    def on_exit_clicked(self, widget):
+    def on_exit_clicked(self, widget) -> None:
         """On clicking exit button, exit"""
         Gtk.main_quit()
 
 
-    def set_random_wallpaper(self):
+    def set_random_wallpaper(self) -> None:
         """Choose a random image and set it as the wallpaper"""
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_wallpaper = get_random_file(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders)
@@ -508,7 +509,7 @@ class App(Gtk.Window):
         self.cf.save()
 
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """Delete cache folder and reprocess the images"""
         try:
             shutil.rmtree(self.cf.cache_dir)
@@ -518,8 +519,8 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
-    def on_key_pressed(self, widget, event):
-        """Process various key bindigns"""
+    def on_key_pressed(self, widget, event) -> None:
+        """Process various key binding"""
         if event.keyval == Gdk.KEY_q:
             Gtk.main_quit()
 
@@ -586,7 +587,7 @@ class App(Gtk.Window):
             return True
 
 
-    def run(self):
+    def run(self) -> None:
         """Run GUI application"""
         self.connect("destroy", self.on_exit_clicked)
         self.show_all()

@@ -1,6 +1,7 @@
 """Module responsible for reading and saving the configuration file"""
 
 import configparser
+from argparse import Namespace
 import pathlib
 import os
 from sys import exit
@@ -47,14 +48,14 @@ class Config:
         self.read()
         self.check_validity()
 
-    def shorten_path(self, path):
+    def shorten_path(self, path: str) -> str:
         """Replace home part of paths with tilde"""
         if str(path).startswith(str(self.home_path)):
             return str(path).replace(str(self.home_path), "~", 1)
         else:
             return str(path)
 
-    def read(self):
+    def read(self) -> None:
         """Load data from the config.ini or use default if it does not exists"""
         config = configparser.ConfigParser()
         config.read(self.config_file, 'utf-8')
@@ -91,7 +92,7 @@ class Config:
         if self.wallpapers_str is not None:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
 
-    def check_validity(self):
+    def check_validity(self) -> None:
         """Check if the config parameters are valid and correct them if needed"""
         if self.backend not in BACKEND_OPTIONS:
             self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
@@ -109,7 +110,7 @@ class Config:
         if 0 > int(self.swww_transition_duration):
             self.swww_transition_duration = 2
 
-    def attribute_selected_wallpaper(self):
+    def attribute_selected_wallpaper(self) -> None:
         """If only certain monitor was affected, change only its wallpaper"""
         if self.selected_wallpaper == "":
             return
@@ -123,7 +124,7 @@ class Config:
             self.monitors.append(self.selected_monitor)
             self.wallpapers.append(self.shorten_path(self.selected_wallpaper))
 
-    def save(self):
+    def save(self) -> None:
         """Update the parameters and save them to the configuration file"""
 
         self.attribute_selected_wallpaper()
@@ -154,8 +155,11 @@ class Config:
             config.write(configfile)
 
 
-    def read_parameters_from_user_arguments(self, args):
-        """Read user arguments provided at the run. These values take priority over config.ini"""
+    def read_parameters_from_user_arguments(self, args: Namespace) -> None:
+        """
+        Read user arguments provided at the run. These values take priority over config.ini
+        :param args Output of the argparse parser.parse_args() method. Should be only used in __main__.py.
+        """
         if args.backend:
             self.backend = args.backend
         if args.fill:
