@@ -34,12 +34,15 @@ def change_wallpaper(image_path, cf, monitor, txt):
                     "tile": "no",
                     }
             fill = fill_types[cf.fill_option.lower()]
-            if "swaybg" in cf.installed_backends:
-                try:
+            try:
+                if "swaybg" in cf.installed_backends:
                     subprocess.Popen(["killall", "swaybg"])
                     time.sleep(0.005)
-                except Exception as e:
-                    print(f"{txt.err_kill} {e}")
+                if "hyprpaper" in cf.installed_backends:
+                    subprocess.Popen(["killall", "hyprpaper"])
+                    time.sleep(0.005)
+            except Exception as e:
+                print(f"{txt.err_kill} {e}")
             subprocess.Popen(["swww-daemon"])
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
