@@ -12,9 +12,12 @@ from waypaper.config import Config
 from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
 
+# Get application metadata.
 about = AboutData()
+# Get application settings.
 cf = Config()
 
+# Define the text language of the application based on the configuration.
 if cf.lang == "de":
     txt = German()
 elif cf.lang == "fr":
@@ -29,6 +32,7 @@ else:
     txt = English()
 
 
+# Define command line argument parser.
 parser = argparse.ArgumentParser(
     prog=about.applicationName(), description=txt.msg_desc, epilog=txt.msg_info
 )
@@ -38,6 +42,7 @@ parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 args = parser.parse_args()
+print(type(args))
 
 
 def run():
