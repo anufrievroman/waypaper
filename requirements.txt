@@ -1,7 +1,0 @@
-importlib_metadata==7.1.0
-pillow==10.3.0
-platformdirs==4.2.2
-pycairo==1.26.0
-PyGObject==3.48.2
--e git+https://github.com/nikolaizombie1/waypaper.git@a9006aafa3db71c979a5d72681f41a91472abf5e#egg=waypaper
-zipp==3.18.2
