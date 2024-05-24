@@ -97,11 +97,9 @@ def change_wallpaper(image_path, cf, monitor, txt):
                 monitor = ""
             wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{monitor},{image_path}"]
             unload_command = ["hyprctl", "hyprpaper", "unload", "all"]
-            subprocess.Popen(preload_command)
-            time.sleep(0.1)
-            subprocess.Popen(wallpaper_command)
-            time.sleep(0.1)
             subprocess.Popen(unload_command)
+            subprocess.Popen(preload_command)
+            subprocess.Popen(wallpaper_command)
 
         elif cf.backend == "none":
             pass
