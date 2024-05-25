@@ -39,7 +39,6 @@ class English:
         self.err_wall = "Error changing wallpaper:"
         self.err_notsup = "The backend is not supported:"
         self.err_disp = "Error determining monitor names:"
-        self.err_kill = "Warning related to killall:"
 
         self.tip_refresh = "Recache the folder of images"
         self.tip_fill = "Choose fill type"
@@ -89,7 +88,6 @@ class German:
         self.err_wall = "Fehler beim Ändern des Hintergrundbildes:"
         self.err_notsup = "Das folgende Backend wird nicht unterstützt:"
         self.err_disp = "Fehler beim Ermitteln der Monitor-Namen:"
-        self.err_kill = "Warnung im Zusammenhang mit dem Befehl killall:"
 
         self.tip_refresh = "Erneutes einlesen des Hintergrundbild-Ordners"
         self.tip_fill = "Skalierungsart auswählen"
@@ -139,7 +137,6 @@ class French:
         self.err_wall = "Erreur lors du changement de papier peint :"
         self.err_notsup = "Le backend n'est pas pris en charge :"
         self.err_disp = "Erreur lors de la détermination des noms des moniteurs :"
-        self.err_kill = "Avertissement lié à killall :"
 
         self.tip_refresh = "Recréer le dossier d'images"
         self.tip_fill = "Choisir le type de remplissage"
@@ -189,7 +186,6 @@ class Polish:
         self.err_wall = "Błąd podczas zmiany tapety:"
         self.err_notsup = "Backend nie jest obsługiwany:"
         self.err_disp = "Błąd podczas określania nazw monitorów:"
-        self.err_kill = "Ostrzeżenie związane z poleceniem killall:"
 
         self.tip_refresh = "Odśwież folder z obrazami"
         self.tip_fill = "Wybierz typ wypełnienia"
@@ -239,7 +235,6 @@ class Russian:
         self.err_wall = "Ошибка при смене обоев:"
         self.err_notsup = "Бэкенд не поддерживается:"
         self.err_disp = "Ошибка определения названий мониторов:"
-        self.err_kill = "Предупреждение связанное с killall:"
 
         self.tip_refresh = "Обновить папку с изображениями"
         self.tip_fill = "Выбрать тип заполнения"
@@ -289,7 +284,6 @@ class Chinese:
         self.err_wall = "更改壁纸时出错："
         self.err_notsup = "不支持后端："
         self.err_disp = "确定监视器名称时出错："
-        self.err_kill = "与killall相关的警告："
 
         self.tip_refresh = "重新缓存图像文件夹"
         self.tip_fill = "选择填充类型"

@@ -12,12 +12,16 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
     try:
         # swaybg backend:
         if cf.backend == "swaybg":
-            fill = cf.fill_option.lower()
+
+            # Kill previous swaybg instances:
             try:
+                subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
                 subprocess.Popen(["killall", "swaybg"])
                 time.sleep(0.005)
-            except Exception as e:
-                print(f"{txt.err_kill} {e}")
+            except subprocess.CalledProcessError:
+                pass
+
+            fill = cf.fill_option.lower()
             command = ["swaybg"]
             # if monitor != "All":
                 # command.extend(["-o", monitor])
@@ -28,6 +32,22 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
 
         # swww backend:
         elif cf.backend == "swww":
+
+            # Check with pgrep if other backends they are running, and kill them
+            # Because swaybg and hyprpaper are known to conflict with swww
+            try:
+                subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
+                subprocess.Popen(["killall", "swaybg"])
+                time.sleep(0.005)
+            except subprocess.CalledProcessError:
+                pass
+            try:
+                subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8')
+                subprocess.Popen(["killall", "hyprpaper"])
+                time.sleep(0.005)
+            except subprocess.CalledProcessError:
+                pass
+
             fill_types = {
                     "fill": "crop",
                     "fit": "fit",
@@ -36,16 +56,13 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
                     "tile": "no",
                     }
             fill = fill_types[cf.fill_option.lower()]
+
+            # Check if swww-deamon is already running. If not, launch it:
             try:
-                if "swaybg" in cf.installed_backends:
-                    subprocess.Popen(["killall", "swaybg"])
-                    time.sleep(0.005)
-                if "hyprpaper" in cf.installed_backends:
-                    subprocess.Popen(["killall", "hyprpaper"])
-                    time.sleep(0.005)
-            except Exception as e:
-                print(f"{txt.err_kill} {e}")
-            subprocess.Popen(["swww-daemon"])
+                subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
+            except subprocess.CalledProcessError:
+                subprocess.Popen(["swww-daemon"])
+
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
             command.extend(["--fill-color", cf.color])
