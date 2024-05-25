@@ -230,7 +230,14 @@ class App(Gtk.Window):
         if self.cf.backend == "swww":
 
             try:
-                subprocess.Popen(["swww-daemon"])
+                # Check if swww-deamon is already running. If not, launch it:
+                try:
+                    subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
+                except subprocess.CalledProcessError:
+                    subprocess.Popen(["swww-daemon"])
+                    print("The swww-daemon launched.")
+
+                # Check available monitors (using swww):
                 query_output = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
                 monitors = query_output.split("\n")
                 for monitor in monitors[:-1]:
@@ -240,14 +247,12 @@ class App(Gtk.Window):
 
         elif self.cf.backend == "hyprpaper":
             try:
-                # Query hyprctl for motitors
+                # Check available motitors (using hyprpaper):
                 query_output = str(subprocess.check_output(["hyprctl", "monitors"], encoding='utf-8'))
-                # Get lines from output
                 query_output = query_output.split('\n')
-                # Use a regular expression to get the lines that contain the monitor names
+                # Use a regular expression to get the lines that contain the monitor names:
                 query_output = list(filter(lambda line:  re.match(r"Monitor [a-zA-Z-0-9]+ \(ID \d+\):", line),query_output))
                 for line in query_output:
-                    # Append monitor names to monitor_names
                     monitor_names.append(line.split(' ')[1])
             except Exception as e:
                 print(f"{self.txt.err_disp} {e}")

@@ -62,6 +62,7 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
                 subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
             except subprocess.CalledProcessError:
                 subprocess.Popen(["swww-daemon"])
+                print("The swww-daemon launched.")
 
             command = ["swww", "img", image_path]
             command.extend(["--resize", fill])
