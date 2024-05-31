@@ -119,13 +119,14 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
             wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{monitor},{image_path}"]
             unload_command = ["hyprctl", "hyprpaper", "unload", "all"]
             result: str = ""
-            while result != "ok":
+            retry_counter: int = 0
+            while result != "ok" and retry_counter < 10:
                 try:
                     result = subprocess.check_output(unload_command, encoding="utf-8").strip()
                     result = subprocess.check_output(preload_command, encoding="utf-8").strip()
                     result = subprocess.check_output(wallpaper_command, encoding="utf-8").strip()
                 except Exception:
-                    continue
+                    retry_counter += 1
 
         elif cf.backend == "none":
             pass
