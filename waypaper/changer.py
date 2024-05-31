@@ -4,6 +4,7 @@ import subprocess
 import time
 from waypaper.config import Config
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
+import sys
 
 
 def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian):
@@ -117,9 +118,14 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
                 monitor = ""
             wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{monitor},{image_path}"]
             unload_command = ["hyprctl", "hyprpaper", "unload", "all"]
-            subprocess.Popen(unload_command)
-            subprocess.Popen(preload_command)
-            subprocess.Popen(wallpaper_command)
+            result: str = ""
+            while result != "ok":
+                try:
+                    result = subprocess.check_output(unload_command, encoding="utf-8").strip()
+                    result = subprocess.check_output(preload_command, encoding="utf-8").strip()
+                    result = subprocess.check_output(wallpaper_command, encoding="utf-8").strip()
+                except Exception:
+                    continue
 
         elif cf.backend == "none":
             pass
