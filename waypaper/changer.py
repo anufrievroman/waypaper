@@ -4,7 +4,7 @@ import subprocess
 import time
 from waypaper.config import Config
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
-import sys
+import re
 
 
 def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian):
@@ -115,18 +115,29 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
                 time.sleep(1)
             preload_command = ["hyprctl", "hyprpaper", "preload", image_path]
             if monitor == "All":
-                monitor = ""
-            wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{monitor},{image_path}"]
-            unload_command = ["hyprctl", "hyprpaper", "unload", "all"]
-            result: str = ""
-            retry_counter: int = 0
-            while result != "ok" and retry_counter < 10:
-                try:
-                    result = subprocess.check_output(unload_command, encoding="utf-8").strip()
-                    result = subprocess.check_output(preload_command, encoding="utf-8").strip()
-                    result = subprocess.check_output(wallpaper_command, encoding="utf-8").strip()
-                except Exception:
-                    retry_counter += 1
+                monitors: list = []
+                # Check available motitors (using hyprpaper):
+                query_output = str(subprocess.check_output(["hyprctl", "monitors"], encoding='utf-8'))
+                query_output = query_output.split('\n')
+                # Use a regular expression to get the lines that contain the monitor names:
+                query_output = list(filter(lambda line:  re.match(r"Monitor [a-zA-Z-0-9]+ \(ID \d+\):", line),query_output))
+                for line in query_output:
+                    monitors.append(line.split(' ')[1])
+            else:
+                monitors: list = [monitor]
+            for m in monitors:
+                wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{m},{image_path}"]
+                unload_command = ["hyprctl", "hyprpaper", "unload", "all"]
+                result: str = ""
+                retry_counter: int = 0
+                while result != "ok" and retry_counter < 10:
+                    try:
+                        subprocess.check_output(unload_command, encoding="utf-8").strip()
+                        subprocess.check_output(preload_command, encoding="utf-8").strip()
+                        result = subprocess.check_output(wallpaper_command, encoding="utf-8").strip()
+                        time.sleep(0.1)
+                    except Exception:
+                        retry_counter += 1
 
         elif cf.backend == "none":
             pass
