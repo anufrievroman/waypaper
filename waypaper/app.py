@@ -1,18 +1,16 @@
 """Module that runs GUI app"""
 
-import subprocess
 import threading
 import os
 import gi
 import shutil
 from pathlib import Path
 from PIL import Image
-import re
 
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_random_file
+from waypaper.common import get_image_paths, get_random_file, get_monitor_names_hyprctl, get_monitor_names_swww
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
 
@@ -228,35 +226,11 @@ class App(Gtk.Window):
         # Check available monitors:
         monitor_names = ["All"]
         if self.cf.backend == "swww":
-
-            try:
-                # Check if swww-deamon is already running. If not, launch it:
-                try:
-                    subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
-                except subprocess.CalledProcessError:
-                    subprocess.Popen(["swww-daemon"])
-                    print("The swww-daemon launched.")
-
-                # Check available monitors (using swww):
-                query_output = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
-                monitors = query_output.split("\n")
-                for monitor in monitors[:-1]:
-                    monitor_names.append(monitor.split(':')[0])
-            except Exception as e:
-                print(f"{self.txt.err_disp} {e}")
-
+            connected_monitors = get_monitor_names_swww()
+            monitor_names.extend(connected_monitors)
         elif self.cf.backend == "hyprpaper":
-            try:
-                # Check available motitors (using hyprpaper):
-                query_output = str(subprocess.check_output(["hyprctl", "monitors"], encoding='utf-8'))
-                query_output = query_output.split('\n')
-                # Use a regular expression to get the lines that contain the monitor names:
-                query_output = list(filter(lambda line:  re.match(r"Monitor [a-zA-Z-0-9]+ \(ID \d+\):", line),query_output))
-                for line in query_output:
-                    monitor_names.append(line.split(' ')[1])
-            except Exception as e:
-                print(f"{self.txt.err_disp} {e}")
-
+            connected_monitors = get_monitor_names_hyprctl()
+            monitor_names.extend(connected_monitors)
         else:
             return
 

@@ -1,6 +1,6 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils` and `feh`. You can check a [demo on reddit](https://www.reddit.com/r/unixporn/comments/15lbhuc/hyprland_waypaper_gui_wallpaper_setter_for_wayland/). See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper` and `feh`. See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screenshot.jpg)
 
@@ -9,7 +9,8 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Vim keys
 - Support for GIF animations (with `swww`)
 - Support for multiple monitors (with `swww`)
-- Works on both Wayland (with `swww` or `swaybg` or `wallutils`) and Xorg (with `feh` or `wallutils`)
+- Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils`)
+- Works on Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
   
@@ -19,7 +20,7 @@ You need to install at least one of the backends and Waypaper, which works as a 
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [wallutils](https://github.com/xyproto/wallutils) on both.
+Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) or [swaybg](https://github.com/hyprwm/hyprpaper) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [wallutils](https://github.com/xyproto/wallutils) on both.
 
 ### 2. Install Waypaper
 
@@ -33,9 +34,9 @@ If `pipx` is not found, you first need to install `pipx` from your package manag
 
 #### On Arch-based distributions
 
-`yay -S waypaper-git`
+`yay -S waypaper` or `yay -S waypaper-git`
 
-The [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) package is available in AUR, thanks to *metak*. Please upvote to support the project.
+The [waypaper](https://aur.archlinux.org/packages/waypaper) and [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) packages are available in AUR, thanks to *metak*. Please upvote to support the project.
 
 #### On NixOS
 
@@ -47,7 +48,7 @@ Users of OpenSUSE [reported issue with installation](https://github.com/anufriev
 
 ### Dependencies
 
-- `swww` or `swaybg` or `feh` or `wallutils`
+- `swww` or `swaybg` or `feh` or `wallutils` or `hyprpaper`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-importlib_metadata`
 - `python-platformdirs`

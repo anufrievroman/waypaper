@@ -3,6 +3,7 @@
 import subprocess
 import time
 from waypaper.config import Config
+from waypaper.common import get_monitor_names_hyprctl
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
 import re
 
@@ -108,28 +109,29 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
 
         # hyprpaper backend:
         elif cf.backend == "hyprpaper":
+
+            # Check if hyprpaper is already running, otherwise start it, and preload the wallpaper:
             try:
                 str(subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8'))
             except Exception:
                 subprocess.Popen(["hyprpaper"])
                 time.sleep(1)
             preload_command = ["hyprctl", "hyprpaper", "preload", image_path]
+            
+            # Decide which monitors are affected:
             if monitor == "All":
-                monitors: list = []
-                # Check available motitors (using hyprpaper):
-                query_output = str(subprocess.check_output(["hyprctl", "monitors"], encoding='utf-8'))
-                query_output = query_output.split('\n')
-                # Use a regular expression to get the lines that contain the monitor names:
-                query_output = list(filter(lambda line:  re.match(r"Monitor [a-zA-Z-0-9]+ \(ID \d+\):", line),query_output))
-                for line in query_output:
-                    monitors.append(line.split(' ')[1])
+                monitors = get_monitor_names_hyprctl()
             else:
                 monitors: list = [monitor]
+
+            # Change the wallpaper one by one for each affected monitor:
             for m in monitors:
                 wallpaper_command = ["hyprctl", "hyprpaper", "wallpaper", f"{m},{image_path}"]
                 unload_command = ["hyprctl", "hyprpaper", "unload", "all"]
                 result: str = ""
                 retry_counter: int = 0
+
+                # Since sometimes hyprpaper fails to change the wallpaper, we try until success:
                 while result != "ok" and retry_counter < 10:
                     try:
                         subprocess.check_output(unload_command, encoding="utf-8").strip()
