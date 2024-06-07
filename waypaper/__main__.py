@@ -42,7 +42,7 @@ parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
 parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
-parser.add_argument("--export", help=txt.msg_arg_export, action='store_true')
+parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
 args = parser.parse_args()
 
 
@@ -72,8 +72,10 @@ def run():
         print(f"{about.applicationName()} v.{about.applicationVersion()}")
         sys.exit(0)
     
-    if args.export:
-        print(json.dumps(Config))
+    if args.list:
+        # Get the wallpapers and monitors and create a list of dictionaries
+        wallpapers_and_monitors = list(map(lambda x: {"monitor": x[0], "wallpaper": x[1]} ,zip(cf.monitors,cf.wallpapers_str.split(','))))
+        print(json.dumps(wallpapers_and_monitors))
         sys.exit(0)
 
     # Start GUI:
