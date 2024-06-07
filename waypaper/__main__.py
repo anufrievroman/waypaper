@@ -42,7 +42,6 @@ parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 args = parser.parse_args()
-print(type(args))
 
 
 def run():
@@ -78,3 +77,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+

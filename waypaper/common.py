@@ -87,6 +87,7 @@ def check_installed_backends() -> List[str]:
             installed_backends.append(backend)
     return installed_backends
 
+
 def get_monitor_names_swww() -> List[str]:
     """Obtain the list of plugged monitors using swww daemon"""
     connected_monitors: List[str] = [] 
