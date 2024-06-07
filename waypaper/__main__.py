@@ -3,6 +3,7 @@
 import argparse
 import sys
 import time
+import json
 
 from waypaper.aboutdata import AboutData
 from waypaper.app import App
@@ -41,6 +42,7 @@ parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
 parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
+parser.add_argument("--export", help=txt.msg_arg_export, action='store_true')
 args = parser.parse_args()
 
 
@@ -68,6 +70,10 @@ def run():
     # Print the version and quit:
     if args.version:
         print(f"{about.applicationName()} v.{about.applicationVersion()}")
+        sys.exit(0)
+    
+    if args.export:
+        print(json.dumps(Config))
         sys.exit(0)
 
     # Start GUI:

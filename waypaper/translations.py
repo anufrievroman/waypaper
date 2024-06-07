@@ -11,6 +11,7 @@ class English:
         self.msg_arg_rest = "restore last wallpaper"
         self.msg_arg_back = "specify which backend to use to set wallpaper"
         self.msg_arg_rand = "set a random wallpaper"
+        self.msg_arg_export = "export to standard output the config file"
 
         self.msg_path = "Selected image path:"
         self.msg_select = "Select"
@@ -60,6 +61,7 @@ class German:
         self.msg_arg_rest = "stellt das zuletzt verwendete Hintergrundbild wieder her"
         self.msg_arg_back = "legt das Backend fest, welches zum Setzen des Hintergrundbildes verwendet werden soll"
         self.msg_arg_rand = "wählt ein zufälliges Hintergrundbild aus"
+        self.msg_arg_export = "export to standard output the config file"
 
         self.msg_path = "Pfad zum ausgewählten Bild:"
         self.msg_select = "Auswählen"
@@ -109,6 +111,7 @@ class French:
         self.msg_arg_rest = "restaurer le dernier papier peint"
         self.msg_arg_back = "spécifier quel backend utiliser pour définir le papier peint"
         self.msg_arg_rand = "définir un papier peint aléatoire"
+        self.msg_arg_export = "export to standard output the config file"
 
         self.msg_path = "Chemin de l'image sélectionnée :"
         self.msg_select = "Sélectionner"
@@ -158,6 +161,7 @@ class Polish:
         self.msg_arg_rest = "przywróć ostatnią tapetę"
         self.msg_arg_back = "określ, który backend użyć do ustawienia tapety"
         self.msg_arg_rand = "ustaw losową tapetę"
+        self.msg_arg_export = "export to standard output the config file"
 
         self.msg_path = "Wybrana ścieżka obrazu:"
         self.msg_select = "Wybierz"
@@ -207,6 +211,7 @@ class Russian:
         self.msg_arg_rest = "восстановить последние обои"
         self.msg_arg_back = "указать бэкенд для установки обоев"
         self.msg_arg_rand = "установить случайные обои"
+        self.msg_arg_export = "export to standard output the config file"
 
         self.msg_path = "Выбранный путь к изображению:"
         self.msg_select = "Выбрать"
@@ -256,6 +261,7 @@ class Chinese:
         self.msg_arg_rest = "恢复上个壁纸"
         self.msg_arg_back = "指定使用哪个后端来设置壁纸"
         self.msg_arg_rand = "设置随机壁纸"
+        self.msg_arg_export = "export to standard output the config file"
 
         self.msg_path = "选择的图像路径："
         self.msg_select = "选择"
