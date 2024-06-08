@@ -10,7 +10,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.config import Config
 from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS
-from waypaper.translations import Chinese, English, French, German, Polish, Russian
+from waypaper.translations import Chinese, English, French, German, Polish, Russian, Spanish
 
 # Get application metadata.
 about = AboutData()
@@ -28,6 +28,8 @@ elif cf.lang == "pl":
     txt = Polish()
 elif cf.lang == "zh":
     txt = Chinese()
+elif cf.lang == "es":
+    txt = Spanish()
 else:
     txt = English()
 
