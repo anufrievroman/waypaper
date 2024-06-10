@@ -512,7 +512,7 @@ class App(Gtk.Window):
 
     def on_key_pressed(self, widget, event) -> None:
         """Process various key binding"""
-        if event.keyval == Gdk.KEY_q:
+        if (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
             Gtk.main_quit()
 
         elif event.keyval == Gdk.KEY_r:
