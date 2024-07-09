@@ -426,7 +426,7 @@ class App(Gtk.Window):
 
     def on_fill_option_changed(self, combo) -> None:
         """Save fill parameter when it was changed"""
-        self.cf.fill_option = combo.get_active_text()
+        self.cf.fill_option = combo.get_active_text().lower()
 
 
     def on_monitor_option_changed(self, combo) -> None:
@@ -468,7 +468,7 @@ class App(Gtk.Window):
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
         print(self.txt.msg_path, self.cf.selected_wallpaper)
-        self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
+        self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
@@ -495,7 +495,7 @@ class App(Gtk.Window):
         if self.cf.selected_wallpaper is None:
             return
         print(self.txt.msg_path, self.cf.selected_wallpaper)
-        self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
+        self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
@@ -569,7 +569,7 @@ class App(Gtk.Window):
             self.cf.selected_wallpaper = wallpaper_path
             print(self.txt.msg_path, self.cf.selected_wallpaper)
             self.cf.backend = self.backend_option_combo.get_active_text()
-            self.cf.fill_option = self.fill_option_combo.get_active_text() or self.cf.fill_option
+            self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
             change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
             self.cf.save()
 
