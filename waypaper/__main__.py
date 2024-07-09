@@ -51,9 +51,6 @@ args = parser.parse_args()
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
 
-    if args.restore:
-        cf.read()
-        
     cf.read_parameters_from_user_arguments(args)
 
     # Set the wallpaper and quit:
