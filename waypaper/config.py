@@ -29,6 +29,7 @@ class Config:
         self.swww_transition_step = 90
         self.swww_transition_angle = 0
         self.swww_transition_duration = 2
+        self.swww_transition_fps = 60
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpapers = []
@@ -72,6 +73,7 @@ class Config:
         self.swww_transition_step = config.get("Settings", "swww_transition_step", fallback=self.swww_transition_step)
         self.swww_transition_angle = config.get("Settings", "swww_transition_angle", fallback=self.swww_transition_angle)
         self.swww_transition_duration = config.get("Settings", "swww_transition_duration", fallback=self.swww_transition_duration)
+        self.swww_transition_fps = config.get("Settings", "swww_transition_fps", fallback=self.swww_transition_fps)
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
@@ -109,6 +111,8 @@ class Config:
             self.swww_transition_step = 90
         if 0 > int(self.swww_transition_duration):
             self.swww_transition_duration = 2
+        if 0 > int(self.swww_transition_fps):
+            self.swww_transition_fps = 60
 
     def attribute_selected_wallpaper(self) -> None:
         """If only certain monitor was affected, change only its wallpaper"""
@@ -151,6 +155,7 @@ class Config:
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
         config.set("Settings", "swww_transition_duration", str(self.swww_transition_duration))
+        config.set("Settings", "swww_transition_fps", str(self.swww_transition_fps))
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
 

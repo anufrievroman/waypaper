@@ -73,6 +73,7 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
             command.extend(["--transition-step", str(cf.swww_transition_step)])
             command.extend(["--transition-angle", str(cf.swww_transition_angle)])
             command.extend(["--transition-duration", str(cf.swww_transition_duration)])
+            command.extend(["--transition-fps", str(cf.swww_transition_fps)])
             if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)
