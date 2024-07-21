@@ -7,7 +7,7 @@ waypaper \- GUI wallpaper manager for Wayland and X11
 [ \fIOPTION\fR ]
 .SH DESCRIPTION
 .B Waypaper
-is a TUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like swaybg, swww, wallutils and feh.  \fIhttps://anufrievroman.gitbook.com/waypaper \fR
+is a TUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like swaybg, swww, hyprpaper, wallutils, and feh.  \fIhttps://anufrievroman.gitbook.com/waypaper \fR
 .SH OPTIONS
 
 .TP
@@ -25,6 +25,14 @@ Restore the last chosen wallpaper. Useful at launch of the window manager.
 .TP
 \fB\-\-random \fP
 Set a random wallpaper.
+
+.TP
+\fB\-\-list \fP
+List wallpapers and monitors in json format.
+
+.TP
+\fB\-\-wallpaper XXX \fP
+Set the wallpaper from the provided path and save it in the config.
 
 .TP
 \fB\-\-backend XXX \fP
