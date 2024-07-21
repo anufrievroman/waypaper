@@ -4,6 +4,7 @@ import argparse
 import sys
 import time
 import json
+import pathlib
 
 from waypaper.aboutdata import AboutData
 from waypaper.app import App
@@ -43,6 +44,7 @@ parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true
 parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
 parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
+parser.add_argument("--wallpaper", help=txt.msg_arg_wall)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
 args = parser.parse_args()
@@ -68,16 +70,28 @@ def run():
             change_wallpaper(wallpaper, cf, monitor, txt)
             time.sleep(0.1)
         sys.exit(0)
+    
+    # Set wallpaper from user arguments:
+    if args.wallpaper:
+        monitor = "All"
+        wallpaper = pathlib.Path(args.wallpaper).expanduser()
+        change_wallpaper(wallpaper, cf, monitor, txt)
+
+        # Save this wallpaper in config and quit:
+        cf.selected_wallpaper = wallpaper
+        cf.selected_monitor = monitor
+        cf.save()
+        sys.exit(0)
+
+    # Output wallpapers and monitors in json format:
+    if args.list:
+        wallpapers_and_monitors = list(map(lambda x: {"monitor": x[0], "wallpaper": x[1]}, zip(cf.monitors,cf.wallpapers_str.split(','))))
+        print(json.dumps(wallpapers_and_monitors))
+        sys.exit(0)
 
     # Print the version and quit:
     if args.version:
         print(f"{about.applicationName()} v.{about.applicationVersion()}")
-        sys.exit(0)
-    
-    if args.list:
-        # Get the wallpapers and monitors and create a list of dictionaries
-        wallpapers_and_monitors = list(map(lambda x: {"monitor": x[0], "wallpaper": x[1]} ,zip(cf.monitors,cf.wallpapers_str.split(','))))
-        print(json.dumps(wallpapers_and_monitors))
         sys.exit(0)
 
     # Start GUI:

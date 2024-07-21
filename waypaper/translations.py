@@ -3,7 +3,7 @@
 
 class English:
     def __init__(self):
-        self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, and swww."
+        self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, hyprpaper, and swww."
         self.msg_info = "For more information, visit:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "print version of the program"
@@ -12,6 +12,7 @@ class English:
         self.msg_arg_back = "specify which backend to use to set wallpaper"
         self.msg_arg_rand = "set a random wallpaper"
         self.msg_arg_list = "list wallpapers in json to standard out"
+        self.msg_arg_wall = "set the specified wallpaper"
 
         self.msg_path = "Selected image path:"
         self.msg_select = "Select"
@@ -35,7 +36,7 @@ class English:
         self.err_backend = "Looks like none of the wallpaper backends is installed in the system.\n"
         self.err_backend += "Use your package manager to install at least one of these backends:\n\n"
         self.err_backend += "- swaybg (for Wayland)\n- swww (for Wayland)\n"
-        self.err_backend += "- feh (for Xorg)\n- wallutils (for Xorg & Wayland)\n\n"
+        self.err_backend += "- hyprpaper (for Wayland)\n- feh (for Xorg)\n- wallutils (for Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Error changing wallpaper:"
         self.err_notsup = "The backend is not supported:"
@@ -53,7 +54,7 @@ class English:
 
 class German:
     def __init__(self):
-        self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils und swww."
+        self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils, hyprpaper und swww."
         self.msg_info = "Weitere Informationen finden Sie unter:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "gibt die Programmversion aus"
@@ -62,6 +63,7 @@ class German:
         self.msg_arg_back = "legt das Backend fest, welches zum Setzen des Hintergrundbildes verwendet werden soll"
         self.msg_arg_rand = "wählt ein zufälliges Hintergrundbild aus"
         self.msg_arg_list = "list wallpapers in json to standard out"
+        self.msg_arg_wall = "set the specified wallpaper"
 
         self.msg_path = "Pfad zum ausgewählten Bild:"
         self.msg_select = "Auswählen"
@@ -85,7 +87,7 @@ class German:
         self.err_backend = "Es konnte kein Hintergrundbild-Backend gefunden werden.\n"
         self.err_backend += "Installieren Sie mindestens eines der folgenden Backends:\n\n"
         self.err_backend += "- swaybg (für Wayland)\n- swww (für Wayland)\n"
-        self.err_backend += "- feh (für Xorg)\n- wallutils (für Xorg & Wayland)\n\n"
+        self.err_backend += "- hyprpaper (fur Wayland)\n- feh (für Xorg)\n- wallutils (für Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Fehler beim Ändern des Hintergrundbildes:"
         self.err_notsup = "Das folgende Backend wird nicht unterstützt:"
@@ -103,7 +105,7 @@ class German:
 
 class French:
     def __init__(self):
-        self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils et swww."
+        self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils, hyprpaper, et swww."
         self.msg_info = "Pour plus d'informations, visitez :\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "afficher la version du programme"
@@ -112,6 +114,7 @@ class French:
         self.msg_arg_back = "spécifier quel backend utiliser pour définir le papier peint"
         self.msg_arg_rand = "définir un papier peint aléatoire"
         self.msg_arg_list = "list wallpapers in json to standard out"
+        self.msg_arg_wall = "set the specified wallpaper"
 
         self.msg_path = "Chemin de l'image sélectionnée :"
         self.msg_select = "Sélectionner"
@@ -135,7 +138,7 @@ class French:
         self.err_backend = "Il semble qu'aucun des backends de papier peint ne soit installé sur le système.\n"
         self.err_backend += "Utilisez votre gestionnaire de paquets pour installer au moins l'un de ces backends :\n\n"
         self.err_backend += "- swaybg (pour Wayland)\n- swww (pour Wayland)\n"
-        self.err_backend += "- feh (pour Xorg)\n- wallutils (pour Xorg & Wayland)\n\n"
+        self.err_backend += "- hyprpaper (pour Wayland)\n- feh (pour Xorg)\n- wallutils (pour Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Erreur lors du changement de papier peint :"
         self.err_notsup = "Le backend n'est pas pris en charge :"
@@ -153,7 +156,7 @@ class French:
 
 class Polish:
     def __init__(self):
-        self.msg_desc = "Graficzne ustawiacz tapet dla Wayland i X11. Działa jako interfejs dla feh, swaybg, wallutils i swww."
+        self.msg_desc = "Graficzne ustawiacz tapet dla Wayland i X11. Działa jako interfejs dla feh, swaybg, wallutils, hyprpaper, i swww."
         self.msg_info = "Aby uzyskać więcej informacji, odwiedź:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "wyświetl wersję programu"
@@ -162,6 +165,7 @@ class Polish:
         self.msg_arg_back = "określ, który backend użyć do ustawienia tapety"
         self.msg_arg_rand = "ustaw losową tapetę"
         self.msg_arg_list = "list wallpapers in json to standard out"
+        self.msg_arg_wall = "set the specified wallpaper"
 
         self.msg_path = "Wybrana ścieżka obrazu:"
         self.msg_select = "Wybierz"
@@ -185,7 +189,7 @@ class Polish:
         self.err_backend = "Wygląda na to, że żaden z backendów tapet nie jest zainstalowany w systemie.\n"
         self.err_backend += "Użyj menedżera pakietów, aby zainstalować co najmniej jeden z tych backendów:\n\n"
         self.err_backend += "- swaybg (dla Wayland)\n- swww (dla Wayland)\n"
-        self.err_backend += "- feh (dla Xorg)\n- wallutils (dla Xorg i Wayland)\n\n"
+        self.err_backend += "- hyprpaper (dla Wayland)\n- feh (dla Xorg)\n- wallutils (dla Xorg i Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Błąd podczas zmiany tapety:"
         self.err_notsup = "Backend nie jest obsługiwany:"
@@ -203,7 +207,7 @@ class Polish:
 
 class Russian:
     def __init__(self):
-        self.msg_desc = "Графический интерфейс для установки обоев на Wayland и X11. Работает как фронтенд для feh, swaybg, wallutils и swww."
+        self.msg_desc = "Графический интерфейс для установки обоев на Wayland и X11. Работает как фронтенд для feh, swaybg, wallutils, hyprpaper, и swww."
         self.msg_info = "Для получения дополнительной информации посетите:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "вывести версию программы"
@@ -211,7 +215,8 @@ class Russian:
         self.msg_arg_rest = "восстановить последние обои"
         self.msg_arg_back = "указать бэкенд для установки обоев"
         self.msg_arg_rand = "установить случайные обои"
-        self.msg_arg_list = "list wallpapers in json to standard out"
+        self.msg_arg_list = "вывести обои и мотиноры в формате json"
+        self.msg_arg_wall = "указать путь к изображению"
 
         self.msg_path = "Выбранный путь к изображению:"
         self.msg_select = "Выбрать"
@@ -235,7 +240,7 @@ class Russian:
         self.err_backend = "Похоже, что ни один из бэкендов для установки обоев не установлен в системе.\n"
         self.err_backend += "Используйте менеджер пакетов для установки хотя бы одного из следующих бэкендов:\n\n"
         self.err_backend += "- swaybg (для Wayland)\n- swww (для Wayland)\n"
-        self.err_backend += "- feh (для Xorg)\n- wallutils (для Xorg и Wayland)\n\n"
+        self.err_backend += "- hyprpaper (для Wayland)\n- feh (для Xorg)\n- wallutils (для Xorg и Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Ошибка при смене обоев:"
         self.err_notsup = "Бэкенд не поддерживается:"
@@ -253,7 +258,7 @@ class Russian:
 
 class Chinese:
     def __init__(self):
-        self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、wallutils 和 swww 的前端。"
+        self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、wallutils 和 swww 的前端。"
         self.msg_info = "欲了解更多信息，请访问:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "版本信息"
@@ -262,6 +267,7 @@ class Chinese:
         self.msg_arg_back = "指定使用哪个后端来设置壁纸"
         self.msg_arg_rand = "设置随机壁纸"
         self.msg_arg_list = "list wallpapers in json to standard out"
+        self.msg_arg_wall = "set the specified wallpaper"
 
         self.msg_path = "选择的图像路径："
         self.msg_select = "选择"
@@ -285,7 +291,7 @@ class Chinese:
         self.err_backend = "系统中似乎没有安装壁纸后端。\n"
         self.err_backend += "使用包管理器安装至少以下后端之一：\n\n"
         self.err_backend += "-swaybg (用于 Wayland)\n-swww (用于 Wayland)\n"
-        self.err_backend += "-feh (对于 Xorg)\n-wallutils (对于 Xorg 和 Wayland)\n\n"
+        self.err_backend += "- hyprpaper (对于 Wayland)\n-feh (对于 Xorg)\n-wallutils (对于 Xorg 和 Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "更改壁纸时出错："
         self.err_notsup = "不支持后端："
@@ -311,6 +317,7 @@ class Spanish:
         self.msg_arg_back = "especifica cual es el programa se va a utilizar para cambiar la imagen de fondo"
         self.msg_arg_rand = "aplica una imagen de fondo aleatoria"
         self.msg_arg_list = 'imprime un listado de las imágenes de fondo al terminal en formato "JSON"'
+        self.msg_arg_wall = "set the specified wallpaper"
 
         self.msg_path = "Donde esta ubicado la imagen en disco"
         self.msg_select = "Selecciona"
@@ -334,7 +341,7 @@ class Spanish:
         self.err_backend = "Parece ser que ningún programa para actualizar la imagen de fondo esta instalado en su sistema.\n"
         self.err_backend += "Por favor instalar uno de los siguientes programas para poder cambiar la imagen de fondo:\n\n"
         self.err_backend += '- swaybg (para "Wayland")\n- swww (para "Wayland"")\n- hyprpaper (para "Wayland")\n'
-        self.err_backend += '- feh (para "Xorg")\n- wallutils (para "Xorg" y "Wayland")\n\n'
+        self.err_backend += '- hyprpaper (para "Wayland")\n- feh (para "Xorg")\n- wallutils (para "Xorg" y "Wayland")\n\n'
         self.err_backend += self.msg_info
         self.err_wall = "Error cambiando imagen de fondo:"
         self.err_notsup = "El programa para cambiar imagen de fondo no tiene soporte:"
