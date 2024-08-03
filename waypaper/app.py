@@ -71,7 +71,7 @@ class App(Gtk.Window):
         """Initialize the UI elements of the application"""
 
         # Create a vertical box for layout:
-        self.main_box = Gtk.VBox(spacing=10)
+        self.main_box = Gtk.VBox(spacing=50)
         self.add(self.main_box)
 
         # Create a button to open folder dialog:
@@ -149,6 +149,11 @@ class App(Gtk.Window):
         self.random_button.connect("clicked", self.on_random_clicked)
         self.random_button.set_tooltip_text(self.txt.tip_random)
 
+        #Create a button that makes a bash script to randmize the images every x minutes
+        self.random_script_button = Gtk.Button(label=self.txt.msg_random_script)
+        self.random_script_button.connect("clicked", self.on_random_script_clicked)
+        self.random_script_button.set_tooltip_text(self.txt.tip_random_script)
+
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         self.bottom_button_box.set_margin_bottom(10)
@@ -175,6 +180,7 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.exit_button, False, False, 0)
         self.options_box.pack_end(self.options_button, False, False, 0)
         self.options_box.pack_end(self.refresh_button, False, False, 0)
+        self.options_box.pack_end(self.random_script_button, False, False, 0)
         self.options_box.pack_end(self.random_button, False, False, 0)
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
@@ -482,6 +488,9 @@ class App(Gtk.Window):
         """On clicking random button, set random wallpaper"""
         self.set_random_wallpaper()
 
+    def on_random_script_clicked(self, widget) -> None:
+        """On clicking random script button, create/execute a bash script to randmize the images every x minutes"""
+        self.set_random_script()
 
     def on_exit_clicked(self, widget) -> None:
         """On clicking exit button, exit"""
