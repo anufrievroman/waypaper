@@ -508,6 +508,24 @@ class App(Gtk.Window):
         change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
+    def set_random_script(self) -> None:
+        """Create/execute a bash script to randmize the images every x minutes"""
+        #I dont know how to actually have the program create or execute an existing bash script
+        #i am thinking of it just doing something like this:
+        #while true; do sleep 600; waypaper --random; done
+        script_path = Path(self.cf.image_folder) / "waypaper_random.sh"
+        script_content = """#!/bin/bash
+        while true; do
+            sleep 10
+            waypaper --random
+        done
+        """
+        if not script_path.exists():
+            with open(script_path, "w") as script_file:
+                script_file.write(script_content)
+            os.chmod(script_path, 0o755)
+        os.system(f"nohup {script_path} &")
+
 
     def clear_cache(self) -> None:
         """Delete cache folder and reprocess the images"""
