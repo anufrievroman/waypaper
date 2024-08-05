@@ -6,6 +6,7 @@ import gi
 import shutil
 from pathlib import Path
 from PIL import Image
+import subprocess
 
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
@@ -63,9 +64,15 @@ class App(Gtk.Window):
         self.selected_index = 0
         self.highlighted_image_row = 0
         self.init_ui()
+        self.random_script_is_running = self.check_script("waypaper_random.sh")
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
+
+    def check_script(self, script_name: str) -> bool:
+        """Check if a given script is running"""
+        result = subprocess.run(['pgrep', '-f', script_name], capture_output=True, text=True)
+        return bool(result.stdout.strip())
 
     def init_ui(self) -> None:
         """Initialize the UI elements of the application"""
@@ -154,6 +161,21 @@ class App(Gtk.Window):
         self.random_script_button.connect("clicked", self.on_random_script_clicked)
         self.random_script_button.set_tooltip_text(self.txt.tip_random_script)
 
+        #make a drop down menu for random script options
+        self.random_script_menu = Gtk.Menu()
+
+        #create a menu item for the random script to be ran every x minutes
+        self.start_script_menu_item = Gtk.MenuItem(label=self.txt.msg_random_script_change_interval)
+        self.start_script_menu_item.connect("activate",self.on_random_script_activate)
+        self.random_script_menu.append(self.start_script_menu_item)
+
+        #stop the menu
+        self.stop_script_menu_item = Gtk.MenuItem(label=self.txt.msg_random_script_stop)
+        self.stop_script_menu_item.connect("activate", self.on_stop_random_script_activate)
+        self.random_script_menu.append(self.stop_script_menu_item)
+
+        self.random_script_menu.show_all()
+
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
         self.bottom_button_box.set_margin_bottom(10)
@@ -181,6 +203,7 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.options_button, False, False, 0)
         self.options_box.pack_end(self.refresh_button, False, False, 0)
         self.options_box.pack_end(self.random_script_button, False, False, 0)
+        self.options_box.pack_end(self.random_script_menu, False, False, 0)
         self.options_box.pack_end(self.random_button, False, False, 0)
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
@@ -490,7 +513,94 @@ class App(Gtk.Window):
 
     def on_random_script_clicked(self, widget) -> None:
         """On clicking random script button, create/execute a bash script to randmize the images every x minutes"""
-        self.set_random_script()
+        # self.set_random_script()
+        self.random_script_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
+
+    def on_random_script_activate(self, widget) -> None:
+        """Start the random script with the specified interval"""
+        self.show_interval_input_dialog()
+
+    def on_stop_random_script_activate(self, widget) -> None:
+        """Stop the random script"""
+        self.stop_random_script()
+
+    def show_interval_input_dialog(self):
+        dialog = Gtk.Dialog(title="Set Interval", transient_for=self, flags=0)
+        #I do not know if these will get translated to other languages
+        dialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK)
+
+        box = dialog.get_content_area()
+        box.set_spacing(6)
+        box.set_margin_top(10)
+        box.set_margin_bottom(10)
+        box.set_margin_start(10)
+        box.set_margin_end(10)
+
+        label = Gtk.Label(label=self.txt.msg_random_script_interval_seconds_label)
+        self.interval_input_entry = Gtk.Entry()
+        self.interval_input_entry.set_text("600")
+
+        box.pack_start(label, False, False, 0)
+        box.pack_start(self.interval_input_entry, False, False, 0)
+
+        dialog.show_all()
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            interval = int(self.interval_input_entry.get_text())
+            self.set_random_script(interval)
+
+        dialog.destroy()
+
+    def set_random_script(self, interval: int) -> None:
+        """Create/execute a bash script to randomize the images every x minutes"""
+        print("Creating or executing the script")
+        script_path = Path(self.cf.image_folder) / "waypaper_random.sh"
+        print(f"Interval is: {interval}")
+
+        script_content = f"""#!/bin/bash
+        while true; do
+            sleep {interval}
+            waypaper --random
+        done
+        """
+        #check if the script is already running to prevent crazy bugs
+        if self.random_script_is_running:
+            self.show_message_dialog("Random script already running! Please stop the script before setting a new interval.")
+            return
+
+        #delete the existing script if it exists because then the interval will not be updated
+        if script_path.exists():
+            script_path.unlink()
+
+        #create a new script with the updated interval and make it executable
+        with open(script_path, "w") as script_file:
+            script_file.write(script_content)
+        os.chmod(script_path, 0o755)
+
+        os.system(f"nohup {script_path} &")
+        self.random_script_is_running = True
+
+    def show_message_dialog(self, message: str) -> None:
+        """Show a message dialog to the user"""
+        dialog = Gtk.MessageDialog(
+            parent=self,
+            flags=0,
+            type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            message_format=message,
+        )
+        dialog.run()
+        dialog.destroy()
+
+    def stop_random_script(self) -> None:
+        """Stop the random script"""
+        result = subprocess.run(['pkill', '-f', "waypaper_random.sh"], capture_output=True, text=True)
+        if result.returncode == 0:
+            self.random_script_is_running = False
+            print("Random script stopped.")
+        else:
+            print("No random script running.")
 
     def on_exit_clicked(self, widget) -> None:
         """On clicking exit button, exit"""
@@ -507,25 +617,6 @@ class App(Gtk.Window):
         self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
-
-    def set_random_script(self) -> None:
-        """Create/execute a bash script to randmize the images every x minutes"""
-        #I dont know how to actually have the program create or execute an existing bash script
-        #i am thinking of it just doing something like this:
-        #while true; do sleep 600; waypaper --random; done
-        script_path = Path(self.cf.image_folder) / "waypaper_random.sh"
-        script_content = """#!/bin/bash
-        while true; do
-            sleep 10
-            waypaper --random
-        done
-        """
-        if not script_path.exists():
-            with open(script_path, "w") as script_file:
-                script_file.write(script_content)
-            os.chmod(script_path, 0o755)
-        os.system(f"nohup {script_path} &")
-
 
     def clear_cache(self) -> None:
         """Delete cache folder and reprocess the images"""

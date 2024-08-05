@@ -4072,3 +4072,30 @@ Traceback (most recent call last):
     if 0 > int(self.swww_transition_fps):
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ValueError: invalid literal for int() with base 10: '60\n\n60'
+Traceback (most recent call last):
+  File "/home/bustopher/opensourceProjects/waypaper/venv/bin/waypaper", line 5, in <module>
+    from waypaper.__main__ import run
+  File "/home/bustopher/opensourceProjects/waypaper/waypaper/__main__.py", line 10, in <module>
+    from waypaper.app import App
+  File "/home/bustopher/opensourceProjects/waypaper/waypaper/app.py", line 73
+    result = subprocess.run(['pgrep', '-f', script_name], capture_output=True, text=True)))
+                                                                                         ^
+SyntaxError: unmatched ')'
+Traceback (most recent call last):
+  File "/home/bustopher/opensourceProjects/waypaper/venv/bin/waypaper", line 5, in <module>
+    from waypaper.__main__ import run
+  File "/home/bustopher/opensourceProjects/waypaper/waypaper/__main__.py", line 10, in <module>
+    from waypaper.app import App
+  File "/home/bustopher/opensourceProjects/waypaper/waypaper/app.py", line 73
+    result = subprocess.run(['pgrep', '-f', script_name], capture_output=True, text=True)))
+                                                                                         ^
+SyntaxError: unmatched ')'
+Traceback (most recent call last):
+  File "/home/bustopher/opensourceProjects/waypaper/venv/bin/waypaper", line 5, in <module>
+    from waypaper.__main__ import run
+  File "/home/bustopher/opensourceProjects/waypaper/waypaper/__main__.py", line 10, in <module>
+    from waypaper.app import App
+  File "/home/bustopher/opensourceProjects/waypaper/waypaper/app.py", line 73
+    result = subprocess.run(['pgrep', '-f', script_name], capture_output=True, text=True)))
+                                                                                         ^
+SyntaxError: unmatched ')'
