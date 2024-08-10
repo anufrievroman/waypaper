@@ -96,7 +96,7 @@ def run():
         sys.exit(0)
 
     # Start GUI:
-    app = App(txt)
+    app = App(txt, cf)
     app.run()
 
 

@@ -52,9 +52,9 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
 class App(Gtk.Window):
     """Main application class that controls GUI"""
 
-    def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Spanish) -> None:
+    def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Spanish, cf: Config) -> None:
         super().__init__(title="Waypaper")
-        self.cf = Config()
+        self.cf = cf
         self.about = AboutData()
         self.txt = txt
         self.check_backends()
