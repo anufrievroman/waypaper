@@ -5,7 +5,7 @@ from argparse import Namespace
 import pathlib
 import os
 from sys import exit
-from platformdirs import user_config_path, user_pictures_path, user_cache_path
+from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
 from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
@@ -41,10 +41,14 @@ class Config:
         self.cache_dir = user_cache_path(self.about.applicationName())
         self.config_dir = user_config_path(self.about.applicationName())
         self.config_file = self.config_dir / "config.ini"
+        self.state_dir = user_state_path(self.about.applicationName())
+        self.state_file = self.state_dir / "state.ini"
+        self.use_xdg_standard = False
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True,exist_ok=True)
+        self.state_dir.mkdir(parents=True, exist_ok=True)
 
         self.read()
         self.check_validity()
@@ -63,7 +67,6 @@ class Config:
 
         # Read parameters:
         self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
-        self.image_folder = pathlib.Path(self.image_folder).expanduser()
         self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
         self.sort_option = config.get("Settings", "sort", fallback=self.sort_option)
         self.backend = config.get("Settings", "backend", fallback=self.backend)
@@ -81,6 +84,17 @@ class Config:
         self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
         self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
+        self.use_xdg_standard = config.getboolean("Settings", "use_xdg_standard", fallback=self.use_xdg_standard)
+
+        # Read State file:
+        if self.use_xdg_standard:
+            state = configparser.ConfigParser()
+            state.read(self.state_file, 'utf-8')
+            self.image_folder = state.get("State", "folder", fallback="")
+            self.wallpapers_str = state.get("State", "wallpaper", fallback="")
+
+        # Post-process parameters:
+        self.image_folder = pathlib.Path(self.image_folder).expanduser()
 
         # Check the validity of the number of columns:
         try:
@@ -139,8 +153,9 @@ class Config:
         if not config.has_section("Settings"):
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
-        config.set("Settings", "folder", self.shorten_path(self.image_folder))
-        config.set("Settings", "wallpaper", ",".join(self.wallpapers))
+        if not self.use_xdg_standard:
+            config.set("Settings", "folder", self.shorten_path(self.image_folder))
+            config.set("Settings", "wallpaper", ",".join(self.wallpapers))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "monitors", ",".join(self.monitors))
         config.set("Settings", "fill", self.fill_option)
@@ -158,6 +173,17 @@ class Config:
         config.set("Settings", "swww_transition_fps", str(self.swww_transition_fps))
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
+
+        # Write state to the file:
+        if self.use_xdg_standard:
+            state = configparser.ConfigParser()
+            state.read(self.state_file)
+            if not state.has_section("State"):
+                state.add_section("State")
+            state.set("State", "folder", str(self.image_folder))
+            state.set("State", "wallpaper", ",".join(self.wallpapers))
+            with open(self.state_file, "w") as statefile:
+                state.write(statefile)
 
 
     def read_parameters_from_user_arguments(self, args: Namespace) -> None:
