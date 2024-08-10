@@ -50,8 +50,6 @@ class Config:
         self.cache_dir.mkdir(parents=True,exist_ok=True)
         self.state_dir.mkdir(parents=True, exist_ok=True)
 
-        self.read()
-        self.check_validity()
 
     def shorten_path(self, path: str) -> str:
         """Replace home part of paths with tilde"""
@@ -86,27 +84,33 @@ class Config:
         self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
 
-        # Read State file:
-        if self.use_xdg_state:
-            state = configparser.ConfigParser()
-            state.read(self.state_file, 'utf-8')
-            self.image_folder = state.get("State", "folder", fallback="")
-            self.wallpapers_str = state.get("State", "wallpaper", fallback="")
-
         # Post-process parameters:
         self.image_folder = pathlib.Path(self.image_folder).expanduser()
-
-        # Check the validity of the number of columns:
-        try:
-            self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
-        except Exception:
-            self.number_of_columns = 3
 
         # Convert strings to lists:
         if self.monitors_str is not None:
             self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
         if self.wallpapers_str is not None:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
+
+
+    def read_state(self) -> None:
+        """Load data from the state.ini file"""
+        if not self.use_xdg_state:
+            return
+        
+        state = configparser.ConfigParser()
+        state.read(self.state_file, 'utf-8')
+        self.image_folder = state.get("State", "folder", fallback="")
+        self.wallpapers_str = state.get("State", "wallpaper", fallback="")
+
+        # Post-process parameters:
+        self.image_folder = pathlib.Path(self.image_folder).expanduser()
+
+        # Convert strings to lists:
+        if self.wallpapers_str is not None:
+            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
+
 
     def check_validity(self) -> None:
         """Check if the config parameters are valid and correct them if needed"""
@@ -118,6 +122,12 @@ class Config:
             self.fill_option = FILL_OPTIONS[0]
         if self.swww_transition_type not in SWWW_TRANSITION_TYPES:
             self.swww_transition_type = "any"
+
+        # Check the validity of the number of columns:
+        try:
+            self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
+        except Exception:
+            self.number_of_columns = 3
 
         if 0 > int(self.swww_transition_angle) > 180:
             self.swww_transition_angle = 0
@@ -174,17 +184,27 @@ class Config:
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
+        
+        # Save state file:
+        self.save_state()
+
+
+    def save_state(self) -> None:
+        """Save the current state of the application"""
+        if not self.use_xdg_state:
+            return
+
+        self.attribute_selected_wallpaper()
 
         # Write state to the file:
-        if self.use_xdg_state:
-            state = configparser.ConfigParser()
-            state.read(self.state_file)
-            if not state.has_section("State"):
-                state.add_section("State")
-            state.set("State", "folder", str(self.image_folder))
-            state.set("State", "wallpaper", ",".join(self.wallpapers))
-            with open(self.state_file, "w") as statefile:
-                state.write(statefile)
+        state = configparser.ConfigParser()
+        state.read(self.state_file)
+        if not state.has_section("State"):
+            state.add_section("State")
+        state.set("State", "folder", str(self.image_folder))
+        state.set("State", "wallpaper", ",".join(self.wallpapers))
+        with open(self.state_file, "w") as statefile:
+            state.write(statefile)
 
 
     def read_parameters_from_user_arguments(self, args: Namespace) -> None:
@@ -198,4 +218,7 @@ class Config:
             self.fill_option = args.fill
         if args.folder:
             self.image_folder = pathlib.Path(args.folder).expanduser()
+        if args.state_file:
+            self.use_xdg_state = True # Use of a custom state file implies state is in a separate file, requires use_xdg_state
+            self.state_file = pathlib.Path(args.state_file).expanduser()
 

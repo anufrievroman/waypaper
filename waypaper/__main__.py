@@ -46,6 +46,7 @@ parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--wallpaper", help=txt.msg_arg_wall)
 parser.add_argument("--folder", help=txt.msg_arg_folder)
+parser.add_argument("--state-file", help=txt.msg_arg_statefile)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
 args = parser.parse_args()
@@ -53,8 +54,13 @@ args = parser.parse_args()
 
 def run():
     """Read user arguments and either run GUI app or just reset the wallpaper"""
-
+    cf.read()
+    cf.read_state() # read default state file, if use_xdg_state is True
     cf.read_parameters_from_user_arguments(args)
+    if args.state_file:
+        cf.read_state() # read from custom state file if provided
+        cf.read_parameters_from_user_arguments(args) # ensure that user arguments override values from state file
+    cf.check_validity()
 
     # Set the wallpaper and quit:
     if args.restore or args.random:

@@ -14,6 +14,7 @@ class English:
         self.msg_arg_list = "list wallpapers in json to standard out"
         self.msg_arg_wall = "set the specified wallpaper"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Selected image path:"
         self.msg_select = "Select"
@@ -66,6 +67,7 @@ class German:
         self.msg_arg_list = "list wallpapers in json to standard out"
         self.msg_arg_wall = "setzt das angegebene Hintergrundbild"
         self.msg_arg_folder = "legt fest, welcher Ordner nach Hintergrundbildern durchsucht werden soll"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Pfad zum ausgewählten Bild:"
         self.msg_select = "Auswählen"
@@ -118,6 +120,7 @@ class French:
         self.msg_arg_list = "list wallpapers in json to standard out"
         self.msg_arg_wall = "set the specified wallpaper"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Chemin de l'image sélectionnée :"
         self.msg_select = "Sélectionner"
@@ -170,6 +173,7 @@ class Polish:
         self.msg_arg_list = "list wallpapers in json to standard out"
         self.msg_arg_wall = "set the specified wallpaper"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Wybrana ścieżka obrazu:"
         self.msg_select = "Wybierz"
@@ -222,6 +226,7 @@ class Russian:
         self.msg_arg_list = "вывести обои и мотиноры в формате json"
         self.msg_arg_wall = "указать путь к изображению"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Выбранный путь к изображению:"
         self.msg_select = "Выбрать"
@@ -274,6 +279,7 @@ class Chinese:
         self.msg_arg_list = "list wallpapers in json to standard out"
         self.msg_arg_wall = "set the specified wallpaper"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "选择的图像路径："
         self.msg_select = "选择"
@@ -325,6 +331,7 @@ class Spanish:
         self.msg_arg_list = 'imprime un listado de las imágenes de fondo al terminal en formato "JSON"'
         self.msg_arg_wall = "set the specified wallpaper"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Donde esta ubicado la imagen en disco"
         self.msg_select = "Selecciona"
