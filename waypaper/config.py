@@ -43,7 +43,7 @@ class Config:
         self.config_file = self.config_dir / "config.ini"
         self.state_dir = user_state_path(self.about.applicationName())
         self.state_file = self.state_dir / "state.ini"
-        self.use_xdg_standard = False
+        self.use_xdg_state = False
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -84,10 +84,10 @@ class Config:
         self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
         self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
-        self.use_xdg_standard = config.getboolean("Settings", "use_xdg_standard", fallback=self.use_xdg_standard)
+        self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
 
         # Read State file:
-        if self.use_xdg_standard:
+        if self.use_xdg_state:
             state = configparser.ConfigParser()
             state.read(self.state_file, 'utf-8')
             self.image_folder = state.get("State", "folder", fallback="")
@@ -153,7 +153,7 @@ class Config:
         if not config.has_section("Settings"):
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
-        if not self.use_xdg_standard:
+        if not self.use_xdg_state:
             config.set("Settings", "folder", self.shorten_path(self.image_folder))
             config.set("Settings", "wallpaper", ",".join(self.wallpapers))
         config.set("Settings", "backend", self.backend)
@@ -171,11 +171,12 @@ class Config:
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
         config.set("Settings", "swww_transition_duration", str(self.swww_transition_duration))
         config.set("Settings", "swww_transition_fps", str(self.swww_transition_fps))
+        config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
 
         # Write state to the file:
-        if self.use_xdg_standard:
+        if self.use_xdg_state:
             state = configparser.ConfigParser()
             state.read(self.state_file)
             if not state.has_section("State"):
