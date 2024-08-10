@@ -102,12 +102,15 @@ class Config:
         state = configparser.ConfigParser()
         state.read(self.state_file, 'utf-8')
         self.image_folder = state.get("State", "folder", fallback="")
+        self.monitors_str = state.get("State", "monitors", fallback=self.selected_monitor, raw=True)
         self.wallpapers_str = state.get("State", "wallpaper", fallback="")
 
         # Post-process parameters:
         self.image_folder = pathlib.Path(self.image_folder).expanduser()
 
         # Convert strings to lists:
+        if self.monitors_str is not None:
+            self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
         if self.wallpapers_str is not None:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
 
@@ -165,9 +168,9 @@ class Config:
         config.set("Settings", "language", self.lang)
         if not self.use_xdg_state:
             config.set("Settings", "folder", self.shorten_path(self.image_folder))
+            config.set("Settings", "monitors", ",".join(self.monitors))
             config.set("Settings", "wallpaper", ",".join(self.wallpapers))
         config.set("Settings", "backend", self.backend)
-        config.set("Settings", "monitors", ",".join(self.monitors))
         config.set("Settings", "fill", self.fill_option)
         config.set("Settings", "sort", self.sort_option)
         config.set("Settings", "color", self.color)
@@ -202,6 +205,7 @@ class Config:
         if not state.has_section("State"):
             state.add_section("State")
         state.set("State", "folder", str(self.image_folder))
+        state.set("State", "monitors", ",".join(self.monitors))
         state.set("State", "wallpaper", ",".join(self.wallpapers))
         with open(self.state_file, "w") as statefile:
             state.write(statefile)
