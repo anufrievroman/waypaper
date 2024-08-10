@@ -169,4 +169,6 @@ class Config:
             self.backend = args.backend
         if args.fill:
             self.fill_option = args.fill
+        if args.folder:
+            self.image_folder = pathlib.Path(args.folder).expanduser()
 
