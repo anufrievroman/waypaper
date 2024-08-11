@@ -112,7 +112,11 @@ class App(Gtk.Window):
         for option in FILL_OPTIONS:
             capitalized_option = option[0].upper() + option[1:]
             self.fill_option_combo.append_text(capitalized_option)
-        self.fill_option_combo.set_active(0)
+        if self.cf.fill_option in FILL_OPTIONS:
+            active_fill_option_index = FILL_OPTIONS.index(self.cf.fill_option)
+            self.fill_option_combo.set_active(active_fill_option_index)
+        else:
+            self.fill_option_combo.set_active(0)
         self.fill_option_combo.connect("changed", self.on_fill_option_changed)
         self.fill_option_combo.set_tooltip_text(self.txt.tip_fill)
 
