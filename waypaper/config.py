@@ -136,7 +136,7 @@ class Config:
             self.swww_transition_angle = 0
         if 0 > int(self.swww_transition_step) > 255:
             self.swww_transition_step = 90
-        if 0 > int(self.swww_transition_duration):
+        if 0 > float(self.swww_transition_duration):
             self.swww_transition_duration = 2
         if 0 > int(self.swww_transition_fps):
             self.swww_transition_fps = 60
