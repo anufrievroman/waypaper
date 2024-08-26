@@ -256,6 +256,57 @@ class Russian:
         self.tip_exit = "Выйти из приложения"
 
 
+class Belarusian:
+    def __init__(self):
+        self.msg_desc = "Графічны інтэрфейс для ўстаноўкі шпалер на Wayland і X11. Працуе як фронтэнд для feh, swaybg, wallutils, hyprpaper, і swww."
+        self.msg_info = "Для атрымання дадатковай інфармацыі наведайце:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "вывесці версію праграмы"
+        self.msg_arg_fill = "пазначыць, як запоўніць экран абранай выявай"
+        self.msg_arg_rest = "аднавіць апошнія шпалеры"
+        self.msg_arg_back = "паказаць бэкенд для ўстаноўкі шпалер"
+        self.msg_arg_rand = "ўсталяваць выпадковыя шпалеры"
+        self.msg_arg_list = "вывесці шпалеры і матыноры ў фармаце json"
+        self.msg_arg_wall = "пазначыць шлях да выявы"
+
+        self.msg_path = "Абраны шлях да выявы:"
+        self.msg_select = "Выбраць"
+        self.msg_refresh = "Абнавіць"
+        self.msg_random = "Выпадкова"
+        self.msg_exit = "Вынахад"
+        self.msg_subfolders = "Паказаць падтэчкі"
+        self.msg_hidden = "Паказаць схаваныя"
+        self.msg_gifs = "Паказаць толькі gif"
+        self.msg_changefolder = "Змяніць тэчку са шпалерамі"
+        self.msg_choosefolder = "Калі ласка, абярыце тэчку"
+        self.msg_caching = "Кэшаванне шпалер..."
+        self.msg_setwith = "Адпраўлена каманда на ўстаноўку шпалер з выкарыстаннем"
+
+        self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
+        self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
+        self.msg_help += ". - Паказаць/схаваць схаваныя файлы \ns - Паказаць/схаваць укладзеныя тэчкі\n? - Даведка\nq - Вынахад\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "Памылка пры выдаленні кэша"
+        self.err_backend = "Падобна, што ніводны з бэкэндаў для ўсталёўкі шпалер не ўсталяваны ў сістэме.\n"
+        self.err_backend += "Выкарыстоўвайце менеджэр пакетаў для ўстаноўкі хаця б аднаго з наступных бэкендаў:\n\n"
+        self.err_backend += "- swaybg (для Wayland)\n- swww (для Wayland)\n"
+        self.err_backend += "- hyprpaper (для Wayland)\n- feh (для Xorg)\n- wallutils (для Xorg і Wayland)\n\n"
+        self.err_backend += self.msg_info
+        self.err_wall = "Памылка пры змене шпалер:"
+        self.err_notsup = "Бэкенд не падтрымліваецца:"
+        self.err_disp = "Памылка вызначэння назваў манітораў:"
+
+        self.tip_refresh = "Абнавіць тэчку з выявамі"
+        self.tip_fill = "Выбраць тып запаўнення"
+        self.tip_backend = "Выбраць бэкенд"
+        self.tip_sorting = "Выбраць тып сартавання"
+        self.tip_display = "Выбраць дысплей"
+        self.tip_color = "Выбраць колер фону"
+        self.tip_random = "Усталяваць выпадковыя шпалеры"
+        self.tip_exit = "Выйсці з прыкладання"
+
+
 class Chinese:
     def __init__(self):
         self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、wallutils 和 swww 的前端。"

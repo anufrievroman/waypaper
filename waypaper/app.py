@@ -12,7 +12,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file, get_monitor_names_hyprctl, get_monitor_names_swww
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
-from waypaper.translations import Chinese, English, French, German, Polish, Russian, Spanish
+from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -52,7 +52,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
 class App(Gtk.Window):
     """Main application class that controls GUI"""
 
-    def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Spanish) -> None:
+    def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Belarusian|Spanish) -> None:
         super().__init__(title="Waypaper")
         self.cf = Config()
         self.about = AboutData()
