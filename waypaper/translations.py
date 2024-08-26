@@ -308,7 +308,7 @@ class Chinese:
 
 class Spanish:
     def __init__(self):
-        self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
+        self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz gráfica para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
         self.msg_info = "Para más información, visita:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "imprime la versión del programa"
