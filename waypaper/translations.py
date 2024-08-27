@@ -266,6 +266,57 @@ class Russian:
         self.tip_exit = "Выйти из приложения"
 
 
+class Belarusian:
+    def __init__(self):
+        self.msg_desc = "Графічны інтэрфейс для ўстаноўкі шпалер на Wayland і X11. Працуе як фронтэнд для feh, swaybg, wallutils, hyprpaper, і swww."
+        self.msg_info = "Для атрымання дадатковай інфармацыі наведайце:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "вывесці версію праграмы"
+        self.msg_arg_fill = "пазначыць, як запоўніць экран абранай выявай"
+        self.msg_arg_rest = "аднавіць апошнія шпалеры"
+        self.msg_arg_back = "паказаць бэкенд для ўстаноўкі шпалер"
+        self.msg_arg_rand = "ўсталяваць выпадковыя шпалеры"
+        self.msg_arg_list = "вывесці шпалеры і матыноры ў фармаце json"
+        self.msg_arg_wall = "пазначыць шлях да выявы"
+
+        self.msg_path = "Абраны шлях да выявы:"
+        self.msg_select = "Выбраць"
+        self.msg_refresh = "Абнавіць"
+        self.msg_random = "Выпадкова"
+        self.msg_exit = "Вынахад"
+        self.msg_subfolders = "Паказаць падтэчкі"
+        self.msg_hidden = "Паказаць схаваныя"
+        self.msg_gifs = "Паказаць толькі gif"
+        self.msg_changefolder = "Змяніць тэчку са шпалерамі"
+        self.msg_choosefolder = "Калі ласка, абярыце тэчку"
+        self.msg_caching = "Кэшаванне шпалер..."
+        self.msg_setwith = "Адпраўлена каманда на ўстаноўку шпалер з выкарыстаннем"
+
+        self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
+        self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
+        self.msg_help += ". - Паказаць/схаваць схаваныя файлы \ns - Паказаць/схаваць укладзеныя тэчкі\n? - Даведка\nq - Вынахад\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "Памылка пры выдаленні кэша"
+        self.err_backend = "Падобна, што ніводны з бэкэндаў для ўсталёўкі шпалер не ўсталяваны ў сістэме.\n"
+        self.err_backend += "Выкарыстоўвайце менеджэр пакетаў для ўстаноўкі хаця б аднаго з наступных бэкендаў:\n\n"
+        self.err_backend += "- swaybg (для Wayland)\n- swww (для Wayland)\n"
+        self.err_backend += "- hyprpaper (для Wayland)\n- feh (для Xorg)\n- wallutils (для Xorg і Wayland)\n\n"
+        self.err_backend += self.msg_info
+        self.err_wall = "Памылка пры змене шпалер:"
+        self.err_notsup = "Бэкенд не падтрымліваецца:"
+        self.err_disp = "Памылка вызначэння назваў манітораў:"
+
+        self.tip_refresh = "Абнавіць тэчку з выявамі"
+        self.tip_fill = "Выбраць тып запаўнення"
+        self.tip_backend = "Выбраць бэкенд"
+        self.tip_sorting = "Выбраць тып сартавання"
+        self.tip_display = "Выбраць дысплей"
+        self.tip_color = "Выбраць колер фону"
+        self.tip_random = "Усталяваць выпадковыя шпалеры"
+        self.tip_exit = "Выйсці з прыкладання"
+
+
 class Chinese:
     def __init__(self):
         self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、wallutils 和 swww 的前端。"
@@ -320,52 +371,52 @@ class Chinese:
 
 class Spanish:
     def __init__(self):
-        self.msg_desc = 'Cambiador de imagen de fondo gráfico para "Wayland" y "X11". Trabaja como una astricción para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
-        self.msg_info = "Para mas información, visita:\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz gráfica para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
+        self.msg_info = "Para más información, visita:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "imprime la versión del programa"
-        self.msg_arg_fill = "especifica cual es el relleno de la pantalla con la imagen escogida"
-        self.msg_arg_rest = "restaura la ultima imagen de fondo"
-        self.msg_arg_back = "especifica cual es el programa se va a utilizar para cambiar la imagen de fondo"
+        self.msg_arg_fill = "específica una forma de rellenar la pantalla con la imagen escogida"
+        self.msg_arg_rest = "restaura la última imagen de fondo"
+        self.msg_arg_back = "específica cuál es el programa a utilizar para cambiar la imagen de fondo"
         self.msg_arg_rand = "aplica una imagen de fondo aleatoria"
         self.msg_arg_list = 'imprime un listado de las imágenes de fondo al terminal en formato "JSON"'
-        self.msg_arg_wall = "set the specified wallpaper"
+        self.msg_arg_wall = "establece el fondo especificado"
         self.msg_arg_folder = "specify which folder to scan for wallpapers"
         self.msg_arg_statefile = "specify a custom file to store the application state"
 
-        self.msg_path = "Donde esta ubicado la imagen en disco"
+        self.msg_path = "Ubicación de la imagen:"
         self.msg_select = "Selecciona"
         self.msg_refresh = "Actualizar"
         self.msg_random = "Aleatorio"
         self.msg_exit = "Salir"
-        self.msg_subfolders = "Enseñar carpetas enlazadas"
+        self.msg_subfolders = "Ver subcarpetas"
         self.msg_hidden = "Ver archivos ocultos"
-        self.msg_gifs = 'Ver solamente imágenes tipo "GIF"'
+        self.msg_gifs = 'Ver solamente imágenes de tipo "GIF"'
         self.msg_changefolder = "Cambiar carpeta de imágenes"
         self.msg_choosefolder = "Por favor, selecciona una carpeta"
         self.msg_caching = "Almacenando en el caché..."
         self.msg_setwith = "El comando para actualizar la imagen de fondo fue ejecutado por"
 
-        self.msg_help = 'Controles para el teclado para "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imagen seleccionada\nf - Cambiar carpeta de images\n'
-        self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imagen aleatoria\nr - Recrear caché de images\n"
-        self.msg_help += ". - Ver/Omitir archivos ocultos\ns - Ver/Omitir imágenes en carpetas enlazadas\n? - Ayuda\nq - Cerrar aplicación\n\n"
+        self.msg_help = 'Controles para usar "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imágen seleccionada\nf - Cambiar carpeta de imágenes\n'
+        self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imágen aleatoria\nr - Recrear caché de imágenes\n"
+        self.msg_help += ". - Ver/Omitir archivos ocultos\ns - Ver/Omitir imágenes en subcarpetas\n? - Ayuda\nq - Cerrar aplicación\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Error borrando el caché"
-        self.err_backend = "Parece ser que ningún programa para actualizar la imagen de fondo esta instalado en su sistema.\n"
-        self.err_backend += "Por favor instalar uno de los siguientes programas para poder cambiar la imagen de fondo:\n\n"
+        self.err_backend = "Parece ser que ningún programa para actualizar la imagen de fondo está instalado en su sistema.\n"
+        self.err_backend += "Por favor, instala uno de los siguientes programas para poder cambiar la imagen de fondo:\n\n"
         self.err_backend += '- swaybg (para "Wayland")\n- swww (para "Wayland"")\n- hyprpaper (para "Wayland")\n'
         self.err_backend += '- hyprpaper (para "Wayland")\n- feh (para "Xorg")\n- wallutils (para "Xorg" y "Wayland")\n\n'
         self.err_backend += self.msg_info
         self.err_wall = "Error cambiando imagen de fondo:"
-        self.err_notsup = "El programa para cambiar imagen de fondo no tiene soporte:"
-        self.err_disp = "Error buscando nombre de monitores"
+        self.err_notsup = "El programa para cambiar la imagen de fondo no tiene soporte:"
+        self.err_disp = "Error buscando nombres de monitores"
 
         self.tip_refresh = "Volver a almacenar la carpeta de imágenes"
         self.tip_fill = "Escoja el tipo de relleno"
-        self.tip_backend = "Escoja el programa para cambiar imagen de fondo"
-        self.tip_sorting = "Escoja métrica de ordenamiento"
-        self.tip_display = "Escoja nombre de pantalla"
-        self.tip_color = "Escoja color de fondo"
-        self.tip_random = "Actualizar imagen de fondo a una imagen aleatoria"
+        self.tip_backend = "Escoja el programa para cambiar la imagen de fondo"
+        self.tip_sorting = "Escoja una forma de ordenar"
+        self.tip_display = "Escoja el nombre de la pantalla"
+        self.tip_color = "Escoja un color de fondo"
+        self.tip_random = "Actualizar la imagen de fondo a una imagen aleatoria"
         self.tip_exit = "Cerrar la aplicación"

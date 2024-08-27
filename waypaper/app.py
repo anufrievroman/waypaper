@@ -12,7 +12,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file, get_monitor_names_hyprctl, get_monitor_names_swww
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
-from waypaper.translations import Chinese, English, French, German, Polish, Russian, Spanish
+from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -52,7 +52,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
 class App(Gtk.Window):
     """Main application class that controls GUI"""
 
-    def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Spanish, cf: Config) -> None:
+    def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Belarusian|Spanish, cf: Config) -> None:
         super().__init__(title="Waypaper")
         self.cf = cf
         self.about = AboutData()
@@ -299,7 +299,7 @@ class App(Gtk.Window):
     def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
-        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders,
+        self.image_paths = get_image_paths(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders,
                                            self.cf.show_hidden, self.cf.show_gifs_only, depth=1)
         self.sort_images()
 
@@ -387,7 +387,7 @@ class App(Gtk.Window):
         )
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.cf.image_folder = dialog.get_filename()
+            self.cf.image_folder = Path(dialog.get_filename())
             threading.Thread(target=self.process_images).start()
         dialog.destroy()
 
@@ -465,15 +465,16 @@ class App(Gtk.Window):
         self.cf.color = "#{:02X}{:02X}{:02X}".format(red, green, blue)
 
 
-    def on_image_clicked(self, widget, path: str) -> str:
+    def on_image_clicked(self, widget, path: str) -> None:
         """On clicking an image, set it as a wallpaper and save"""
         self.cf.backend = self.backend_option_combo.get_active_text()
-        self.cf.selected_wallpaper = path
+        self.cf.select_wallpaper(path)
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+        if self.cf.selected_wallpaper:
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
 
@@ -495,12 +496,15 @@ class App(Gtk.Window):
     def set_random_wallpaper(self) -> None:
         """Choose a random image and set it as the wallpaper"""
         self.cf.backend = self.backend_option_combo.get_active_text()
-        self.cf.selected_wallpaper = get_random_file(self.cf.backend, self.cf.image_folder, self.cf.include_subfolders)
-        if self.cf.selected_wallpaper is None:
+        new_wallpaper =  get_random_file(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders)
+        if new_wallpaper:
+            self.cf.select_wallpaper(new_wallpaper)
+        else:
             return
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
-        change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+        if self.cf.selected_wallpaper:
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.save()
 
 
@@ -514,7 +518,7 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
-    def on_key_pressed(self, widget, event) -> None:
+    def on_key_pressed(self, widget, event) -> bool:
         """Process various key binding"""
         if (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
             Gtk.main_quit()
@@ -570,16 +574,16 @@ class App(Gtk.Window):
 
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
-            self.cf.selected_wallpaper = wallpaper_path
+            self.cf.select_wallpaper(wallpaper_path)
             print(self.txt.msg_path, self.cf.selected_wallpaper)
             self.cf.backend = self.backend_option_combo.get_active_text()
             self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
-            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+            if self.cf.selected_wallpaper:
+                change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
             self.cf.save()
 
         # Prevent other default key handling:
-        if event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]:
-            return True
+        return event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]
 
 
     def run(self) -> None:

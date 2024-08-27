@@ -12,7 +12,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.config import Config
 from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS
-from waypaper.translations import Chinese, English, French, German, Polish, Russian, Spanish
+from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 # Get application metadata.
 about = AboutData()
@@ -26,6 +26,8 @@ elif cf.lang == "fr":
     txt = French()
 elif cf.lang == "ru":
     txt = Russian()
+elif cf.lang == "by":
+    txt = Belarusian()
 elif cf.lang == "pl":
     txt = Polish()
 elif cf.lang == "zh":
@@ -67,9 +69,11 @@ def run():
         for wallpaper, monitor in zip(cf.wallpapers, cf.monitors):
 
             if args.random:
-                wallpaper = get_random_file(cf.backend, cf.image_folder, cf.include_subfolders, cf.show_hidden)
-                cf.selected_wallpaper = str(wallpaper)
-                cf.save()
+                wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.show_hidden)
+                if wallpaper_str:
+                    cf.select_wallpaper(wallpaper_str)
+                    cf.save()
+                    wallpaper = pathlib.Path(wallpaper_str)
 
             if wallpaper is None:
                 continue
@@ -92,7 +96,7 @@ def run():
 
     # Output wallpapers and monitors in json format:
     if args.list:
-        wallpapers_and_monitors = list(map(lambda x: {"monitor": x[0], "wallpaper": x[1]}, zip(cf.monitors,cf.wallpapers_str.split(','))))
+        wallpapers_and_monitors = list(map(lambda x: {"monitor": x[0], "wallpaper": str(x[1])}, zip(cf.monitors,cf.wallpapers)))
         print(json.dumps(wallpapers_and_monitors))
         sys.exit(0)
 

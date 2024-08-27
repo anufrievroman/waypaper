@@ -6,6 +6,7 @@ import pathlib
 import os
 from sys import exit
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
+from typing import List
 
 from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
@@ -15,10 +16,11 @@ from waypaper.common import check_installed_backends
 class Config:
     """User configuration loaded from the config.ini file"""
     def __init__(self):
+        # All paths (folders or wallpapers) are Path objects
         self.home_path = pathlib.Path.home()
         self.image_folder = user_pictures_path()
         self.installed_backends = check_installed_backends()
-        self.selected_wallpaper = ""
+        self.selected_wallpaper = None
         self.selected_monitor = "All"
         self.fill_option = FILL_OPTIONS[0]
         self.sort_option = SORT_OPTIONS[0]
@@ -51,20 +53,28 @@ class Config:
         self.state_dir.mkdir(parents=True, exist_ok=True)
 
 
-    def shorten_path(self, path: str) -> str:
+    def select_wallpaper(self, path_str: str) -> None:
+        self.selected_wallpaper = pathlib.Path(path_str)
+
+    def shorten_path(self, path: pathlib.Path) -> str:
         """Replace home part of paths with tilde"""
-        if str(path).startswith(str(self.home_path)):
+        if path.is_relative_to(self.home_path):
             return str(path).replace(str(self.home_path), "~", 1)
-        else:
+        elif path:
             return str(path)
+        else:
+            return ''
+
+    def shortened_paths(self, paths: List[pathlib.Path]) -> str:
+        """Prepare a list of paths to be serialized as a comma separated string"""
+        return ','.join(self.shorten_path(p) for p in paths)
 
     def read(self) -> None:
         """Load data from the config.ini or use default if it does not exists"""
         config = configparser.ConfigParser()
         config.read(self.config_file, 'utf-8')
 
-        # Read parameters:
-        self.image_folder = config.get("Settings", "folder", fallback=self.image_folder)
+        # Read basic parameters:
         self.fill_option = config.get("Settings", "fill", fallback=self.fill_option)
         self.sort_option = config.get("Settings", "sort", fallback=self.sort_option)
         self.backend = config.get("Settings", "backend", fallback=self.backend)
@@ -79,20 +89,24 @@ class Config:
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
-        self.monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
-        self.wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
-        self.number_of_columns = config.get("Settings", "number_of_columns", fallback=self.number_of_columns)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
-
-        # Post-process parameters:
-        self.image_folder = pathlib.Path(self.image_folder).expanduser()
-
-        # Convert strings to lists:
-        if self.monitors_str is not None:
-            self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
-        if self.wallpapers_str is not None:
-            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
-
+        
+        # Read and convert strings representing lists and paths:
+        image_folder_str = config.get("Settings", "folder", fallback=self.image_folder)
+        monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
+        wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
+        self.image_folder = pathlib.Path(image_folder_str).expanduser()
+        if monitors_str:
+            self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
+        if wallpapers_str:
+            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
+            
+        # Read and check the validity of the number of columns:
+        try:
+            self.number_of_columns = config.getint("Settings", "number_of_columns", fallback=self.number_of_columns)
+            self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
+        except Exception:
+            self.number_of_columns = 3
 
     def read_state(self) -> None:
         """Load data from the state.ini file"""
@@ -102,17 +116,15 @@ class Config:
         state = configparser.ConfigParser()
         state.read(self.state_file, 'utf-8')
         self.image_folder = state.get("State", "folder", fallback="")
-        self.monitors_str = state.get("State", "monitors", fallback=self.selected_monitor, raw=True)
-        self.wallpapers_str = state.get("State", "wallpaper", fallback="")
-
-        # Post-process parameters:
-        self.image_folder = pathlib.Path(self.image_folder).expanduser()
-
+        monitors_str = state.get("State", "monitors", fallback=self.selected_monitor, raw=True)
+        wallpapers_str = state.get("State", "wallpaper", fallback="", raw=True)
+    
         # Convert strings to lists:
-        if self.monitors_str is not None:
-            self.monitors = [str(monitor) for monitor in self.monitors_str.split(",")]
-        if self.wallpapers_str is not None:
-            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in self.wallpapers_str.split(",")]
+        if monitors_str:
+            self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
+        if wallpapers_str:
+            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
+        self.image_folder = pathlib.Path(self.image_folder).expanduser()
 
 
     def check_validity(self) -> None:
@@ -143,17 +155,17 @@ class Config:
 
     def attribute_selected_wallpaper(self) -> None:
         """If only certain monitor was affected, change only its wallpaper"""
-        if self.selected_wallpaper == "":
+        if not self.selected_wallpaper:
             return
         if self.selected_monitor == "All":
             self.monitors = [self.selected_monitor]
-            self.wallpapers = [self.shorten_path(self.selected_wallpaper)]
+            self.wallpapers = [self.selected_wallpaper]
         elif self.selected_monitor in self.monitors:
             index = self.monitors.index(self.selected_monitor)
-            self.wallpapers[index] = self.shorten_path(self.selected_wallpaper)
+            self.wallpapers[index] = self.selected_wallpaper
         else:
             self.monitors.append(self.selected_monitor)
-            self.wallpapers.append(self.shorten_path(self.selected_wallpaper))
+            self.wallpapers.append(self.selected_wallpaper)
 
     def save(self) -> None:
         """Update the parameters and save them to the configuration file"""
@@ -166,10 +178,12 @@ class Config:
         if not config.has_section("Settings"):
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
+
         if not self.use_xdg_state:
             config.set("Settings", "folder", self.shorten_path(self.image_folder))
             config.set("Settings", "monitors", ",".join(self.monitors))
-            config.set("Settings", "wallpaper", ",".join(self.wallpapers))
+            config.set("Settings", "wallpaper", self.shortened_paths(self.wallpapers))
+
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "fill", self.fill_option)
         config.set("Settings", "sort", self.sort_option)
@@ -209,7 +223,6 @@ class Config:
         state.set("State", "wallpaper", ",".join(self.wallpapers))
         with open(self.state_file, "w") as statefile:
             state.write(statefile)
-
 
     def read_parameters_from_user_arguments(self, args: Namespace) -> None:
         """
