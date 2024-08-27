@@ -10,7 +10,7 @@ from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 from typing import List
 
 
-def has_image_extension(file_path: str, backend: str) -> List[str]:
+def has_image_extension(file_path: str, backend: str) -> bool:
     """Check if the file has image extension"""
     image_extensions = IMAGE_EXTENSIONS[backend]
     ext = os.path.splitext(file_path)[1].lower()
@@ -22,7 +22,7 @@ def get_image_paths(backend: str,
                     include_subfolders: bool = False,
                     include_hidden: bool = False,
                     only_gifs: bool = False,
-                    depth: bool = False):
+                    depth: int = 1):
     """Get a list of file paths depending on the filters that were requested"""
     image_paths = []
     for root, directories, files in os.walk(root_folder):
@@ -58,7 +58,7 @@ def get_image_paths(backend: str,
 def get_random_file(backend: str,
                     folder: str,
                     include_subfolders: bool,
-                    include_hidden: bool = False):
+                    include_hidden: bool = False) -> str | None:
     """Pick a random file from the folder"""
     try:
         image_paths = get_image_paths(backend,
@@ -105,7 +105,7 @@ def get_monitor_names_swww() -> List[str]:
         for monitor in monitors[:-1]:
             connected_monitors.append(monitor.split(':')[0])
     except Exception as e:
-        print(f"{self.txt.err_disp} {e}")
+        print(f"Exception: {e}")
 
     return connected_monitors
 
@@ -124,7 +124,7 @@ def get_monitor_names_hyprctl() -> List[str]:
         for line in query_output:
             connected_monitors.append(line.split(' ')[1])
     except Exception as e:
-        print(f"{self.txt.err_disp} {e}")
+        print(f"Exception: {e}")
 
     return connected_monitors
 

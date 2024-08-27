@@ -5,10 +5,11 @@ import time
 from waypaper.config import Config
 from waypaper.common import get_monitor_names_hyprctl
 from waypaper.translations import Chinese, English, French, German, Polish, Russian
+from pathlib import Path
 import re
 
 
-def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian):
+def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian):
     """Run system commands to change the wallpaper depending on the backend"""
 
     try:
@@ -27,7 +28,7 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
             command = ["swaybg"]
             # if monitor != "All":
                 # command.extend(["-o", monitor])
-            command.extend(["-i", image_path])
+            command.extend(["-i", str(image_path)])
             command.extend(["-m", fill, "-c", cf.color])
             subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
@@ -90,7 +91,7 @@ def change_wallpaper(image_path: str, cf: Config, monitor: str, txt: Chinese|Eng
                     }
             fill = fill_types[cf.fill_option.lower()]
             command = ["feh", fill, "--image-bg", cf.color]
-            command.extend([image_path])
+            command.extend([str(image_path)])
             subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
 
