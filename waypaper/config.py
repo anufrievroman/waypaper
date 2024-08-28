@@ -115,16 +115,16 @@ class Config:
         
         state = configparser.ConfigParser()
         state.read(self.state_file, 'utf-8')
-        self.image_folder = state.get("State", "folder", fallback="")
+
+        # Read and convert strings representing lists and paths:
+        image_folder_str = state.get("State", "folder", fallback=self.image_folder)
         monitors_str = state.get("State", "monitors", fallback=self.selected_monitor, raw=True)
         wallpapers_str = state.get("State", "wallpaper", fallback="", raw=True)
-    
-        # Convert strings to lists:
+        self.image_folder = pathlib.Path(image_folder_str).expanduser()
         if monitors_str:
             self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
-        self.image_folder = pathlib.Path(self.image_folder).expanduser()
 
 
     def check_validity(self) -> None:
@@ -218,9 +218,9 @@ class Config:
         state.read(self.state_file)
         if not state.has_section("State"):
             state.add_section("State")
-        state.set("State", "folder", str(self.image_folder))
+        state.set("State", "folder", self.shorten_path(self.image_folder))
         state.set("State", "monitors", ",".join(self.monitors))
-        state.set("State", "wallpaper", ",".join(self.wallpapers))
+        state.set("State", "wallpaper", self.shortened_paths(self.wallpapers))
         with open(self.state_file, "w") as statefile:
             state.write(statefile)
 

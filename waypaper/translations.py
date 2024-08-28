@@ -278,6 +278,8 @@ class Belarusian:
         self.msg_arg_rand = "ўсталяваць выпадковыя шпалеры"
         self.msg_arg_list = "вывесці шпалеры і матыноры ў фармаце json"
         self.msg_arg_wall = "пазначыць шлях да выявы"
+        self.msg_arg_folder = "specify which folder to scan for wallpapers"
+        self.msg_arg_statefile = "specify a custom file to store the application state"
 
         self.msg_path = "Абраны шлях да выявы:"
         self.msg_select = "Выбраць"
