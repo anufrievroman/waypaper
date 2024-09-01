@@ -81,7 +81,7 @@ def run():
             change_wallpaper(wallpaper, cf, monitor, txt)
             time.sleep(0.1)
         sys.exit(0)
-    
+
     # Set wallpaper from user arguments:
     if args.wallpaper:
         monitor = "All"

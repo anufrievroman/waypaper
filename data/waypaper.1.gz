@@ -35,6 +35,10 @@ List wallpapers and monitors in json format.
 Set the wallpaper from the provided path and save it in the config.
 
 .TP
+\fB\-\-folder \fP
+Set the folder of wallpaper images.
+
+.TP
 \fB\-\-backend XXX \fP
 Specify which backend to use, which can be either \fIswaybg, swww, feh\fR, or \fIwallutils\fR. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
 
