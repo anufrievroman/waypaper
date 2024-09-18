@@ -48,7 +48,7 @@ Users of OpenSUSE [reported issue with installation](https://github.com/anufriev
 
 #### On Fedora
 
-Waypaper is available in an external repository owned by Solopasha. You can add this repository as `sudo dnf copr enable solopasha/hyprland` and install as `sudo dnf install wayapaper`.
+Waypaper is available in an external repository owned by Solopasha. You can add this repository as `sudo dnf copr enable solopasha/hyprland` and install as `sudo dnf install waypaper`.
 
 ### Dependencies
 
