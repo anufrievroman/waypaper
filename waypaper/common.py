@@ -5,6 +5,7 @@ import re
 import random
 import shutil
 import subprocess
+from pathlib import Path
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 from typing import List
@@ -58,6 +59,7 @@ def get_image_paths(backend: str,
 def get_random_file(backend: str,
                     folder: str,
                     include_subfolders: bool,
+                    cache_dir: Path,
                     include_hidden: bool = False) -> str | None:
     """Pick a random file from the folder"""
     try:

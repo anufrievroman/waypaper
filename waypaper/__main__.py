@@ -69,7 +69,7 @@ def run():
         for wallpaper, monitor in zip(cf.wallpapers, cf.monitors):
 
             if args.random:
-                wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.show_hidden)
+                wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
                 if wallpaper_str:
                     cf.select_wallpaper(wallpaper_str)
                     cf.save()
@@ -112,4 +112,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
