@@ -6,6 +6,7 @@ import random
 import shutil
 import subprocess
 from pathlib import Path
+from configparser import ConfigParser
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 from typing import List
@@ -63,6 +64,14 @@ def get_random_file(backend: str,
                     include_hidden: bool = False) -> str | None:
     """Pick a random file from the folder"""
     try:
+        cache = ConfigParser()
+        cache_file = cache_dir / "cache.ini"
+        cache.read(cache_file)
+
+        if not cache.has_section("used_wallpapers"):
+            cache.add_section("used_wallpapers")
+            cache.set("used_wallpapers", "list", [])
+
         image_paths = get_image_paths(backend,
                                       folder,
                                       include_subfolders,
