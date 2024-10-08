@@ -49,7 +49,7 @@ class Config:
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
-        self.cache_dir.mkdir(parents=True,exist_ok=True)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.state_dir.mkdir(parents=True, exist_ok=True)
 
 
