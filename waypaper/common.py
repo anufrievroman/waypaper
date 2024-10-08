@@ -75,7 +75,27 @@ def get_random_file(backend: str,
                                       include_hidden,
                                       only_gifs=False,
                                       depth=1)
-        return random.choice(image_paths)
+
+        with open(cache_file, "r+") as cachefile:
+            cache = json.load(cachefile)
+            try:
+                used_images = cache['used_images']
+            except:
+                used_images = []
+
+            remaining_images = list(filter(lambda x: x not in set(used_images), image_paths))
+            if len(remaining_images) == 0:
+                used_images.clear()
+                random_choice = random.choice(image_paths)
+            else:
+                random_choice = random.choice(remaining_images)
+
+            used_images.append(random_choice)
+            cache['used_images'] = used_images
+            cachefile.seek(0)
+            json.dump(cache, cachefile, indent=4)
+
+        return random_choice
     except:
         return None
 
