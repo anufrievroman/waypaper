@@ -82,7 +82,7 @@ def get_random_file(backend: str,
             # Read used_image list from cache file:
             try:
                 used_images = cache['used_images']
-            except:
+            except KeyError:
                 used_images = []
 
             # Pick a random image from possible images:
