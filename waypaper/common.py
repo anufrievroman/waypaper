@@ -65,6 +65,7 @@ def get_random_file(backend: str,
     """Pick a random file from the folder"""
     try:
         cache_file = cache_dir / "cache.json"
+        # Create cache file if it doesn't exist:
         if not cache_file.exists():
             with open(cache_file, 'x') as f:
                 f.write('''{}''')
@@ -78,11 +79,13 @@ def get_random_file(backend: str,
 
         with open(cache_file, "r+") as cachefile:
             cache = json.load(cachefile)
+            # Read used_image list from cache file:
             try:
                 used_images = cache['used_images']
             except:
                 used_images = []
 
+            # Pick a random image from possible images:
             remaining_images = list(filter(lambda x: x not in set(used_images), image_paths))
             if len(remaining_images) == 0:
                 used_images.clear()
@@ -90,6 +93,7 @@ def get_random_file(backend: str,
             else:
                 random_choice = random.choice(remaining_images)
 
+            # Write used_image list back into cache file after adding new selected image:
             used_images.append(random_choice)
             cache['used_images'] = used_images
             cachefile.seek(0)
