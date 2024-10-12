@@ -43,8 +43,17 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
             except subprocess.CalledProcessError:
                 pass
 
+            fill_types = {
+                    "fill": "panscan=1.0",
+                    "fit": "panscan=0.0",
+                    "center": "",
+                    "stretch": "--keepaspect=no",
+                    "tile": "",
+            }
+            fill = fill_types[cf.fill_option.lower()]
+
             command = ["mpvpaper"]
-            command.extend(["-o", f"no-audio loop"])
+            command.extend(["-o", f"no-audio loop {fill}"])
             # if monitor != "All":
             #     command.extend([monitor])
             # else:
