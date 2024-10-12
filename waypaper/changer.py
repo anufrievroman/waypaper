@@ -53,7 +53,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
             fill = fill_types[cf.fill_option.lower()]
 
             command = ["mpvpaper"]
-            command.extend(["-o", f"no-audio loop {fill}"])
+            command.extend(["-o", f"no-audio loop {fill} --background-color='{cf.color}'"])
             # if monitor != "All":
             #     command.extend([monitor])
             # else:
