@@ -12,7 +12,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file, get_monitor_names_hyprctl, get_monitor_names_swww
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -43,6 +43,8 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
     try:
         if ext == ".webp":
             pixbuf = read_webp_image(str(image_path))
+        elif ext in VIDEO_EXTENSIONS:
+            pixbuf = read_video_frame(str(image_path), cache_dir)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
 
