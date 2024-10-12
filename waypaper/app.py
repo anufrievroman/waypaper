@@ -2,6 +2,7 @@
 
 import threading
 import os
+import cv2
 import gi
 import shutil
 from pathlib import Path
@@ -26,6 +27,15 @@ def read_webp_image(image_path: str) -> GdkPixbuf:
     pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, width, height, width * 3)
     return pixbuf
 
+def read_video_frame(image_path: str, cache_dir: Path) -> GdkPixbuf:
+    """Read first frame of video and convert it inot pixbuf format"""
+    temp_frame = cache_dir / "temp_frame.jpeg"
+    vidcap = cv2.VideoCapture(image_path)
+    _, image = vidcap.read()
+    cv2.imwrite(temp_frame, image)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file(temp_frame)
+    os.remove(temp_frame)
+    return pixbuf
 
 def cache_image(image_path: str, cache_dir: Path) -> None:
     """Resize and cache images using gtk library"""
