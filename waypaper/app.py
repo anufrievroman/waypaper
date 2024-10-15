@@ -2,7 +2,6 @@
 
 import threading
 import os
-import cv2
 import gi
 import shutil
 from pathlib import Path
@@ -29,6 +28,7 @@ def read_webp_image(image_path: str) -> GdkPixbuf:
 
 def read_video_frame(image_path: str, cache_dir: Path) -> GdkPixbuf:
     """Read first frame of video and convert it inot pixbuf format"""
+    import cv2
     temp_frame = cache_dir / "temp_frame.jpeg"
     vidcap = cv2.VideoCapture(image_path)
     _, image = vidcap.read()
