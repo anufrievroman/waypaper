@@ -17,7 +17,7 @@ setuptools.setup(
             "waypaper = waypaper.__main__:run"
         ]
     },
-    install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow", "opencv-python-headless"],
+    install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow", "opencv-python-headless", "screeninfo"],
     version='2.3',
     python_requires='>3.9',
     classifiers=[
