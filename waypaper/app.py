@@ -11,7 +11,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file, get_monitor_names_hyprctl, get_monitor_names_swww
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -26,6 +26,16 @@ def read_webp_image(image_path: str) -> GdkPixbuf:
     pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, width, height, width * 3)
     return pixbuf
 
+def read_video_frame(image_path: str, cache_dir: Path) -> GdkPixbuf:
+    """Read first frame of video and convert it inot pixbuf format"""
+    import cv2
+    temp_frame = cache_dir / "temp_frame.jpeg"
+    vidcap = cv2.VideoCapture(image_path)
+    _, image = vidcap.read()
+    cv2.imwrite(temp_frame, image)
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file(temp_frame)
+    os.remove(temp_frame)
+    return pixbuf
 
 def cache_image(image_path: str, cache_dir: Path) -> None:
     """Resize and cache images using gtk library"""
@@ -33,6 +43,8 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
     try:
         if ext == ".webp":
             pixbuf = read_webp_image(str(image_path))
+        elif ext in VIDEO_EXTENSIONS:
+            pixbuf = read_video_frame(str(image_path), cache_dir)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
 
@@ -496,7 +508,7 @@ class App(Gtk.Window):
     def set_random_wallpaper(self) -> None:
         """Choose a random image and set it as the wallpaper"""
         self.cf.backend = self.backend_option_combo.get_active_text()
-        new_wallpaper =  get_random_file(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders)
+        new_wallpaper =  get_random_file(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders, self.cf.cache_dir)
         if new_wallpaper:
             self.cf.select_wallpaper(new_wallpaper)
         else:

@@ -9,7 +9,6 @@ from pathlib import Path
 import re
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian|Belarusian):
-
     """Run system commands to change the wallpaper depending on the backend"""
 
     try:
@@ -30,6 +29,37 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
                 # command.extend(["-o", monitor])
             command.extend(["-i", str(image_path)])
             command.extend(["-m", fill, "-c", cf.color])
+            subprocess.Popen(command)
+            print(f"{txt.msg_setwith} {cf.backend}")
+
+        # mpvpaper backend:
+        elif cf.backend == "mpvpaper":
+
+            # Kill previous mpvpaper instances:
+            try:
+                subprocess.check_output(["pgrep", "mpvpaper"], encoding='utf-8')
+                subprocess.Popen(["killall", ".mpvpaper-wrapp"])
+                time.sleep(0.5)
+            except subprocess.CalledProcessError:
+                pass
+
+            fill_types = {
+                    "fill": "panscan=1.0",
+                    "fit": "panscan=0.0",
+                    "center": "",
+                    "stretch": "--keepaspect=no",
+                    "tile": "",
+            }
+            fill = fill_types[cf.fill_option.lower()]
+
+            command = ["mpvpaper"]
+            command.extend(["-o", f"no-audio loop {fill} --background-color='{cf.color}'"])
+            # if monitor != "All":
+            #     command.extend([monitor])
+            # else:
+            #     command.extend('*')
+            command.extend('*')
+            command.extend([image_path])
             subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
 
@@ -119,7 +149,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
                 subprocess.Popen(["hyprpaper"])
                 time.sleep(1)
             preload_command = ["hyprctl", "hyprpaper", "preload", image_path]
-            
+
             # Decide which monitors are affected:
             if monitor == "All":
                 monitors = get_monitor_names_hyprctl()

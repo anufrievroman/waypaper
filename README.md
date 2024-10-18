@@ -8,19 +8,20 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 
 - Vim keys
 - Support for GIF animations (with `swww`)
+- Support for videos (with `mpvpaper`)
 - Support for multiple monitors (with `swww`)
-- Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils`)
+- Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
 - Works on Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
 - Caching for fast loading
-  
+
 ## Installation
 
 You need to install at least one of the backends and Waypaper, which works as a frontend.
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) or [swaybg](https://github.com/hyprwm/hyprpaper) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [wallutils](https://github.com/xyproto/wallutils) on both.
+Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) or [hyprpaper](https://github.com/hyprwm/hyprpaper) on Wayland or [feh](https://github.com/derf/feh) on Xorg or [mpvpaper](https://github.com/GhostNaN/mpvpaper) or [wallutils](https://github.com/xyproto/wallutils) on both.
 
 ### 2. Install Waypaper
 
@@ -48,11 +49,11 @@ Users of OpenSUSE [reported issue with installation](https://github.com/anufriev
 
 #### On Fedora
 
-Waypaper is available in an external repository owned by Solopasha. You can add this repository as `sudo dnf copr enable solopasha/hyprland` and install as `sudo dnf install wayapaper`.
+Waypaper is available in an external repository owned by Solopasha. You can add this repository as `sudo dnf copr enable solopasha/hyprland` and install as `sudo dnf install waypaper`.
 
 ### Dependencies
 
-- `swww` or `swaybg` or `feh` or `wallutils` or `hyprpaper`
+- `swww` or `swaybg` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-importlib_metadata`
 - `python-platformdirs`
