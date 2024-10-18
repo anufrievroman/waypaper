@@ -10,7 +10,7 @@ from PIL import Image
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_random_file, get_monitor_names, get_monitor_names_hyprctl, get_monitor_names_swww
+from waypaper.common import get_image_paths, get_random_file, get_monitor_names
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 

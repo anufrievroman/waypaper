@@ -3,7 +3,7 @@
 import subprocess
 import time
 from waypaper.config import Config
-from waypaper.common import get_monitor_names_hyprctl
+from waypaper.common import get_monitor_names
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian
 from pathlib import Path
 import re
@@ -152,7 +152,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
 
             # Decide which monitors are affected:
             if monitor == "All":
-                monitors = get_monitor_names_hyprctl()
+                monitors = get_monitor_names()
             else:
                 monitors: list = [monitor]
 
