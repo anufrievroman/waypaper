@@ -237,10 +237,12 @@ class App(Gtk.Window):
 
 
     def monitor_option_display(self) -> None:
-        """Display monitor option if backend is swww or hyprpaper (with swww installed)"""
+        """Display monitor option if backend is not feh or wallutils"""
         self.options_box.remove(self.monitor_option_combo)
         # Check available monitors:
         monitor_names = ["All"]
+        if self.cf.backend in ["feh", "wallutils", "none"]:
+            return
         monitor_names.extend(get_monitor_names())
 
         # Create a monitor option dropdown menu:
