@@ -25,8 +25,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
 
             fill = cf.fill_option.lower()
             command = ["swaybg"]
-            # if monitor != "All":
-                # command.extend(["-o", monitor])
+            if monitor != "All":
+                command.extend(["-o", monitor])
             command.extend(["-i", str(image_path)])
             command.extend(["-m", fill, "-c", cf.color])
             subprocess.Popen(command)
@@ -54,11 +54,10 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
 
             command = ["mpvpaper"]
             command.extend(["-o", f"no-audio loop {fill} --background-color='{cf.color}'"])
-            # if monitor != "All":
-            #     command.extend([monitor])
-            # else:
-            #     command.extend('*')
-            command.extend('*')
+            if monitor != "All":
+                command.extend([monitor])
+            else:
+                command.extend('*')
             command.extend([image_path])
             subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
