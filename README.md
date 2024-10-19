@@ -7,9 +7,9 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 ## Features
 
 - Vim keys
-- Support for GIF animations (with `swww`)
+- Support for GIF animations (with `swww` or `mpvpaper`)
 - Support for videos (with `mpvpaper`)
-- Support for multiple monitors (with `swww`)
+- Support for multiple monitors (with `swww` or `swaybg` or `hyprpaper` or `mpvpaper`)
 - Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
 - Works on Xorg (with `feh` or `wallutils`)
 - Restores wallpaper at launch of your WM
