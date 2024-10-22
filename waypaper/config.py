@@ -123,6 +123,7 @@ class Config:
         self.image_folder = pathlib.Path(image_folder_str).expanduser()
         if monitors_str:
             self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
+            self.selected_monitor = self.monitors[0]
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
 
