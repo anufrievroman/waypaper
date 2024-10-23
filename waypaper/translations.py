@@ -20,6 +20,10 @@ class English:
         self.msg_select = "Select"
         self.msg_refresh = "Refresh"
         self.msg_random = "Random"
+        self.msg_random_script = "Randomize Script"
+        self.msg_random_script_change_interval = "Change the wallpaper interval"
+        self.msg_random_script_stop = "Stop the random wallpaper script"
+        self.msg_random_script_interval_seconds_label = "Interval (seconds):"
         self.msg_exit = "Exit"
         self.msg_subfolders = "Show subfolders"
         self.msg_hidden = "Show hidden"
@@ -51,6 +55,7 @@ class English:
         self.tip_display = "Choose display"
         self.tip_color = "Choose background color"
         self.tip_random = "Set random wallpaper"
+        self.tip_random_script = "Create/execute a script to randomize the images every x minutes"
         self.tip_exit = "Exit the application"
 
 
