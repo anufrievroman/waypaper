@@ -1,4 +1,5 @@
 from typing import List, Dict
+
 BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "wallutils", "hyprpaper", "mpvpaper"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
 SORT_OPTIONS: List[str] = ["name", "namerev", "date", "daterev"]
@@ -13,7 +14,7 @@ VIDEO_EXTENSIONS: List[str] = ['.webm', '.mkv', '.flv', '.vob', '.ogv', '.ogg', 
                                '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.m4v', '.svi', '.3gp', '.3g2', '.mxf',
                                '.roq', '.nsv', '.flv', '.f4v', '.f4p', '.f4a', '.f4b', '.mod' ]
 
-IMAGE_EXTENSIONS: Dict[BACKEND_OPTIONS, List[str]] = {
+IMAGE_EXTENSIONS: Dict[str, List[str]] = {
         BACKEND_OPTIONS[0]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
         BACKEND_OPTIONS[1]: ['.gif', '.jpg', '.jpeg', '.png'],
         BACKEND_OPTIONS[2]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
