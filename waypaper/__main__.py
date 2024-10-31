@@ -64,22 +64,23 @@ def run():
         cf.read_parameters_from_user_arguments(args) # ensure that user arguments override values from state file
     cf.check_validity()
 
-    # Set the wallpaper and quit:
+    # Set the wallpapers and quit:
     if args.restore or args.random:
-        for wallpaper, monitor in zip(cf.wallpapers, cf.monitors):
+        for index, (wallpaper, monitor) in enumerate(zip(cf.wallpapers, cf.monitors)):
 
             if args.random:
                 wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
                 if wallpaper_str:
-                    cf.select_wallpaper(wallpaper_str)
-                    cf.save()
                     wallpaper = pathlib.Path(wallpaper_str)
+                    cf.wallpapers[index] = wallpaper
 
-            if wallpaper is None:
+            if cf.wallpapers[index] is None:
                 continue
 
             change_wallpaper(wallpaper, cf, monitor, txt)
             time.sleep(0.1)
+
+        cf.save()
         sys.exit(0)
 
     # Set wallpaper from user arguments:
@@ -91,6 +92,7 @@ def run():
         # Save this wallpaper in config and quit:
         cf.selected_wallpaper = wallpaper
         cf.selected_monitor = monitor
+        cf.attribute_selected_wallpaper()
         cf.save()
         sys.exit(0)
 

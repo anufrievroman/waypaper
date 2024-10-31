@@ -3,10 +3,8 @@
 import configparser
 from argparse import Namespace
 import pathlib
-import os
-from sys import exit
-from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 from typing import List
+from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
 from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
@@ -90,7 +88,7 @@ class Config:
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
-        
+
         # Read and convert strings representing lists and paths:
         image_folder_str = config.get("Settings", "folder", fallback=self.image_folder)
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -100,7 +98,7 @@ class Config:
             self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
-            
+
         # Read and check the validity of the number of columns:
         try:
             self.number_of_columns = config.getint("Settings", "number_of_columns", fallback=self.number_of_columns)
@@ -112,7 +110,7 @@ class Config:
         """Load data from the state.ini file"""
         if not self.use_xdg_state:
             return
-        
+
         state = configparser.ConfigParser()
         state.read(self.state_file, 'utf-8')
 
@@ -130,6 +128,8 @@ class Config:
 
     def check_validity(self) -> None:
         """Check if the config parameters are valid and correct them if needed"""
+
+        # Check validity of general options:
         if self.backend not in BACKEND_OPTIONS:
             self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
         if self.sort_option not in SORT_OPTIONS:
@@ -145,6 +145,7 @@ class Config:
         except Exception:
             self.number_of_columns = 3
 
+        # Check validity of other swww options:
         if 0 > int(self.swww_transition_angle) > 180:
             self.swww_transition_angle = 0
         if 0 > int(self.swww_transition_step) > 255:
@@ -155,7 +156,12 @@ class Config:
             self.swww_transition_fps = 60
 
     def attribute_selected_wallpaper(self) -> None:
-        """If only certain monitor was affected, change only its wallpaper"""
+        """
+        This function is used before saving config to attribute a wallpaper to a monitor.
+        For example, if only certain monitor was affected,
+        change only corresponding wallpaper in the wallpapers list.
+        Otherwise, reset the list and set one wallpaper for all monitors.
+        """
         if not self.selected_wallpaper:
             return
         if self.selected_monitor == "All":
@@ -169,9 +175,7 @@ class Config:
             self.wallpapers.append(self.selected_wallpaper)
 
     def save(self) -> None:
-        """Update the parameters and save them to the configuration file"""
-
-        self.attribute_selected_wallpaper()
+        """Save current parameters to the configuration and state files"""
 
         # Write configuration to the file:
         config = configparser.ConfigParser()
@@ -180,11 +184,13 @@ class Config:
             config.add_section("Settings")
         config.set("Settings", "language", self.lang)
 
+        # If state file is used, some parameters are not save into config:
         if not self.use_xdg_state:
             config.set("Settings", "folder", self.shorten_path(self.image_folder))
             config.set("Settings", "monitors", ",".join(self.monitors))
             config.set("Settings", "wallpaper", self.shortened_paths(self.wallpapers))
 
+        # Save the parameters into config:
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "fill", self.fill_option)
         config.set("Settings", "sort", self.sort_option)
@@ -202,19 +208,12 @@ class Config:
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         with open(self.config_file, "w") as configfile:
             config.write(configfile)
-        
-        # Save state file:
-        self.save_state()
 
-
-    def save_state(self) -> None:
-        """Save the current state of the application"""
+        # If requested, save the state file:
         if not self.use_xdg_state:
             return
 
-        self.attribute_selected_wallpaper()
-
-        # Write state to the file:
+        # Write the remaining state parameters to the file:
         state = configparser.ConfigParser()
         state.read(self.state_file)
         if not state.has_section("State"):

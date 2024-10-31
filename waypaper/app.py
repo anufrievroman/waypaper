@@ -482,6 +482,7 @@ class App(Gtk.Window):
         self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         if self.cf.selected_wallpaper:
             change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+        self.cf.attribute_selected_wallpaper()
         self.cf.save()
 
 
@@ -512,6 +513,7 @@ class App(Gtk.Window):
         self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         if self.cf.selected_wallpaper:
             change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+        self.cf.attribute_selected_wallpaper()
         self.cf.save()
 
 
@@ -587,6 +589,7 @@ class App(Gtk.Window):
             self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
             if self.cf.selected_wallpaper:
                 change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+            self.cf.attribute_selected_wallpaper()
             self.cf.save()
 
         # Prevent other default key handling:
