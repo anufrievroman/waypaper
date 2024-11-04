@@ -52,6 +52,7 @@ class English:
         self.tip_color = "Choose background color"
         self.tip_random = "Set random wallpaper"
         self.tip_exit = "Exit the application"
+        self.tip_transition = "Choose transition type"
 
 
 class German:
@@ -105,6 +106,7 @@ class German:
         self.tip_color = "Hintergrundfarbe auswählen"
         self.tip_random = "Ein zufälliges Hintergrundbild auswählen"
         self.tip_exit = "Das Programm beenden"
+        self.tip_transition = "Übergangstyp auswählen"
 
 
 class French:
@@ -158,6 +160,7 @@ class French:
         self.tip_color = "Choisir la couleur de fond"
         self.tip_random = "Définir un papier peint aléatoire"
         self.tip_exit = "Quitter l'application"
+        self.tip_transition = "Choisissez le type de transition"
 
 
 class Polish:
@@ -211,6 +214,7 @@ class Polish:
         self.tip_color = "Wybierz kolor tła"
         self.tip_random = "Ustaw losową tapetę"
         self.tip_exit = "Wyjdź z aplikacji"
+        self.tip_transition = "Wybierz typ przejścia"
 
 
 class Russian:
@@ -264,6 +268,7 @@ class Russian:
         self.tip_color = "Выбрать цвет фона"
         self.tip_random = "Установить случайные обои"
         self.tip_exit = "Выйти из приложения"
+        self.tip_transition =  "Выберите тип перехода"
 
 
 class Belarusian:
@@ -317,6 +322,7 @@ class Belarusian:
         self.tip_color = "Выбраць колер фону"
         self.tip_random = "Усталяваць выпадковыя шпалеры"
         self.tip_exit = "Выйсці з прыкладання"
+        self.tip_transition = "Выберыце тып пераходу"
 
 
 class Chinese:
@@ -370,6 +376,7 @@ class Chinese:
         self.tip_color = "选择背景颜色"
         self.tip_random = "设置随机壁纸"
         self.tip_exit = "退出应用程序"
+        self.tip_transition = "选择过渡类型"
 
 class Spanish:
     def __init__(self):
@@ -422,3 +429,4 @@ class Spanish:
         self.tip_color = "Escoja un color de fondo"
         self.tip_random = "Actualizar la imagen de fondo a una imagen aleatoria"
         self.tip_exit = "Cerrar la aplicación"
+        self.tip_transition = "Elige el tipo de transición"

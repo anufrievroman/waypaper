@@ -11,7 +11,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file, get_monitor_names
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -182,6 +182,9 @@ class App(Gtk.Window):
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
 
+        # Create a transition dropdown menu for swww
+        self.swww_transitions_options = Gtk.ComboBoxText()
+
         # Create the options menu button:
         self.options_button = Gtk.Button(label="Options")
         self.options_button.connect("clicked", self.on_options_button_clicked)
@@ -196,6 +199,7 @@ class App(Gtk.Window):
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
 
+        self.swww_transitions_options_display()
         self.monitor_option_display()
         self.fill_option_display()
         self.color_picker_display()
@@ -256,6 +260,23 @@ class App(Gtk.Window):
         # Add it to the row of buttons:
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
+    def swww_transitions_options_display(self) -> None:
+        """ Show swww transition option if backend is swww """          
+        self.options_box.remove(self.swww_transitions_options)
+        if self.cf.backend not in ["swww"]:
+            return
+        
+        self.swww_transitions_options = Gtk.ComboBoxText()
+        for transitions in SWWW_TRANSITION_TYPES:
+            self.swww_transitions_options.append_text(transitions)
+        active_transition = 0
+        if self.cf.swww_transition_type in SWWW_TRANSITION_TYPES:
+            active_transition = SWWW_TRANSITION_TYPES.index(self.cf.swww_transition_type)
+            self.swww_transitions_options.set_active(active_transition)
+            self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
+            self.swww_transitions_options.set_tooltip_text(self.txt.tip_transition)
+        
+        self.options_box.pack_start(self.swww_transitions_options, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -458,9 +479,19 @@ class App(Gtk.Window):
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_monitor = "All"
         self.monitor_option_display()
+        self.swww_transitions_options_display()
         self.fill_option_display()
         self.color_picker_display()
         self.show_all()
+
+    def on_transition_option_changed(self, combo) -> None:
+        # Get the active index
+        active_index = combo.get_active()
+        
+        # Update the active transition type based on the selected option
+        if active_index >= 0:
+            self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
+            print(f"transition type changed to: {self.cf.swww_transition_type}")
 
 
     def on_color_set(self, color_button):
@@ -601,3 +632,4 @@ class App(Gtk.Window):
         self.connect("destroy", self.on_exit_clicked)
         self.show_all()
         Gtk.main()
+        
