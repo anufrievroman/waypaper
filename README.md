@@ -3,6 +3,7 @@
 GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper` and `feh`. See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screenshot.jpg)
+![screenshot](screenshot2.jpg)
 
 ## Features
 
