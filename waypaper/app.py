@@ -49,7 +49,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
 
     # If image processing failed, create a black placeholder:
-    except GLib.Error:
+    except Exception:
         pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1280, 720)
         pixbuf.fill(0x0)
 
