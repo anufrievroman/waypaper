@@ -50,6 +50,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
 
     # If image processing failed, create a black placeholder:
     except Exception:
+        print(f"Could not generate preview for {os.path.basename(image_path)}")
         pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1280, 720)
         pixbuf.fill(0x0)
 
