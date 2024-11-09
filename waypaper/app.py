@@ -122,6 +122,14 @@ class App(Gtk.Window):
         self.main_box = Gtk.VBox(spacing=10)
         self.add(self.main_box)
 
+         # Adding search image feature :)
+
+        # Search entry
+        self.search_entry = Gtk.Entry()
+        self.search_entry.set_placeholder_text("Search images...")
+        self.search_entry.connect("changed", self.on_search_entry_changed)
+        self.main_box.pack_start(self.search_entry, False, False, 5)
+
         # Create a button to open folder dialog:
         self.choose_folder_button = Gtk.Button(label=self.txt.msg_changefolder)
         self.choose_folder_button.connect("clicked", self.on_choose_folder_clicked)
@@ -455,6 +463,46 @@ class App(Gtk.Window):
             button.connect("clicked", self.on_image_clicked, path)
 
         self.show_all()
+    
+    def load_image_grid_searched(self) -> None:
+        """Reload the grid of images"""
+
+        # Clear existing images:
+        for child in self.grid.get_children():
+            self.grid.remove(child)
+
+        current_y = 0
+        current_row_heights = [0] * self.cf.number_of_columns
+        for index, (thumbnail, name, path) in enumerate(self.searched_images):
+
+            row = index // self.cf.number_of_columns
+            column = index % self.cf.number_of_columns
+
+            # Calculate current y coordinate in the scroll window:
+            aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
+            current_row_heights[column] = int(240 / aspect_ratio)
+            if column == 0:
+                current_y += max(current_row_heights) + 10
+                current_row_heights = [0] * self.cf.number_of_columns
+
+            # Create a button with an image and add tooltip:
+            image = Gtk.Image.new_from_pixbuf(thumbnail)
+            image.set_tooltip_text(name)  # Ensure `name` is a string, not a tuple
+            button = Gtk.Button()
+            if index == self.selected_index:
+                button.set_relief(Gtk.ReliefStyle.NORMAL)
+                self.highlighted_image_y = current_y
+            else:
+                button.set_relief(Gtk.ReliefStyle.NONE)
+            button.add(image)
+
+            # Add button to the grid and connect clicked event:
+            self.grid.attach(button, column, row, 1, 1)
+            button.connect("clicked", self.on_image_clicked, path)
+
+        self.show_all()
+
+
 
 
     def scroll_to_selected_image(self) -> None:
@@ -700,6 +748,26 @@ class App(Gtk.Window):
 
         # Prevent other default key handling:
         return event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]
+
+    def on_search_entry_changed(self,entry, event= None):
+        """This function is triggered when the user types in the search field"""
+        # Get the search query
+        search_query = entry.get_text().lower()
+
+        # Filter the images and thumbnails based on the search query
+        if search_query:
+        # Filter both the image names and thumbnails that match the search query
+            self.searched_images = [(thumb, name, path) 
+                                for thumb, name, path in zip(self.thumbnails, self.image_names, self.image_paths) 
+                                if search_query in name.lower()]
+        else:
+        # If no search query, reset to show all images
+            self.searched_images = [(thumb, name, path) 
+                                for thumb, name, path in zip(self.thumbnails, self.image_names, self.image_paths)]
+
+        # Update the image grid with the filtered images
+        self.load_image_grid_searched()
+    
 
 
     def run(self) -> None:
