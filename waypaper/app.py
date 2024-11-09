@@ -77,6 +77,7 @@ class App(Gtk.Window):
         self.selected_index = 0
         self.highlighted_image_row = 0
         self.init_ui()
+        self.backend_option_combo.grab_focus()
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
