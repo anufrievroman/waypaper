@@ -64,45 +64,40 @@ def get_random_file(backend: str,
                     include_subfolders: bool,
                     cache_dir: Path,
                     include_hidden: bool = False) -> str | None:
-    """Pick a random file from the folder"""
+    """Pick a random file from the folder and update cache"""
     try:
-        cache_file = cache_dir / "cache.json"
-        # Create cache file if it doesn't exist:
-        if not cache_file.exists():
-            with open(cache_file, 'x') as f:
-                f.write('''{}''')
+        # Get all image paths from the folder:
+        image_paths = get_image_paths(backend, folder, include_subfolders,
+                                      include_hidden, only_gifs=False, depth=1)
 
-        image_paths = get_image_paths(backend,
-                                      folder,
-                                      include_subfolders,
-                                      include_hidden,
-                                      only_gifs=False,
-                                      depth=1)
+        # Read cache file with already used images:
+        cache_file = cache_dir / "used_wallpapers.txt"
+        if cache_file.exists():
+            with cache_file.open('r') as file:
+                used_images = [line.strip() for line in file.readlines()]
+        # Create it if the file does not exists:
+        else:
+            cache_file.touch()
+            used_images = []
 
-        with open(cache_file, "r+") as cachefile:
-            cache = json.load(cachefile)
-            # Read used_image list from cache file:
-            try:
-                used_images = cache['used_images']
-            except KeyError:
-                used_images = []
+        # Pick a random image from unused images:
+        remaining_images = list(filter(lambda img: img not in set(used_images), image_paths))
+        if remaining_images:
+            random_image = random.choice(remaining_images)
+            used_images.append(random_image)
+        else:
+            random_image = random.choice(image_paths)
+            used_images = [random_image]
 
-            # Pick a random image from possible images:
-            remaining_images = list(filter(lambda x: x not in set(used_images), image_paths))
-            if len(remaining_images) == 0:
-                used_images.clear()
-                random_choice = random.choice(image_paths)
-            else:
-                random_choice = random.choice(remaining_images)
+        # Write the cache file:
+        with cache_file.open('w') as file:
+            for img in used_images:
+                file.write(img + '\n')
 
-            # Write used_image list back into cache file after adding new selected image:
-            used_images.append(random_choice)
-            cache['used_images'] = used_images
-            cachefile.seek(0)
-            json.dump(cache, cachefile, indent=4)
+        return random_image
 
-        return random_choice
-    except:
+    except Exception as e:
+        print(f"Error getting random image: {e}")
         return None
 
 
