@@ -69,6 +69,7 @@ class App(Gtk.Window):
     def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Belarusian|Spanish, cf: Config) -> None:
         super().__init__(title="Waypaper")
         self.cf = cf
+        self.LEFT_SHIFT_KEY = 0xffe1
         self.about = AboutData()
         self.txt = txt
         self.check_backends()
@@ -125,11 +126,22 @@ class App(Gtk.Window):
 
          # Adding search image feature :)
 
+        # Hbox to hold search option and clear button 
+        self.hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+        
+        # Add it to main box 
+        self.main_box.pack_start(self.hbox, expand=False, fill=True, padding=10)
+        
         # Search entry
         self.search_entry = Gtk.Entry()
         self.search_entry.set_placeholder_text("Search images...")
         self.search_entry.connect("changed", self.on_search_entry_changed)
-        self.main_box.pack_start(self.search_entry, False, False, 5)
+        self.hbox.pack_start(self.search_entry, expand=True, fill=True, padding=0)  
+
+        #  Add a clear button
+        self.clear_btn = Gtk.Button(label="Clear")
+        self.clear_btn.connect("clicked", self.on_clear_button)
+        self.hbox.pack_start(self.clear_btn, expand=False, fill=True, padding=0)
 
         # Create a button to open folder dialog:
         self.choose_folder_button = Gtk.Button(label=self.txt.msg_changefolder)
@@ -769,6 +781,9 @@ class App(Gtk.Window):
         # Update the image grid with the filtered images
         self.load_image_grid_searched()
     
+    def on_clear_button(self,event):
+        self.search_entry.set_text("")
+        self.main_box.grab_focus()
 
 
     def run(self) -> None:
