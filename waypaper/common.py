@@ -1,17 +1,14 @@
 """Module with some of the common functions, like file operations"""
 
 import os
-import re
 import random
 import shutil
-import subprocess
-import json
 
-from screeninfo import get_monitors
 from pathlib import Path
+from typing import List
+from screeninfo import get_monitors
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
-from typing import List
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:

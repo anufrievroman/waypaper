@@ -1,8 +1,8 @@
 """Module responsible for reading and saving the configuration file"""
 
 import configparser
-from argparse import Namespace
 import pathlib
+from argparse import Namespace
 from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
