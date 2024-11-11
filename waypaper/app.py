@@ -69,7 +69,6 @@ class App(Gtk.Window):
     def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Belarusian|Spanish, cf: Config) -> None:
         super().__init__(title="Waypaper")
         self.cf = cf
-        self.LEFT_SHIFT_KEY = 0xffe1
         self.about = AboutData()
         self.txt = txt
         self.check_backends()
@@ -79,6 +78,7 @@ class App(Gtk.Window):
         self.highlighted_image_row = 0
         self.init_ui()
         self.backend_option_combo.grab_focus()
+        self.search_state = False
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -136,6 +136,8 @@ class App(Gtk.Window):
         self.search_entry = Gtk.Entry()
         self.search_entry.set_placeholder_text("Search images...")
         self.search_entry.connect("changed", self.on_search_entry_changed)
+        self.search_entry.connect("focus-in-event", self.on_focus_in)
+        self.search_entry.connect("focus-out-event", self.on_focus_out)
         self.hbox.pack_start(self.search_entry, expand=True, fill=True, padding=0)  
 
         #  Add a clear button
@@ -696,7 +698,10 @@ class App(Gtk.Window):
 
     def on_key_pressed(self, widget, event) -> bool:
         """Process various key binding"""
-        if (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
+        if self.search_state == True:
+            return
+
+        elif (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
             Gtk.main_quit()
 
         elif event.keyval == Gdk.KEY_r:
@@ -784,6 +789,12 @@ class App(Gtk.Window):
     def on_clear_button(self,event):
         self.search_entry.set_text("")
         self.main_box.grab_focus()
+
+    def on_focus_in(self, widget, event):
+        self.search_state = True
+
+    def on_focus_out(self, widget, event):
+        self.search_state = False
 
 
     def run(self) -> None:
