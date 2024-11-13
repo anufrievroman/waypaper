@@ -1,6 +1,6 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper` and `feh`. See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper` and `feh`. See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screenshot.jpg)
 
@@ -37,9 +37,9 @@ If `pipx` is not found, you first need to install `pipx` from your package manag
 
 #### On Arch-based distributions
 
-`yay -S waypaper` or `yay -S waypaper-git`
+`yay -S waypaper`
 
-The [waypaper](https://aur.archlinux.org/packages/waypaper) and [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) packages are available in AUR, thanks to *metak*. Please upvote to support the project.
+The [waypaper](https://aur.archlinux.org/packages/waypaper) package and developer package [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) are available in AUR, thanks to *metak*. Please upvote to support the project.
 
 #### On NixOS
 
