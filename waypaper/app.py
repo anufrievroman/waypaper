@@ -137,6 +137,11 @@ class App(Gtk.Window):
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
         self.refresh_button.set_tooltip_text(self.txt.tip_refresh)
 
+        # Create random button:
+        self.random_button = Gtk.Button(label=self.txt.msg_random)
+        self.random_button.connect("clicked", self.on_random_clicked)
+        self.random_button.set_tooltip_text(self.txt.tip_random)
+
         # Create exit button:
         self.exit_button = Gtk.Button(label=self.txt.msg_exit)
         self.exit_button.connect("clicked", self.on_exit_clicked)
@@ -149,6 +154,7 @@ class App(Gtk.Window):
         self.top_container.pack_start(self.clear_button, expand=False, fill=False, padding=0)
         self.top_container.pack_start(self.sort_combo, expand=False, fill=False, padding=0)
         self.top_container.pack_start(self.refresh_button, expand=False, fill=False, padding=0)
+        self.top_container.pack_start(self.random_button, expand=False, fill=False, padding=0)
         self.top_container.pack_start(self.options_button, expand=False, fill=False, padding=0)
         self.top_container.pack_start(self.exit_button, expand=False, fill=False, padding=0)
         self.top_row_alignment.add(self.top_container)
@@ -169,53 +175,6 @@ class App(Gtk.Window):
         self.grid.set_row_spacing(0)
         self.grid.set_column_spacing(0)
         self.scrolled_window.add(self.grid)
-
-        # SWWW TRANSITION MENU
-
-         # Transitions menu above the main menu for swww options
-        self.swww_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-
-        # Create a transition type dropdown menu for swww
-        self.swww_label = Gtk.Label(label="Transition options: ")
-        self.swww_transitions_options = Gtk.ComboBoxText()
-
-        #  Get angle for animation
-        self.swww_angle_entry = Gtk.Entry()
-        self.swww_angle_entry.set_width_chars(7)
-        self.swww_angle_entry.set_placeholder_text("angle")
-        self.swww_box.pack_start(self.swww_angle_entry, False, False, 0)
-
-        #  Get steps for animation
-        self.swww_steps_entry = Gtk.Entry()
-        self.swww_steps_entry.set_width_chars(7)
-        self.swww_steps_entry.set_placeholder_text("steps")
-        self.swww_box.pack_start(self.swww_steps_entry, False, False, 0)
-
-        #  Get duration for animation
-        self.swww_duration_entry = Gtk.Entry()
-        self.swww_duration_entry.set_width_chars(7)
-        self.swww_duration_entry.set_placeholder_text("duration")
-        self.swww_box.pack_start(self.swww_duration_entry, False, False, 0)
-
-        #  Get fps for animation
-        self.swww_fps_entry = Gtk.Entry()
-        self.swww_fps_entry.set_width_chars(5)
-        self.swww_fps_entry.set_placeholder_text("fps")
-        self.swww_box.pack_start(self.swww_fps_entry, False, False, 0)
-
-        # Create a box to contain the bottom row of buttons with margin:
-        self.swww_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        self.swww_container.set_margin_bottom(0)
-        self.main_box.pack_start(self.swww_container, False, False, 0)
-
-        # Create alignment container for swww submenu:
-        self.swww_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
-        self.swww_container.pack_start(self.swww_row_alignment, True, False, 0)
-
-        # Pack the new box at the end of the main box:
-        self.swww_options_box = Gtk.HBox(spacing=10)
-        self.swww_options_box.pack_start(self.swww_box, False, False, 0)
-        self.swww_row_alignment.add(self.swww_options_box)
 
         # BACKEND MENU
 
@@ -254,11 +213,6 @@ class App(Gtk.Window):
         self.color_picker_button.connect("color-set", self.on_color_set)
         self.color_picker_button.set_tooltip_text(self.txt.tip_color)
 
-        # Create random button:
-        self.random_button = Gtk.Button(label=self.txt.msg_random)
-        self.random_button.connect("clicked", self.on_random_clicked)
-        self.random_button.set_tooltip_text(self.txt.tip_random)
-
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
@@ -278,16 +232,39 @@ class App(Gtk.Window):
 
         # Create a horizontal box for display backend options:
         self.options_box = Gtk.HBox(spacing=10)
-        self.options_box.pack_end(self.random_button, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
 
-        self.swww_options_display()
+        # Create a transition type dropdown menu for swww
+        self.swww_transitions_options = Gtk.ComboBoxText()
+
+        #  Get angle for animation
+        self.swww_angle_entry = Gtk.Entry()
+        self.swww_angle_entry.set_width_chars(5)
+        self.swww_angle_entry.set_placeholder_text("angle")
+
+        #  Get steps for animation
+        self.swww_steps_entry = Gtk.Entry()
+        self.swww_steps_entry.set_width_chars(5)
+        self.swww_steps_entry.set_placeholder_text("steps")
+
+        #  Get duration for animation
+        self.swww_duration_entry = Gtk.Entry()
+        self.swww_duration_entry.set_width_chars(7)
+        self.swww_duration_entry.set_placeholder_text("duration")
+
+        #  Get fps for animation
+        self.swww_fps_entry = Gtk.Entry()
+        self.swww_fps_entry.set_width_chars(5)
+        self.swww_fps_entry.set_placeholder_text("fps")
+
+        # Add different buttons depending on backend:
         self.monitor_option_display()
         self.fill_option_display()
         self.color_picker_display()
+        self.swww_options_display()
 
-        # Connect the "q" key press event to exit the application
+        # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
         self.show_all()
 
@@ -349,13 +326,12 @@ class App(Gtk.Window):
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
     def swww_options_display(self) -> None:
-        """ Show swww transition option if backend is swww """
-        self.swww_box.remove(self.swww_label)
-        self.swww_box.remove(self.swww_transitions_options)
-        self.swww_box.remove(self.swww_angle_entry)
-        self.swww_box.remove(self.swww_steps_entry)
-        self.swww_box.remove(self.swww_fps_entry)
-        self.swww_box.remove(self.swww_duration_entry)
+        """ Show swww transition options if backend is swww """
+        self.options_box.remove(self.swww_transitions_options)
+        self.options_box.remove(self.swww_angle_entry)
+        self.options_box.remove(self.swww_steps_entry)
+        self.options_box.remove(self.swww_fps_entry)
+        self.options_box.remove(self.swww_duration_entry)
 
         if self.cf.backend != "swww" or not self.cf.show_transition_options:
             return
@@ -363,7 +339,6 @@ class App(Gtk.Window):
         self.swww_transitions_options = Gtk.ComboBoxText()
         for transitions in SWWW_TRANSITION_TYPES:
             self.swww_transitions_options.append_text(transitions)
-
         active_transition = 0
         if self.cf.swww_transition_type in SWWW_TRANSITION_TYPES:
             active_transition = SWWW_TRANSITION_TYPES.index(self.cf.swww_transition_type)
@@ -371,12 +346,11 @@ class App(Gtk.Window):
             self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
             self.swww_transitions_options.set_tooltip_text(self.txt.tip_transition)
 
-        self.swww_box.pack_start(self.swww_label, False, False, 0)
-        self.swww_box.pack_start(self.swww_transitions_options, False, False, 0)
-        self.swww_box.pack_start(self.swww_angle_entry, False, False, 0)
-        self.swww_box.pack_end(self.swww_steps_entry, False, False, 0)
-        self.swww_box.pack_end(self.swww_duration_entry, False, False, 0)
-        self.swww_box.pack_start(self.swww_fps_entry, False, False, 0)
+        self.options_box.pack_end(self.swww_steps_entry, False, False, 0)
+        self.options_box.pack_end(self.swww_fps_entry, False, False, 0)
+        self.options_box.pack_end(self.swww_angle_entry, False, False, 0)
+        self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
+        self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
