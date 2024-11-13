@@ -4,6 +4,8 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 
 ![screenshot](screenshot.jpg)
 
+![screenshot](screenshot2.jpg)
+
 ## Features
 
 - Vim keys

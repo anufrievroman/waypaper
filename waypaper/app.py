@@ -1,7 +1,9 @@
 """Module that runs GUI app"""
 
 import threading
+import subprocess
 import os
+import time
 import gi
 import shutil
 from pathlib import Path
@@ -11,7 +13,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file, get_monitor_names
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -76,6 +78,8 @@ class App(Gtk.Window):
         self.selected_index = 0
         self.highlighted_image_row = 0
         self.init_ui()
+        self.backend_option_combo.grab_focus()
+        self.search_state = False
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -83,9 +87,64 @@ class App(Gtk.Window):
     def init_ui(self) -> None:
         """Initialize the UI elements of the application"""
 
+         # New menus below main menu for swww options
+        self.new_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+
+        # Create a transition dropdown menu for swww
+        self.swww_transitions_options = Gtk.ComboBoxText()
+        
+        # Add content to the new box
+        # Label for swww options
+
+        self.swww_label = Gtk.Label(label="Options for swww: ")
+        #  Get angle for animation
+        self.swww_angle_entry = Gtk.Entry()
+        self.swww_angle_entry.set_width_chars(7)
+        self.swww_angle_entry.set_placeholder_text("angle")
+        self.new_box.pack_start(self.swww_angle_entry, False, False, 0)
+
+        #  Get steps for animation
+        self.swww_steps_entry = Gtk.Entry()
+        self.swww_steps_entry.set_width_chars(7)
+        self.swww_steps_entry.set_placeholder_text("steps")
+        self.new_box.pack_start(self.swww_steps_entry, False, False, 0)
+
+        #  Get duration for animation
+        self.swww_duration_entry = Gtk.Entry()
+        self.swww_duration_entry.set_width_chars(7)
+        self.swww_duration_entry.set_placeholder_text("duration")
+        self.new_box.pack_start(self.swww_duration_entry, False, False, 0)
+
+        #  Get fps for animation
+        self.swww_fps_entry = Gtk.Entry()
+        self.swww_fps_entry.set_width_chars(5)
+        self.swww_fps_entry.set_placeholder_text("fps")
+        self.new_box.pack_start(self.swww_fps_entry, False, False, 0)
+
         # Create a vertical box for layout:
         self.main_box = Gtk.VBox(spacing=10)
         self.add(self.main_box)
+
+         # Adding search image feature :)
+
+        # Hbox to hold search option and clear button 
+        self.hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+        
+        # Add it to main box 
+        self.main_box.pack_start(self.hbox, expand=False, fill=True, padding=10)
+        
+        # Search entry
+        self.search_entry = Gtk.Entry()
+        self.search_entry.set_placeholder_text("Search images...")
+        self.search_entry.connect("changed", self.on_search_entry_changed)
+        self.search_entry.connect("focus-in-event", self.on_focus_in)
+        self.search_entry.connect("focus-out-event", self.on_focus_out)
+        self.hbox.pack_start(self.search_entry, expand=True, fill=True, padding=0)  
+
+        #  Add a clear button
+        self.clear_btn = Gtk.Button(label="Clear")
+        self.clear_btn.connect("clicked", self.on_clear_button)
+        self.hbox.pack_start(self.clear_btn, expand=False, fill=True, padding=0)
 
         # Create a button to open folder dialog:
         self.choose_folder_button = Gtk.Button(label=self.txt.msg_changefolder)
@@ -167,7 +226,7 @@ class App(Gtk.Window):
         self.random_button.set_tooltip_text(self.txt.tip_random)
 
         # Create a box to contain the bottom row of buttons with margin:
-        self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
+        self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=600)
         self.bottom_button_box.set_margin_bottom(10)
         self.main_box.pack_end(self.bottom_button_box, False, False, 0)
 
@@ -176,10 +235,19 @@ class App(Gtk.Window):
         self.bottom_loading_box.set_margin_bottom(0)
         self.main_box.pack_end(self.bottom_loading_box, False, False, 0)
 
+        # Create a box to contain the bottom row of buttons with margin:
+        self.swww_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=100)
+        self.swww_button_box.set_margin_bottom(5)
+        self.main_box.pack_start(self.swww_button_box, False, False, 0)
+
+        # Create alignment container for swww:
+        self.swww_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
+        self.swww_button_box.pack_start(self.swww_row_alignment, True, False, 0)
+
         # Create alignment container:
         self.button_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
         self.bottom_button_box.pack_start(self.button_row_alignment, True, False, 0)
-
+    
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
 
@@ -196,7 +264,13 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.sort_option_combo, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
+        # Pack the new box at the end of the main box
 
+        self.sww_options_box = Gtk.HBox(spacing=10)
+        self.sww_options_box.pack_start(self.new_box, False, False, 0)
+        self.swww_row_alignment.add(self.sww_options_box)
+
+        self.swww_options_display()
         self.monitor_option_display()
         self.fill_option_display()
         self.color_picker_display()
@@ -257,6 +331,35 @@ class App(Gtk.Window):
         # Add it to the row of buttons:
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
+    def swww_options_display(self) -> None:
+        """ Show swww transition option if backend is swww """          
+        self.new_box.remove(self.swww_label)
+        self.new_box.remove(self.swww_transitions_options)
+        self.new_box.remove(self.swww_angle_entry)
+        self.new_box.remove(self.swww_steps_entry)
+        self.new_box.remove(self.swww_fps_entry)
+        self.new_box.remove(self.swww_duration_entry)
+
+        if self.cf.backend not in ["swww"]:
+            return
+
+        self.swww_transitions_options = Gtk.ComboBoxText()        
+        for transitions in SWWW_TRANSITION_TYPES:
+            self.swww_transitions_options.append_text(transitions)
+
+        active_transition = 0
+        if self.cf.swww_transition_type in SWWW_TRANSITION_TYPES:
+            active_transition = SWWW_TRANSITION_TYPES.index(self.cf.swww_transition_type)
+            self.swww_transitions_options.set_active(active_transition)
+            self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
+            self.swww_transitions_options.set_tooltip_text(self.txt.tip_transition)
+        
+        self.new_box.pack_start(self.swww_label, False, False, 0)
+        self.new_box.pack_start(self.swww_transitions_options, False, False, 0)
+        self.new_box.pack_start(self.swww_angle_entry, False, False, 0)
+        self.new_box.pack_end(self.swww_steps_entry, False, False, 0)
+        self.new_box.pack_end(self.swww_duration_entry, False, False, 0)
+        self.new_box.pack_start(self.swww_fps_entry, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -376,6 +479,46 @@ class App(Gtk.Window):
             button.connect("clicked", self.on_image_clicked, path)
 
         self.show_all()
+    
+    def load_image_grid_searched(self) -> None:
+        """Reload the grid of images"""
+
+        # Clear existing images:
+        for child in self.grid.get_children():
+            self.grid.remove(child)
+
+        current_y = 0
+        current_row_heights = [0] * self.cf.number_of_columns
+        for index, (thumbnail, name, path) in enumerate(self.searched_images):
+
+            row = index // self.cf.number_of_columns
+            column = index % self.cf.number_of_columns
+
+            # Calculate current y coordinate in the scroll window:
+            aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
+            current_row_heights[column] = int(240 / aspect_ratio)
+            if column == 0:
+                current_y += max(current_row_heights) + 10
+                current_row_heights = [0] * self.cf.number_of_columns
+
+            # Create a button with an image and add tooltip:
+            image = Gtk.Image.new_from_pixbuf(thumbnail)
+            image.set_tooltip_text(name)  # Ensure `name` is a string, not a tuple
+            button = Gtk.Button()
+            if index == self.selected_index:
+                button.set_relief(Gtk.ReliefStyle.NORMAL)
+                self.highlighted_image_y = current_y
+            else:
+                button.set_relief(Gtk.ReliefStyle.NONE)
+            button.add(image)
+
+            # Add button to the grid and connect clicked event:
+            self.grid.attach(button, column, row, 1, 1)
+            button.connect("clicked", self.on_image_clicked, path)
+
+        self.show_all()
+
+
 
 
     def scroll_to_selected_image(self) -> None:
@@ -459,9 +602,19 @@ class App(Gtk.Window):
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_monitor = "All"
         self.monitor_option_display()
+        self.swww_options_display()
         self.fill_option_display()
         self.color_picker_display()
         self.show_all()
+
+    def on_transition_option_changed(self, combo) -> None:
+        # Get the active index
+        active_index = combo.get_active()
+        
+        # Update the active transition type based on the selected option
+        if active_index >= 0:
+            self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
+            print(f"transition type changed to: {self.cf.swww_transition_type}")
 
 
     def on_color_set(self, color_button):
@@ -475,6 +628,22 @@ class App(Gtk.Window):
 
     def on_image_clicked(self, widget, path: str) -> None:
         """On clicking an image, set it as a wallpaper and save"""
+        angle = self.swww_angle_entry.get_text()
+        steps = self.swww_steps_entry.get_text()
+        fps = self.swww_fps_entry.get_text()
+        duration = self.swww_duration_entry.get_text()
+        if angle.isdigit():
+            self.cf.swww_transition_angle = angle
+
+        if steps.isdigit():
+            self.cf.swww_transition_step = steps
+
+        if fps.isdigit():
+            self.cf.swww_transition_fps = fps
+
+        if duration.isdigit():
+            self.cf.swww_transition_duration = duration
+
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.select_wallpaper(path)
         self.selected_index = self.image_paths.index(path)
@@ -530,7 +699,10 @@ class App(Gtk.Window):
 
     def on_key_pressed(self, widget, event) -> bool:
         """Process various key binding"""
-        if (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
+        if self.search_state == True:
+            return
+
+        elif (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
             Gtk.main_quit()
 
         elif event.keyval == Gdk.KEY_r:
@@ -596,9 +768,39 @@ class App(Gtk.Window):
         # Prevent other default key handling:
         return event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]
 
+    def on_search_entry_changed(self,entry, event= None):
+        """This function is triggered when the user types in the search field"""
+        # Get the search query
+        search_query = entry.get_text().lower()
+
+        # Filter the images and thumbnails based on the search query
+        if search_query:
+        # Filter both the image names and thumbnails that match the search query
+            self.searched_images = [(thumb, name, path) 
+                                for thumb, name, path in zip(self.thumbnails, self.image_names, self.image_paths) 
+                                if search_query in name.lower()]
+        else:
+        # If no search query, reset to show all images
+            self.searched_images = [(thumb, name, path) 
+                                for thumb, name, path in zip(self.thumbnails, self.image_names, self.image_paths)]
+
+        # Update the image grid with the filtered images
+        self.load_image_grid_searched()
+    
+    def on_clear_button(self,event):
+        self.search_entry.set_text("")
+        self.main_box.grab_focus()
+
+    def on_focus_in(self, widget, event):
+        self.search_state = True
+
+    def on_focus_out(self, widget, event):
+        self.search_state = False
+
 
     def run(self) -> None:
         """Run GUI application"""
         self.connect("destroy", self.on_exit_clicked)
         self.show_all()
         Gtk.main()
+        
