@@ -170,7 +170,54 @@ class App(Gtk.Window):
         self.grid.set_column_spacing(0)
         self.scrolled_window.add(self.grid)
 
-        # BOTTOM MENU
+        # SWWW TRANSITION MENU
+
+         # Transitions menu above the main menu for swww options
+        self.swww_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+
+        # Create a transition type dropdown menu for swww
+        self.swww_label = Gtk.Label(label="Transition options: ")
+        self.swww_transitions_options = Gtk.ComboBoxText()
+
+        #  Get angle for animation
+        self.swww_angle_entry = Gtk.Entry()
+        self.swww_angle_entry.set_width_chars(7)
+        self.swww_angle_entry.set_placeholder_text("angle")
+        self.swww_box.pack_start(self.swww_angle_entry, False, False, 0)
+
+        #  Get steps for animation
+        self.swww_steps_entry = Gtk.Entry()
+        self.swww_steps_entry.set_width_chars(7)
+        self.swww_steps_entry.set_placeholder_text("steps")
+        self.swww_box.pack_start(self.swww_steps_entry, False, False, 0)
+
+        #  Get duration for animation
+        self.swww_duration_entry = Gtk.Entry()
+        self.swww_duration_entry.set_width_chars(7)
+        self.swww_duration_entry.set_placeholder_text("duration")
+        self.swww_box.pack_start(self.swww_duration_entry, False, False, 0)
+
+        #  Get fps for animation
+        self.swww_fps_entry = Gtk.Entry()
+        self.swww_fps_entry.set_width_chars(5)
+        self.swww_fps_entry.set_placeholder_text("fps")
+        self.swww_box.pack_start(self.swww_fps_entry, False, False, 0)
+
+        # Create a box to contain the bottom row of buttons with margin:
+        self.swww_container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        self.swww_container.set_margin_bottom(0)
+        self.main_box.pack_start(self.swww_container, False, False, 0)
+
+        # Create alignment container for swww submenu:
+        self.swww_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
+        self.swww_container.pack_start(self.swww_row_alignment, True, False, 0)
+
+        # Pack the new box at the end of the main box:
+        self.swww_options_box = Gtk.HBox(spacing=10)
+        self.swww_options_box.pack_start(self.swww_box, False, False, 0)
+        self.swww_row_alignment.add(self.swww_options_box)
+
+        # BACKEND MENU
 
         # Create a backend dropdown menu:
         self.backend_option_combo = Gtk.ComboBoxText()
@@ -222,50 +269,6 @@ class App(Gtk.Window):
         self.bottom_loading_box.set_margin_bottom(0)
         self.main_box.pack_end(self.bottom_loading_box, False, False, 0)
 
-        # SWWW TRANSITION MENU
-
-         # Transitions menu above the main menu for swww options
-        self.swww_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-
-        # Label for swww options
-        self.swww_label = Gtk.Label(label="Transition options: ")
-
-        # Create a transition type dropdown menu for swww
-        self.swww_transitions_options = Gtk.ComboBoxText()
-
-        #  Get angle for animation
-        self.swww_angle_entry = Gtk.Entry()
-        self.swww_angle_entry.set_width_chars(7)
-        self.swww_angle_entry.set_placeholder_text("angle")
-        self.swww_box.pack_start(self.swww_angle_entry, False, False, 0)
-
-        #  Get steps for animation
-        self.swww_steps_entry = Gtk.Entry()
-        self.swww_steps_entry.set_width_chars(7)
-        self.swww_steps_entry.set_placeholder_text("steps")
-        self.swww_box.pack_start(self.swww_steps_entry, False, False, 0)
-
-        #  Get duration for animation
-        self.swww_duration_entry = Gtk.Entry()
-        self.swww_duration_entry.set_width_chars(7)
-        self.swww_duration_entry.set_placeholder_text("duration")
-        self.swww_box.pack_start(self.swww_duration_entry, False, False, 0)
-
-        #  Get fps for animation
-        self.swww_fps_entry = Gtk.Entry()
-        self.swww_fps_entry.set_width_chars(5)
-        self.swww_fps_entry.set_placeholder_text("fps")
-        self.swww_box.pack_start(self.swww_fps_entry, False, False, 0)
-
-        # Create a box to contain the bottom row of buttons with margin:
-        self.swww_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        self.swww_button_box.set_margin_bottom(0)
-        self.main_box.pack_start(self.swww_button_box, False, False, 0)
-
-        # Create alignment container for swww submenu:
-        self.swww_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
-        self.swww_button_box.pack_start(self.swww_row_alignment, True, False, 0)
-
         # Create alignment container for bottom menu:
         self.button_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.5, yscale=0.5)
         self.bottom_button_box.pack_start(self.button_row_alignment, True, False, 0)
@@ -278,11 +281,6 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.random_button, False, False, 0)
         self.options_box.pack_start(self.backend_option_combo, False, False, 0)
         self.button_row_alignment.add(self.options_box)
-
-        # Pack the new box at the end of the main box:
-        self.swww_options_box = Gtk.HBox(spacing=10)
-        self.swww_options_box.pack_start(self.swww_box, False, False, 0)
-        self.swww_row_alignment.add(self.swww_options_box)
 
         self.swww_options_display()
         self.monitor_option_display()
@@ -302,20 +300,27 @@ class App(Gtk.Window):
         self.filter_gifs_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_gifs)
         self.filter_gifs_checkbox.set_active(self.cf.show_gifs_only)
         self.filter_gifs_checkbox.connect("toggled", self.on_filter_gifs_toggled)
+        self.menu.append(self.filter_gifs_checkbox)
 
         # Create subfolder toggle:
         self.include_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_subfolders)
         self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
         self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
+        self.menu.append(self.include_subfolders_checkbox)
 
         # Create hidden toggle:
         self.include_hidden_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_hidden)
         self.include_hidden_checkbox.set_active(self.cf.show_hidden)
         self.include_hidden_checkbox.connect("toggled", self.on_hidden_files_toggled)
-
-        self.menu.append(self.filter_gifs_checkbox)
-        self.menu.append(self.include_subfolders_checkbox)
         self.menu.append(self.include_hidden_checkbox)
+
+        # Create show transition options toggle:
+        if self.cf.backend == "swww":
+            self.show_transition_options_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_transitions)
+            self.show_transition_options_checkbox.set_active(self.cf.show_transition_options)
+            self.show_transition_options_checkbox.connect("toggled", self.on_show_transition_options_toggled)
+            self.menu.append(self.show_transition_options_checkbox)
+
         self.menu.show_all()
 
     def on_options_button_clicked(self, widget) -> None:
@@ -352,7 +357,7 @@ class App(Gtk.Window):
         self.swww_box.remove(self.swww_fps_entry)
         self.swww_box.remove(self.swww_duration_entry)
 
-        if self.cf.backend != "swww":
+        if self.cf.backend != "swww" or not self.cf.show_transition_options:
             return
 
         self.swww_transitions_options = Gtk.ComboBoxText()
@@ -578,6 +583,13 @@ class App(Gtk.Window):
         """Toggle visibility of hidden files via menu"""
         self.cf.show_hidden = toggle.get_active()
         threading.Thread(target=self.process_images).start()
+
+
+    def on_show_transition_options_toggled(self, toggle) -> None:
+        """Toggle visibility of transition menu"""
+        self.cf.show_transition_options = toggle.get_active()
+        threading.Thread(target=self.process_images).start()
+        self.swww_options_display()
 
 
     def toggle_hidden_files(self) -> None:
