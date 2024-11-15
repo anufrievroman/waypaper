@@ -44,27 +44,25 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
                     }
             fill = fill_types[cf.fill_option.lower()]
 
-            # If mpvpaper is already active, try to call that process in that socket:
+            # If mpvpaper is already active on given monitor, try to call that process in that socket:
             try:
-                subprocess.check_output(["pgrep", "mpvpaper"], encoding='utf-8')
+                subprocess.check_output(["pgrep", "-f", f"socket-{monitor}"], encoding='utf-8')
                 time.sleep(0.2)
-                print("Detected running mpvpaper, now trying to call mpvpaper socket")
-                update_command = f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-waypaper"
-                subprocess.Popen(update_command, shell=True)
+                print("Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
+                subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}", shell=True)
 
-            # Otherwise, if no mpv running, create a new process in a new socket:
+            # Otherwise, if no mpvpaper is running, create a new process in a new socket:
             except subprocess.CalledProcessError:
-                command = ["mpvpaper"]
-                command.extend(["--fork", "-o", f"input-ipc-server=/tmp/mpv-socket-waypaper no-audio loop {fill} --background-color='{cf.color}'"])
                 print("Detected no running mpvpaper, starting new mpvpaper process")
+                command = ["mpvpaper", "--fork"]
+                command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} no-audio loop {fill} --background-color='{cf.color}'"])
 
-                # Specify the monitor (does not work yet):
-                # if monitor != "All":
-                    # command.extend([monitor])
-                # else:
-                    # command.extend('*')
+                # Specify the monitor:
+                if monitor != "All":
+                    command.extend([monitor])
+                else:
+                    command.extend('*')
 
-                command.extend(['*'])
                 command.extend([image_path])
                 subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
