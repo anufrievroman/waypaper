@@ -35,31 +35,38 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
         # mpvpaper backend:
         elif cf.backend == "mpvpaper":
 
-            # Kill previous mpvpaper instances:
-            try:
-                subprocess.check_output(["pgrep", "mpvpaper"], encoding='utf-8')
-                subprocess.Popen(["killall", ".mpvpaper-wrapp"])
-                time.sleep(0.5)
-            except subprocess.CalledProcessError:
-                pass
-
             fill_types = {
                     "fill": "panscan=1.0",
                     "fit": "panscan=0.0",
                     "center": "",
                     "stretch": "--keepaspect=no",
                     "tile": "",
-            }
+                    }
             fill = fill_types[cf.fill_option.lower()]
 
-            command = ["mpvpaper"]
-            command.extend(["-o", f"no-audio loop {fill} --background-color='{cf.color}'"])
-            if monitor != "All":
-                command.extend([monitor])
-            else:
-                command.extend('*')
-            command.extend([image_path])
-            subprocess.Popen(command)
+            # If mpvpaper is already active, try to call that process in that socket:
+            try:
+                subprocess.check_output(["pgrep", "mpvpaper"], encoding='utf-8')
+                time.sleep(0.2)
+                print("Detected running mpvpaper, now trying to call mpvpaper socket")
+                update_command = f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-waypaper"
+                subprocess.Popen(update_command, shell=True)
+
+            # Otherwise, if no mpv running, create a new process in a new socket:
+            except subprocess.CalledProcessError:
+                command = ["mpvpaper"]
+                command.extend(["--fork", "-o", f"input-ipc-server=/tmp/mpv-socket-waypaper no-audio loop {fill} --background-color='{cf.color}'"])
+                print("Detected no running mpvpaper, starting new mpvpaper process")
+
+                # Specify the monitor (does not work yet):
+                # if monitor != "All":
+                    # command.extend([monitor])
+                # else:
+                    # command.extend('*')
+
+                command.extend(['*'])
+                command.extend([image_path])
+                subprocess.Popen(command)
             print(f"{txt.msg_setwith} {cf.backend}")
 
         # swww backend:
