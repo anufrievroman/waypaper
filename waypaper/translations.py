@@ -20,6 +20,7 @@ class English:
         self.msg_select = "Select"
         self.msg_refresh = "Refresh"
         self.msg_clear = "Clear"
+        self.msg_stop = "Stop"
         self.msg_search = "Search"
         self.msg_random = "Random"
         self.msg_exit = "Exit"
@@ -44,7 +45,6 @@ class English:
         self.err_backend += "- hyprpaper (for Wayland)\n- feh (for Xorg)\n- wallutils (for Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Error changing wallpaper:"
-        self.err_notsup = "The backend is not supported:"
         self.err_disp = "Error determining monitor names:"
 
         self.tip_refresh = "Recache the folder of images"
@@ -78,6 +78,7 @@ class German:
         self.msg_refresh = "Aktualisieren"
         self.msg_random = "Zufällig"
         self.msg_clear = "Clear"
+        self.msg_stop = "Stop"
         self.msg_search = "Search"
         self.msg_exit = "Beenden"
         self.msg_subfolders = "Unterordner"
@@ -101,7 +102,6 @@ class German:
         self.err_backend += "- hyprpaper (fur Wayland)\n- feh (für Xorg)\n- wallutils (für Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Fehler beim Ändern des Hintergrundbildes:"
-        self.err_notsup = "Das folgende Backend wird nicht unterstützt:"
         self.err_disp = "Fehler beim Ermitteln der Monitor-Namen:"
 
         self.tip_refresh = "Erneutes einlesen des Hintergrundbild-Ordners"
@@ -135,6 +135,7 @@ class French:
         self.msg_refresh = "Actualiser"
         self.msg_random = "Aléatoire"
         self.msg_clear = "Effacer"
+        self.msg_stop = "Stop"
         self.msg_search = "Chercher"
         self.msg_exit = "Quitter"
         self.msg_subfolders = "Sous-dossiers"
@@ -158,7 +159,6 @@ class French:
         self.err_backend += "- hyprpaper (pour Wayland)\n- feh (pour Xorg)\n- wallutils (pour Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Erreur lors du changement de papier peint :"
-        self.err_notsup = "Le backend n'est pas pris en charge :"
         self.err_disp = "Erreur lors de la détermination des noms des moniteurs :"
 
         self.tip_refresh = "Recréer le dossier d'images"
@@ -192,6 +192,7 @@ class Polish:
         self.msg_refresh = "Odśwież"
         self.msg_random = "Losowo"
         self.msg_clear = "Clear"
+        self.msg_stop = "Stop"
         self.msg_search = "Search"
         self.msg_exit = "Wyjście"
         self.msg_subfolders = "Podkatalogi"
@@ -215,7 +216,6 @@ class Polish:
         self.err_backend += "- hyprpaper (dla Wayland)\n- feh (dla Xorg)\n- wallutils (dla Xorg i Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Błąd podczas zmiany tapety:"
-        self.err_notsup = "Backend nie jest obsługiwany:"
         self.err_disp = "Błąd podczas określania nazw monitorów:"
 
         self.tip_refresh = "Odśwież folder z obrazami"
@@ -249,6 +249,7 @@ class Russian:
         self.msg_refresh = "Обновить"
         self.msg_random = "Случайно"
         self.msg_clear = "Очистить"
+        self.msg_stop = "Остановить"
         self.msg_search = "Поиск"
         self.msg_exit = "Выход"
         self.msg_subfolders = "Показать подпапки"
@@ -272,7 +273,6 @@ class Russian:
         self.err_backend += "- hyprpaper (для Wayland)\n- feh (для Xorg)\n- wallutils (для Xorg и Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Ошибка при смене обоев:"
-        self.err_notsup = "Бэкенд не поддерживается:"
         self.err_disp = "Ошибка определения названий мониторов:"
 
         self.tip_refresh = "Обновить папку с изображениями"
@@ -306,6 +306,7 @@ class Belarusian:
         self.msg_refresh = "Абнавіць"
         self.msg_random = "Выпадкова"
         self.msg_clear = "Clear"
+        self.msg_stop = "Stop"
         self.msg_search = "Search"
         self.msg_exit = "Вынахад"
         self.msg_subfolders = "Паказаць падтэчкі"
@@ -329,7 +330,6 @@ class Belarusian:
         self.err_backend += "- hyprpaper (для Wayland)\n- feh (для Xorg)\n- wallutils (для Xorg і Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "Памылка пры змене шпалер:"
-        self.err_notsup = "Бэкенд не падтрымліваецца:"
         self.err_disp = "Памылка вызначэння назваў манітораў:"
 
         self.tip_refresh = "Абнавіць тэчку з выявамі"
@@ -363,6 +363,7 @@ class Chinese:
         self.msg_refresh = "刷新"
         self.msg_random = "随机"
         self.msg_clear = "Clear"
+        self.msg_stop = "Stop"
         self.msg_search = "Search"
         self.msg_exit = "退出"
         self.msg_subfolders = "子文件夹"
@@ -386,7 +387,6 @@ class Chinese:
         self.err_backend += "- hyprpaper (对于 Wayland)\n-feh (对于 Xorg)\n-wallutils (对于 Xorg 和 Wayland)\n\n"
         self.err_backend += self.msg_info
         self.err_wall = "更改壁纸时出错："
-        self.err_notsup = "不支持后端："
         self.err_disp = "确定监视器名称时出错："
 
         self.tip_refresh = "重新缓存图像文件夹"
@@ -419,6 +419,7 @@ class Spanish:
         self.msg_refresh = "Actualizar"
         self.msg_random = "Aleatorio"
         self.msg_clear = "Clear"
+        self.msg_stop = "Stop"
         self.msg_search = "Search"
         self.msg_exit = "Salir"
         self.msg_subfolders = "Ver subcarpetas"
@@ -442,7 +443,6 @@ class Spanish:
         self.err_backend += '- hyprpaper (para "Wayland")\n- feh (para "Xorg")\n- wallutils (para "Xorg" y "Wayland")\n\n'
         self.err_backend += self.msg_info
         self.err_wall = "Error cambiando imagen de fondo:"
-        self.err_notsup = "El programa para cambiar la imagen de fondo no tiene soporte:"
         self.err_disp = "Error buscando nombres de monitores"
 
         self.tip_refresh = "Volver a almacenar la carpeta de imágenes"

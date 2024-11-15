@@ -8,7 +8,8 @@ from waypaper.config import Config
 from waypaper.common import get_monitor_names
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian
 
-def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|English|French|German|Polish|Russian|Belarusian):
+def change_wallpaper(image_path: Path, cf: Config, monitor: str,
+                     txt: Chinese|English|French|German|Polish|Russian|Belarusian):
     """Run system commands to change the wallpaper depending on the backend"""
 
     try:
@@ -51,17 +52,17 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
                 print("Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
                 subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}", shell=True)
 
-            # Otherwise, if no mpvpaper is running, create a new process in a new socket:
+            # If mpvpaper is not running, create a new process in a new socket:
             except subprocess.CalledProcessError:
                 print("Detected no running mpvpaper, starting new mpvpaper process")
                 command = ["mpvpaper", "--fork"]
                 command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} no-audio loop {fill} --background-color='{cf.color}'"])
 
                 # Specify the monitor:
-                if monitor != "All":
-                    command.extend([monitor])
-                else:
+                if monitor == "All":
                     command.extend('*')
+                else:
+                    command.extend([monitor])
 
                 command.extend([image_path])
                 subprocess.Popen(command)
@@ -70,8 +71,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
         # swww backend:
         elif cf.backend == "swww":
 
-            # Check with pgrep if other backends they are running, and kill them
-            # Because swaybg and hyprpaper are known to conflict with swww
+            # Check with pgrep if other backends they are running and kill them
+            # because swaybg and hyprpaper are known to conflict with swww
             try:
                 subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
                 subprocess.Popen(["killall", "swaybg"])
@@ -94,7 +95,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
                     }
             fill = fill_types[cf.fill_option.lower()]
 
-            # Check if swww-deamon is already running. If not, launch it:
+            # Check if swww-daemon is already running. If not, launch it:
             try:
                 subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
             except subprocess.CalledProcessError:
@@ -148,8 +149,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
 
             # Check if hyprpaper is already running, otherwise start it, and preload the wallpaper:
             try:
-                str(subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8'))
-            except Exception:
+                subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8')
+            except subprocess.CalledProcessError:
                 subprocess.Popen(["hyprpaper"])
                 time.sleep(1)
             preload_command = ["hyprctl", "hyprpaper", "preload", image_path]
@@ -177,11 +178,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str, txt: Chinese|En
                     except Exception:
                         retry_counter += 1
 
-        elif cf.backend == "none":
-            pass
-
         else:
-            print(f"{txt.err_notsup} {cf.backend}")
+            pass
 
         # Run a post command:
         if cf.post_command:

@@ -213,6 +213,10 @@ class App(Gtk.Window):
         self.color_picker_button.connect("color-set", self.on_color_set)
         self.color_picker_button.set_tooltip_text(self.txt.tip_color)
 
+        # Create mpv stop button:
+        self.mpv_stop_button = Gtk.Button(label=self.txt.msg_stop)
+        self.mpv_stop_button.connect("clicked", self.on_mpv_stop_button_clicked)
+
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
@@ -260,6 +264,7 @@ class App(Gtk.Window):
 
         # Add different buttons depending on backend:
         self.monitor_option_display()
+        self.mpv_options_display()
         self.fill_option_display()
         self.color_picker_display()
         self.swww_options_display()
@@ -326,7 +331,7 @@ class App(Gtk.Window):
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
     def swww_options_display(self) -> None:
-        """ Show swww transition options if backend is swww """
+        """Show swww transition options if backend is swww"""
         self.options_box.remove(self.swww_transitions_options)
         self.options_box.remove(self.swww_angle_entry)
         self.options_box.remove(self.swww_steps_entry)
@@ -351,6 +356,14 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.swww_angle_entry, False, False, 0)
         self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
         self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
+
+
+    def mpv_options_display(self) -> None:
+        """Show mpv options if backend is mpvpaper"""
+        self.options_box.remove(self.mpv_stop_button)
+        if self.cf.backend != "mpvpaper":
+            return
+        self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -654,6 +667,9 @@ class App(Gtk.Window):
         """On clicking refresh button, clear cache"""
         self.clear_cache()
 
+    def on_mpv_stop_button_clicked(self, widget) -> None:
+        """On clicking mpv stop button, kill the mpvpaper"""
+        subprocess.Popen(["killall", "mpvpaper"])
 
     def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""
