@@ -214,7 +214,12 @@ class App(Gtk.Window):
         self.mpv_stop_button.connect("clicked", self.on_mpv_stop_button_clicked)
         self.mpv_stop_button.set_tooltip_text(self.txt.tip_mpv_stop)
 
-        # Create a box to contain the bottom row of buttons with margin:
+        # Create mpv pause button:
+        self.mpv_pause_button = Gtk.Button(label=self.txt.msg_pause)
+        self.mpv_pause_button.connect("clicked", self.on_mpv_pause_button_clicked)
+        self.mpv_pause_button.set_tooltip_text(self.txt.tip_mpv_pause)
+
+        # Create a box to contain the bottom row of buttons:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
         self.main_box.pack_end(self.bottom_button_box, False, False, 0)
@@ -360,6 +365,7 @@ class App(Gtk.Window):
         self.options_box.remove(self.mpv_stop_button)
         if self.cf.backend == "mpvpaper":
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
+            self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -667,6 +673,10 @@ class App(Gtk.Window):
     def on_mpv_stop_button_clicked(self, widget) -> None:
         """On clicking mpv stop button, kill the mpvpaper"""
         subprocess.Popen(["killall", "mpvpaper"])
+
+    def on_mpv_pause_button_clicked(self, widget) -> None:
+        """On clicking mpv stop button, kill the mpvpaper"""
+        subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
 
     def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""
