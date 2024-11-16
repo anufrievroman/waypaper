@@ -12,33 +12,18 @@ from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.config import Config
 from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS
-from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
+from waypaper.translations import load_language
+
 
 # Get application metadata.
 about = AboutData()
-# Get application settings.
+
+# Get application settings and language package:
 cf = Config()
+cf.read()
+txt = load_language(cf.lang)
 
-# Define the text language of the application based on the configuration.
-if cf.lang == "de":
-    txt = German()
-elif cf.lang == "fr":
-    txt = French()
-elif cf.lang == "ru":
-    txt = Russian()
-elif cf.lang == "by":
-    txt = Belarusian()
-elif cf.lang == "pl":
-    txt = Polish()
-elif cf.lang == "zh":
-    txt = Chinese()
-elif cf.lang == "es":
-    txt = Spanish()
-else:
-    txt = English()
-
-
-# Define command line argument parser.
+# Define command line argument parser and parse user arguments:
 parser = argparse.ArgumentParser(
     prog=about.applicationName(), description=txt.msg_desc, epilog=txt.msg_info
 )
@@ -55,13 +40,12 @@ args = parser.parse_args()
 
 
 def run():
-    """Read user arguments and either run GUI app or just reset the wallpaper"""
-    cf.read()
+    """Read user arguments and either run GUI app or perform requested action"""
     cf.read_state() # read default state file, if use_xdg_state is True
     cf.read_parameters_from_user_arguments(args)
     if args.state_file:
         cf.read_state() # read from custom state file if provided
-        cf.read_parameters_from_user_arguments(args) # ensure that user arguments override values from state file
+        cf.read_parameters_from_user_arguments(args) # user arguments override values from state file
     cf.check_validity()
 
     # Set the wallpapers and quit:

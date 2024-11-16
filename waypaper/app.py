@@ -120,7 +120,7 @@ class App(Gtk.Window):
         self.clear_button.connect("clicked", self.on_clear_button)
 
         # Create the options menu button:
-        self.options_button = Gtk.Button(label="Options")
+        self.options_button = Gtk.Button(label=self.txt.msg_options)
         self.options_button.connect("clicked", self.on_options_button_clicked)
 
         # Create a sort option dropdown menu:
@@ -216,6 +216,7 @@ class App(Gtk.Window):
         # Create mpv stop button:
         self.mpv_stop_button = Gtk.Button(label=self.txt.msg_stop)
         self.mpv_stop_button.connect("clicked", self.on_mpv_stop_button_clicked)
+        self.mpv_stop_button.set_tooltip_text(self.txt.tip_mpv_stop)
 
         # Create a box to contain the bottom row of buttons with margin:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
@@ -361,9 +362,8 @@ class App(Gtk.Window):
     def mpv_options_display(self) -> None:
         """Show mpv options if backend is mpvpaper"""
         self.options_box.remove(self.mpv_stop_button)
-        if self.cf.backend != "mpvpaper":
-            return
-        self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
+        if self.cf.backend == "mpvpaper":
+            self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -608,6 +608,7 @@ class App(Gtk.Window):
         self.cf.backend = self.backend_option_combo.get_active_text()
         self.cf.selected_monitor = "All"
         self.monitor_option_display()
+        self.mpv_options_display()
         self.swww_options_display()
         self.fill_option_display()
         self.color_picker_display()
