@@ -363,6 +363,7 @@ class App(Gtk.Window):
     def mpv_options_display(self) -> None:
         """Show mpv options if backend is mpvpaper"""
         self.options_box.remove(self.mpv_stop_button)
+        self.options_box.remove(self.mpv_pause_button)
         if self.cf.backend == "mpvpaper":
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
