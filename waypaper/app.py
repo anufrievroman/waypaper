@@ -6,6 +6,7 @@ import os
 import time
 import gi
 import shutil
+import imageio
 from pathlib import Path
 from PIL import Image
 
@@ -20,50 +21,45 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 
-def read_webp_image(image_path: str) -> GdkPixbuf:
-    """Read webp images using Pillow library and convert it to pixbuf format"""
-    img = Image.open(image_path)
-    data = img.tobytes()
-    width, height = img.size
-    pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, width, height, width * 3)
-    return pixbuf
-
-
-def read_video_frame(image_path: str, cache_dir: Path) -> GdkPixbuf:
-    """Read first frame of video and convert it inot pixbuf format"""
-    import cv2
-    temp_frame = cache_dir / "temp_frame.jpeg"
-    vidcap = cv2.VideoCapture(image_path)
-    _, image = vidcap.read()
-    cv2.imwrite(temp_frame, image)
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file(temp_frame)
-    os.remove(temp_frame)
-    return pixbuf
-
-
 def cache_image(image_path: str, cache_dir: Path) -> None:
     """Resize and cache images using gtk library"""
     ext = os.path.splitext(image_path)[1].lower()
+    output_file = cache_dir / Path(os.path.basename(image_path))
+
     try:
+        # If it's a video, extract the first frame:
+        if ext in VIDEO_EXTENSIONS:
+            reader = imageio.get_reader(image_path)
+            first_frame = reader.get_data(0)
+            # Convert the numpy array to a PIL image (using Image.fromarray if necessary)
+            pil_image = Image.fromarray(first_frame)
+            width = 240
+            aspect_ratio = pil_image.height / pil_image.width
+            new_height = int(width * aspect_ratio)
+            resized_image = pil_image.resize((width, new_height))
+            resized_image.save(str(output_file), "JPEG")
+            return
+
+        # If it's an image, create preview depending on the filetype
         if ext == ".webp":
-            pixbuf = read_webp_image(str(image_path))
-        elif ext in VIDEO_EXTENSIONS:
-            pixbuf = read_video_frame(str(image_path), cache_dir)
+            img = Image.open(image_path)
+            data = img.tobytes()
+            width, height = img.size
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, width, height, width * 3)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+        aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
+        scaled_width = 240
+        scaled_height = int(scaled_width / aspect_ratio)
+        scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
+        scaled_pixbuf.savev(str(output_file), "jpeg", [], [])
 
     # If image processing failed, create a black placeholder:
     except Exception:
         print(f"Could not generate preview for {os.path.basename(image_path)}")
-        pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 1280, 720)
-        pixbuf.fill(0x0)
-
-    aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-    scaled_width = 240
-    scaled_height = int(scaled_width / aspect_ratio)
-    scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-    output_file = cache_dir / Path(os.path.basename(image_path))
-    scaled_pixbuf.savev(str(output_file), "jpeg", [], [])
+        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 240, 135)
+        black_pixbuf.fill(0x0)
+        black_pixbuf.savev(str(output_file), "jpeg", [], [])
 
 
 class App(Gtk.Window):
