@@ -2,9 +2,7 @@
 
 GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper` and `feh`. See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
 
-![screenshot](screenshot.jpg)
-
-![screenshot](screenshot2.jpg)
+![screenshot](screen.jpg)
 
 ## Features
 
@@ -58,6 +56,8 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 - `swww` or `swaybg` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-importlib_metadata`
+- `python-imageio`
+- `python-screeninfo`
 - `python-platformdirs`
 
 ## Usage
@@ -82,9 +82,15 @@ See [list of keybindings in the documentation](https://anufrievroman.gitbook.io/
 
 See typical problems [explained in the documentation](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
 
-## Contribution and support
+## Contribution
 
-Feel free to propose PR and suggest the improvements. I'll highly appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file.
+Feel free to propose PR and suggest the improvements. I'll highly appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file. Here a few guiding principles for creating pull requests:
+
+- Please do not apply automatic code formatting tools on the entire code base.
+- Please do separate pull requests for each feature, don't combine unrelated changes into one PR.
+- For big changes, please open an issue first to discuss, otherwise PR might be declined.
+
+## Support
 
 I am not a professional developer and work on open-source projects in my free time. If you'd like to support the development, consider donations via [buymeacoffee](https://www.buymeacoffee.com/angryprofessor) or cryptocurrencies:
 
