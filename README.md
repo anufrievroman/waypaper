@@ -57,6 +57,7 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-importlib_metadata`
 - `python-imageio`
+- `python-imageio-ffmpeg`
 - `python-screeninfo`
 - `python-platformdirs`
 

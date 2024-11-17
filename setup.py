@@ -17,7 +17,7 @@ setuptools.setup(
             "waypaper = waypaper.__main__:run"
         ]
     },
-    install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow", "imageio", "screeninfo"],
+    install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
     version='2.4',
     python_requires='>3.9',
     classifiers=[
