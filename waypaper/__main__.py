@@ -11,7 +11,7 @@ from waypaper.app import App
 from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.config import Config
-from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS
+from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS, MONITOR_OPTIONS
 from waypaper.translations import load_language
 
 
@@ -36,6 +36,7 @@ parser.add_argument("--folder", help=txt.msg_arg_folder)
 parser.add_argument("--state-file", help=txt.msg_arg_statefile)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
+parser.add_argument("--monitor", help=txt.msg_arg_monitor, choices=MONITOR_OPTIONS)
 args = parser.parse_args()
 
 
@@ -47,6 +48,29 @@ def run():
         cf.read_state() # read from custom state file if provided
         cf.read_parameters_from_user_arguments(args) # user arguments override values from state file
     cf.check_validity()
+
+    # Set monitor from user arguments
+    if args.monitor: 
+        monitor = args.monitor
+
+        # Set wallpaper from user arguments
+        if args.wallpaper:
+            wallpaper = pathlib.Path(args.wallpaper).expanduser()
+
+        if args.random:
+            wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
+            if wallpaper_str:
+                wallpaper = pathlib.Path(wallpaper_str)
+
+        change_wallpaper(wallpaper, cf, monitor, txt)
+        time.sleep(0.1)
+
+        # Save this wallpaper in config and quit:
+        cf.selected_wallpaper = wallpaper
+        cf.selected_monitor = monitor
+        cf.attribute_selected_wallpaper()
+        cf.save()
+        sys.exit(0)
 
     # Set the wallpapers and quit:
     if args.restore or args.random:
