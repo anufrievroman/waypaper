@@ -6,8 +6,8 @@ import shutil
 
 from pathlib import Path
 from typing import List
+from screeninfo import get_monitors
 
-from waypaper.options import get_monitor_names
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, MONITOR_OPTIONS
 
 
@@ -112,3 +112,11 @@ def check_installed_backends() -> List[str]:
         if is_installed:
             installed_backends.append(backend)
     return installed_backends
+
+
+def get_monitor_names() -> List[str]:
+    """Obtain the list of plugged monitors"""
+    connected_monitors: List[str] = []
+    for m in get_monitors():
+        connected_monitors.append(m.name)
+    return connected_monitors

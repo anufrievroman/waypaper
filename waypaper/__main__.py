@@ -50,7 +50,11 @@ def run():
     cf.check_validity()
 
     # Set monitor from user arguments
-    if args.monitor: 
+    if args.monitor and not args.wallpaper and not args.random: 
+        print("--monitor Error! Requires an image to be set\nUse --wallpaper or --random")
+        sys.exit(0)
+
+    if args.monitor and args.wallpaper or args.random: 
         monitor = args.monitor
 
         # Set wallpaper from user arguments
