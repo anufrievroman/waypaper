@@ -210,8 +210,12 @@ class Config:
         config.set("Settings", "swww_transition_duration", str(self.swww_transition_duration))
         config.set("Settings", "swww_transition_fps", str(self.swww_transition_fps))
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
-        with open(self.config_file, "w") as configfile:
-            config.write(configfile)
+
+        try:
+            with open(self.config_file, "w") as configfile:
+                config.write(configfile)
+        except PermissionError:
+            print("Could not save config file due to permission error.")
 
         # If requested, save the state file:
         if not self.use_xdg_state:

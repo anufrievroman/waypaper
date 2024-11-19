@@ -625,7 +625,7 @@ class App(Gtk.Window):
         # Update the active transition type based on the selected option
         if active_index >= 0:
             self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
-            print(f"transition type changed to: {self.cf.swww_transition_type}")
+            print(f"Transition type changed to: {self.cf.swww_transition_type}")
 
 
     def on_color_set(self, color_button):
