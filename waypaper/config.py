@@ -85,7 +85,6 @@ class Config:
         self.swww_transition_duration = config.get("Settings", "swww_transition_duration", fallback=self.swww_transition_duration)
         self.swww_transition_fps = config.get("Settings", "swww_transition_fps", fallback=self.swww_transition_fps)
         self.lang = config.get("Settings", "language", fallback=self.lang)
-        print(f"We got: {self.lang}")
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.show_transition_options = config.getboolean("Settings", "show_transition_options", fallback=self.show_transition_options)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
