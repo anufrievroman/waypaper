@@ -49,22 +49,27 @@ def run():
         cf.read_parameters_from_user_arguments(args) # user arguments override values from state file
     cf.check_validity()
 
-    # Set monitor from user arguments
-    if args.monitor and not args.wallpaper and not args.random: 
-        print("--monitor Error! Requires an image to be set\nUse --wallpaper or --random")
-        sys.exit(0)
-
-    if args.monitor and args.wallpaper or args.random: 
+    # Set monitor and wallpaper from user arguments:
+    if args.monitor:
         monitor = args.monitor
 
-        # Set wallpaper from user arguments
+        # Set wallpaper from user arguments:
         if args.wallpaper:
             wallpaper = pathlib.Path(args.wallpaper).expanduser()
 
-        if args.random:
+        # Set random wallpaper:
+        elif args.random:
             wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
             if wallpaper_str:
                 wallpaper = pathlib.Path(wallpaper_str)
+            else:
+                print("Could not get random wallpaper.")
+                wallpaper = pathlib.Path("")
+
+        # If no wallpaper provided, show error:
+        else:
+            print("The --monitor argument equires also using --wallpaper or --random.")
+            sys.exit(0)
 
         change_wallpaper(wallpaper, cf, monitor, txt)
         time.sleep(0.1)
@@ -76,7 +81,7 @@ def run():
         cf.save()
         sys.exit(0)
 
-    # Set the wallpapers and quit:
+    # Set previous wallpapers or random wallpaper:
     if args.restore or args.random:
         for index, (wallpaper, monitor) in enumerate(zip(cf.wallpapers, cf.monitors)):
 

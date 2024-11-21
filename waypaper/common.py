@@ -6,9 +6,8 @@ import shutil
 
 from pathlib import Path
 from typing import List
-from screeninfo import get_monitors
 
-from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, MONITOR_OPTIONS
+from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:
@@ -36,7 +35,7 @@ def get_image_paths(backend: str,
         if not include_subfolders and str(root) != str(root_folder):
             continue
 
-        # Remove deep w from consideration:
+        # Remove deep folders from consideration:
         if depth is not None and root != root_folder:
             current_depth = root.count(os.path.sep) - str(root_folder).count(
                 os.path.sep)
@@ -112,11 +111,3 @@ def check_installed_backends() -> List[str]:
         if is_installed:
             installed_backends.append(backend)
     return installed_backends
-
-
-def get_monitor_names() -> List[str]:
-    """Obtain the list of plugged monitors"""
-    connected_monitors: List[str] = []
-    for m in get_monitors():
-        connected_monitors.append(m.name)
-    return connected_monitors

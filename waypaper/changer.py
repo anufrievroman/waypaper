@@ -2,10 +2,10 @@
 
 import subprocess
 import time
+import screeninfo
 from pathlib import Path
 
 from waypaper.config import Config
-from waypaper.common import get_monitor_names
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str,
@@ -157,7 +157,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
 
             # Decide which monitors are affected:
             if monitor == "All":
-                monitors = get_monitor_names()
+                monitors = [m.name for m in screeninfo.get_monitors()]
             else:
                 monitors: list = [monitor]
 
