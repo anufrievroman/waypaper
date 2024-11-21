@@ -1,4 +1,4 @@
-.TH WAYPAPER 2024-01-01
+.TH WAYPAPER 2024-11-21
 .nh
 .SH NAME
 waypaper \- GUI wallpaper manager for Wayland and X11
@@ -7,7 +7,7 @@ waypaper \- GUI wallpaper manager for Wayland and X11
 [ \fIOPTION\fR ]
 .SH DESCRIPTION
 .B Waypaper
-is a TUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like swaybg, swww, hyprpaper, wallutils, and feh.  \fIhttps://anufrievroman.gitbook.com/waypaper \fR
+is a TUI wallpaper setter for Wayland and Xorg window managers, with support for gif and video wallpapers. It works as a frontend for popular wallpaper backends like swaybg, swww, hyprpaper, wallutils, mpvpaper, and feh.  \fIhttps://anufrievroman.gitbook.com/waypaper \fR
 .SH OPTIONS
 
 .TP
@@ -27,10 +27,6 @@ Restore the last chosen wallpaper. Useful at launch of the window manager.
 Set a random wallpaper.
 
 .TP
-\fB\-\-list \fP
-List wallpapers and monitors in json format.
-
-.TP
 \fB\-\-wallpaper XXX \fP
 Set the wallpaper from the provided path and save it in the config.
 
@@ -39,12 +35,20 @@ Set the wallpaper from the provided path and save it in the config.
 Set the folder of wallpaper images.
 
 .TP
+\fB\-\-monitor \fP
+Set the desired monitor. Should be used together with either \-\-random or \-\-wallpaper.
+
+.TP
 \fB\-\-backend XXX \fP
 Specify which backend to use, which can be either \fIswaybg, swww, feh\fR, or \fIwallutils\fR. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
 
 .TP
 \fB\-\-fill XXX \fP
 Specifies filling type, which can be eiher \fIfill, stretch, fit, center\fR, or \fItile\fR.
+
+.TP
+\fB\-\-list \fP
+List wallpapers and monitors in json format.
 
 .SH COMMANDS DURING USE
 Press '\fB?\fP' during use to get a list of keybindings.

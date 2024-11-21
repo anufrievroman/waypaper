@@ -4,11 +4,7 @@ from screeninfo import get_monitors
 BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "wallutils", "hyprpaper", "mpvpaper"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
 SORT_OPTIONS: List[str] = ["name", "namerev", "date", "daterev"]
-SORT_DISPLAYS: Dict[str, str] = {
-                "name": "Name ↓",
-                "namerev": "Name ↑",
-                "date": "Date ↓",
-                "daterev": "Date ↑"}
+SORT_DISPLAYS: Dict[str, str] = {"name": "Name ↓", "namerev": "Name ↑", "date": "Date ↓", "daterev": "Date ↑"}
 MONITOR_OPTIONS: List[str] = [m.name for m in get_monitors()]
 
 VIDEO_EXTENSIONS: List[str] = ['.webm', '.mkv', '.flv', '.vob', '.ogv', '.ogg', '.rrc', '.gifv', '.mng', '.mov',
