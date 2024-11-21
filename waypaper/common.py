@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List
 from screeninfo import get_monitors
 
-from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
+from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, MONITOR_OPTIONS
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:
@@ -120,4 +120,3 @@ def get_monitor_names() -> List[str]:
     for m in get_monitors():
         connected_monitors.append(m.name)
     return connected_monitors
-

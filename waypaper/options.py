@@ -1,4 +1,7 @@
 from typing import List, Dict
+from screeninfo import get_monitors
+
+connected_monitors: List[str] = [m.name for m in get_monitors()]
 
 BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "wallutils", "hyprpaper", "mpvpaper"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
@@ -8,6 +11,7 @@ SORT_DISPLAYS: Dict[str, str] = {
                 "namerev": "Name ↑",
                 "date": "Date ↓",
                 "daterev": "Date ↑"}
+MONITOR_OPTIONS: List[str] = connected_monitors
 
 VIDEO_EXTENSIONS: List[str] = ['.webm', '.mkv', '.flv', '.vob', '.ogv', '.ogg', '.rrc', '.gifv', '.mng', '.mov',
                                '.avi', '.qt', '.wmv', '.yuv', '.rm', '.asf', '.amv', '.mp4', '.m4p', '.m4v',
