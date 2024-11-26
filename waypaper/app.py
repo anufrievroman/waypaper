@@ -447,16 +447,21 @@ class App(Gtk.Window):
         GLib.idle_add(self.load_image_grid)
 
 
-    def load_image_grid(self) -> None:
+    def load_image_grid(self, thumbnails=None, image_names=None, image_paths=None) -> None:
         """Reload the grid of images"""
+
+        # If specific set of images was not provided, use everything:
+        thumbnails = thumbnails if thumbnails is not None else self.thumbnails
+        image_names = image_names if image_names is not None else self.image_names
+        image_paths = image_paths if image_paths is not None else self.image_paths
 
         # Clear existing images:
         for child in self.grid.get_children():
             self.grid.remove(child)
 
         current_y = 0
-        current_row_heights = [0]*self.cf.number_of_columns
-        for index, [thumbnail, name, path] in enumerate(zip(self.thumbnails, self.image_names, self.image_paths)):
+        current_row_heights = [0] * self.cf.number_of_columns
+        for index, [thumbnail, name, path] in enumerate(zip(thumbnails, image_names, image_paths)):
 
             row = index // self.cf.number_of_columns
             column = index % self.cf.number_of_columns
@@ -471,44 +476,6 @@ class App(Gtk.Window):
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
             image.set_tooltip_text(name)
-            button = Gtk.Button()
-            if index == self.selected_index:
-                button.set_relief(Gtk.ReliefStyle.NORMAL)
-                self.highlighted_image_y = current_y
-            else:
-                button.set_relief(Gtk.ReliefStyle.NONE)
-            button.add(image)
-
-            # Add button to the grid and connect clicked event:
-            self.grid.attach(button, column, row, 1, 1)
-            button.connect("clicked", self.on_image_clicked, path)
-
-        self.show_all()
-
-    def load_image_grid_searched(self) -> None:
-        """Reload the grid of images"""
-
-        # Clear existing images:
-        for child in self.grid.get_children():
-            self.grid.remove(child)
-
-        current_y = 0
-        current_row_heights = [0] * self.cf.number_of_columns
-        for index, (thumbnail, name, path) in enumerate(self.searched_images):
-
-            row = index // self.cf.number_of_columns
-            column = index % self.cf.number_of_columns
-
-            # Calculate current y coordinate in the scroll window:
-            aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
-            current_row_heights[column] = int(240 / aspect_ratio)
-            if column == 0:
-                current_y += max(current_row_heights) + 10
-                current_row_heights = [0] * self.cf.number_of_columns
-
-            # Create a button with an image and add tooltip:
-            image = Gtk.Image.new_from_pixbuf(thumbnail)
-            image.set_tooltip_text(name)  # Ensure `name` is a string, not a tuple
             button = Gtk.Button()
             if index == self.selected_index:
                 button.set_relief(Gtk.ReliefStyle.NORMAL)
@@ -790,22 +757,18 @@ class App(Gtk.Window):
 
     def on_search_entry_changed(self,entry, event= None):
         """This function is triggered when the user types in the search field"""
-        # Get the search query
         search_query = entry.get_text().lower()
 
-        # Filter the images and thumbnails based on the search query
+        # Filter the images and thumbnails based on the search query:
         if search_query:
-        # Filter both the image names and thumbnails that match the search query
-            self.searched_images = [(thumb, name, path)
-                                for thumb, name, path in zip(self.thumbnails, self.image_names, self.image_paths)
-                                if search_query in name.lower()]
-        else:
-        # If no search query, reset to show all images
-            self.searched_images = [(thumb, name, path)
-                                for thumb, name, path in zip(self.thumbnails, self.image_names, self.image_paths)]
+            searched_names = [name for name in self.image_names if search_query in name.lower()]
+            searched_thumbs = [self.thumbnails[i] for i in range(len(self.image_names)) if search_query in self.image_names[i].lower()]
+            searched_paths = [self.image_paths[i] for i in range(len(self.image_names)) if search_query in self.image_names[i].lower()]
+            self.load_image_grid(searched_thumbs, searched_names, searched_paths)
 
-        # Update the image grid with the filtered images
-        self.load_image_grid_searched()
+        # If no search query, reset to show all images:
+        else:
+            self.load_image_grid()
 
     def on_clear_button(self,event):
         self.search_entry.set_text("")
@@ -816,7 +779,6 @@ class App(Gtk.Window):
 
     def on_focus_out(self, widget, event):
         self.search_state = False
-
 
     def run(self) -> None:
         """Run GUI application"""
