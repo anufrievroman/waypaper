@@ -190,8 +190,8 @@ class French:
 
 class Polish:
     def __init__(self):
-        self.msg_desc = "GUI narzędzie do ustawiania tapety dla Wayland i X11. Jest interfejsem dla feh, swaybg, wallutils, hyprpaper, mpvpaper, and swww."
-        self.msg_info = "Aby dowiedzieć się więcej, odwiedz:\nhttps://github.com/anufrievroman/waypaper"
+        self.msg_desc = "GUI narzędzie do ustawiania tapety dla Wayland i X11. Jest interfejsem dla feh, swaybg, wallutils, hyprpaper, mpvpaper i swww."
+        self.msg_info = "Aby dowiedzieć się więcej, odwiedź:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "pokaż wersję programu"
         self.msg_arg_fill = "ustaw jak wypełnić ekran wybranym obrazem"
