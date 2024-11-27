@@ -360,6 +360,22 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
         self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
 
+    def swww_options_read(self) -> None:
+        """Read swww transition options from the UI if they are valid"""
+        if self.cf.backend != "swww":
+            return
+        angle = self.swww_angle_entry.get_text()
+        steps = self.swww_steps_entry.get_text()
+        fps = self.swww_fps_entry.get_text()
+        duration = self.swww_duration_entry.get_text()
+        if angle.isdigit():
+            self.cf.swww_transition_angle = angle
+        if steps.isdigit():
+            self.cf.swww_transition_step = steps
+        if fps.isdigit():
+            self.cf.swww_transition_fps = fps
+        if duration.isdigit():
+            self.cf.swww_transition_duration = duration
 
     def mpv_options_display(self) -> None:
         """Show mpv options if backend is mpvpaper"""
@@ -500,6 +516,17 @@ class App(Gtk.Window):
         self.scrolled_window.get_vadjustment().set_value(scroll)
 
 
+    def set_selected_wallpaper(self, path: str) -> None:
+        """Set selected image as a wallpaper and save the state"""
+        self.swww_options_read()
+        self.cf.select_wallpaper(path)
+        print(self.txt.msg_path, self.cf.selected_wallpaper)
+        if self.cf.selected_wallpaper:
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+        self.cf.attribute_selected_wallpaper()
+        self.cf.save()
+
+
     def choose_folder(self) -> None:
         """Choosing the folder of images, saving the path, and reloading images"""
         dialog = Gtk.FileChooserDialog(
@@ -607,33 +634,9 @@ class App(Gtk.Window):
 
     def on_image_clicked(self, widget, path: str) -> None:
         """On clicking an image, set it as a wallpaper and save"""
-        angle = self.swww_angle_entry.get_text()
-        steps = self.swww_steps_entry.get_text()
-        fps = self.swww_fps_entry.get_text()
-        duration = self.swww_duration_entry.get_text()
-        if angle.isdigit():
-            self.cf.swww_transition_angle = angle
-
-        if steps.isdigit():
-            self.cf.swww_transition_step = steps
-
-        if fps.isdigit():
-            self.cf.swww_transition_fps = fps
-
-        if duration.isdigit():
-            self.cf.swww_transition_duration = duration
-
-        self.cf.backend = self.backend_option_combo.get_active_text()
-        self.cf.select_wallpaper(path)
         self.selected_index = self.image_paths.index(path)
         self.load_image_grid()
-        print(self.txt.msg_path, self.cf.selected_wallpaper)
-        self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
-        if self.cf.selected_wallpaper:
-            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
-        self.cf.attribute_selected_wallpaper()
-        self.cf.save()
-
+        self.set_selected_wallpaper(path)
 
     def on_refresh_clicked(self, widget) -> None:
         """On clicking refresh button, clear cache"""
@@ -651,7 +654,6 @@ class App(Gtk.Window):
         """On clicking random button, set random wallpaper"""
         self.set_random_wallpaper()
 
-
     def on_exit_clicked(self, widget) -> None:
         """On clicking exit button, exit"""
         Gtk.main_quit()
@@ -659,14 +661,13 @@ class App(Gtk.Window):
 
     def set_random_wallpaper(self) -> None:
         """Choose a random image and set it as the wallpaper"""
-        self.cf.backend = self.backend_option_combo.get_active_text()
         new_wallpaper =  get_random_file(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders, self.cf.cache_dir)
         if new_wallpaper:
             self.cf.select_wallpaper(new_wallpaper)
         else:
             return
         print(self.txt.msg_path, self.cf.selected_wallpaper)
-        self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
+        # self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         if self.cf.selected_wallpaper:
             change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
         self.cf.attribute_selected_wallpaper()
@@ -742,14 +743,7 @@ class App(Gtk.Window):
 
         elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
             wallpaper_path = self.image_paths[self.selected_index]
-            self.cf.select_wallpaper(wallpaper_path)
-            print(self.txt.msg_path, self.cf.selected_wallpaper)
-            self.cf.backend = self.backend_option_combo.get_active_text()
-            self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
-            if self.cf.selected_wallpaper:
-                change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
-            self.cf.attribute_selected_wallpaper()
-            self.cf.save()
+            self.set_selected_wallpaper(wallpaper_path)
 
         # Prevent other default key handling:
         return event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]
