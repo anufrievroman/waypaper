@@ -22,7 +22,11 @@ class Config:
         self.selected_monitor = "All"
         self.fill_option = FILL_OPTIONS[0]
         self.sort_option = SORT_OPTIONS[0]
-        self.backend = self.installed_backends[1] if self.installed_backends else BACKEND_OPTIONS[0]
+        self.backend = (
+            self.installed_backends[1]
+            if len(self.installed_backends) > 1
+            else BACKEND_OPTIONS[0]
+        )
         self.color = "#ffffff"
         self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
