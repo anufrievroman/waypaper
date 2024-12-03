@@ -3,27 +3,51 @@
 import subprocess
 import time
 import screeninfo
+from typing import Optional
 from pathlib import Path
 
 from waypaper.config import Config
-from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
-def change_wallpaper(image_path: Path, cf: Config, monitor: str,
-                     txt: Chinese|English|French|German|Polish|Russian|Belarusian|Spanish):
+
+def find_process_pid(command: str) -> Optional[int]:
+    """Find the PID of the process matching the exact command"""
+    try:
+        result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
+        processes = result.stdout.splitlines()
+        for process in processes:
+            if command in process:
+                # Extract PID (second column after splitting):
+                return int(process.split()[1])
+        return None
+    except Exception:
+        return None
+
+
+def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
 
     try:
         # swaybg backend:
         if cf.backend == "swaybg":
 
-            # Kill previous swaybg instances:
-            try:
-                subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
-                subprocess.Popen(["killall", "swaybg"])
-                time.sleep(0.005)
-            except subprocess.CalledProcessError:
-                pass
+            # Kill previous swaybg instances if we want to set for all monitors:
+            if monitor == "All":
+                try:
+                    subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
+                    subprocess.Popen(["killall", "swaybg"])
+                    time.sleep(0.005)
+                except subprocess.CalledProcessError:
+                    pass
 
+            # Otherwise, find PID of the process for this monitor and kill it:
+            else:
+                pid = find_process_pid(f"swaybg -o {monitor}")
+                try:
+                    subprocess.run(['kill', '-9', str(pid)], check=True)
+                except Exception as e:
+                    pass
+
+            # Launch new swaybg process:
             fill = cf.fill_option.lower()
             command = ["swaybg"]
             if monitor != "All":
@@ -31,7 +55,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
             command.extend(["-i", str(image_path)])
             command.extend(["-m", fill, "-c", cf.color])
             subprocess.Popen(command)
-            print(f"{txt.msg_setwith} {cf.backend}")
+            print(f"Sent command to set wallpaper was set with {cf.backend}")
 
         # mpvpaper backend:
         elif cf.backend == "mpvpaper":
@@ -66,7 +90,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
 
                 command.extend([image_path])
                 subprocess.Popen(command)
-            print(f"{txt.msg_setwith} {cf.backend}")
+            print(f"Sent command to set wallpaper was set with {cf.backend}")
 
         # swww backend:
         elif cf.backend == "swww":
@@ -113,7 +137,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
             if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)
-            print(f"{txt.msg_setwith} {cf.backend}")
+            print(f"Sent command to set wallpaper was set with {cf.backend}")
 
         # feh backend:
         elif cf.backend == "feh":
@@ -142,7 +166,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
             fill = fill_types[cf.fill_option.lower()]
 
             subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
-            print(f"{txt.msg_setwith} {cf.backend}")
+            print(f"Sent command to set wallpaper was set with {cf.backend}")
 
         # hyprpaper backend:
         elif cf.backend == "hyprpaper":
@@ -177,6 +201,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
                         time.sleep(0.1)
                     except Exception:
                         retry_counter += 1
+                print(f"Sent command to set wallpaper was set with {cf.backend}")
 
         else:
             pass
@@ -189,4 +214,4 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str,
             print(f'Post command {post_command} executed')
 
     except Exception as e:
-        print(f"{txt.err_wall} {e}")
+        print(f"Error changing wallpaper: {e}")

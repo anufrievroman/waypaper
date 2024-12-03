@@ -22,11 +22,7 @@ class Config:
         self.selected_monitor = "All"
         self.fill_option = FILL_OPTIONS[0]
         self.sort_option = SORT_OPTIONS[0]
-        self.backend = (
-            self.installed_backends[1]
-            if len(self.installed_backends) > 1
-            else BACKEND_OPTIONS[0]
-        )
+        self.backend = self.installed_backends[-1]
         self.color = "#ffffff"
         self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
@@ -137,7 +133,7 @@ class Config:
 
         # Check validity of general options:
         if self.backend not in BACKEND_OPTIONS:
-            self.backend = self.installed_backends[0] if self.installed_backends else BACKEND_OPTIONS[0]
+            self.backend = self.installed_backends[-1]
         if self.sort_option not in SORT_OPTIONS:
             self.sort_option = SORT_OPTIONS[0]
         if self.fill_option not in FILL_OPTIONS:

@@ -34,7 +34,6 @@ class English:
         self.msg_changefolder = "Folder"
         self.msg_choosefolder = "Please choose a folder"
         self.msg_caching = "Caching wallpapers..."
-        self.msg_setwith = "Sent command to set wallpaper was set with"
 
         self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
@@ -48,8 +47,6 @@ class English:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Error changing wallpaper:"
-        self.err_disp = "Error determining monitor names:"
 
         self.tip_refresh = "Recache the folder of images"
         self.tip_fill = "Choose fill type"
@@ -97,7 +94,6 @@ class German:
         self.msg_changefolder = "Ordner"
         self.msg_choosefolder = "Bitte wählen Sie einen Ordner aus"
         self.msg_caching = "Hintergrundbilder werden zwischengespeichert..."
-        self.msg_setwith = "Hintergrundbild wurde mit folgendem Befehl gesetzt"
 
         self.msg_help = "Waypapers Tastenkürzel:\n\nhjkl - Navigation (←↓↑→)\nf - Hintergrundbild-Ordner ändern\n"
         self.msg_help += "g - Zum Anfang scrollen\nG - Zum Ende scrollen\nR - Zufälliges Hintergrundbild\nr - Hintergrundbilder zwischenspeichern\n"
@@ -111,8 +107,6 @@ class German:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Fehler beim Ändern des Hintergrundbildes:"
-        self.err_disp = "Fehler beim Ermitteln der Monitor-Namen:"
 
         self.tip_refresh = "Erneutes einlesen des Hintergrundbild-Ordners"
         self.tip_fill = "Skalierungsart auswählen"
@@ -159,7 +153,6 @@ class French:
         self.msg_changefolder = "Dossier"
         self.msg_choosefolder = "Veuillez choisir un dossier"
         self.msg_caching = "Mise en cache des papiers peints..."
-        self.msg_setwith = "La commande envoyée pour définir le papier peint a été définie avec"
 
         self.msg_help = "Raccourcis clavier de Waypaper :\n\nhjkl - Navigation (←↓↑→)\nf - Changer de dossier de papier peint\n"
         self.msg_help += "g - Faire défiler vers le haut\nG - Faire défiler vers le bas\nR - Définir un papier peint aléatoire\nr - Recréer le cache des papiers peints\n"
@@ -173,8 +166,6 @@ class French:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Erreur lors du changement de papier peint :"
-        self.err_disp = "Erreur lors de la détermination des noms des moniteurs :"
 
         self.tip_refresh = "Recréer le dossier d'images"
         self.tip_fill = "Choisir le type de remplissage"
@@ -221,7 +212,6 @@ class Polish:
         self.msg_changefolder = "Folder"
         self.msg_choosefolder = "Proszę wybrać folder"
         self.msg_caching = "Buforowanie tapet..."
-        self.msg_setwith = "Wyślij komendę, żeby ustawić tapetę z"
 
         self.msg_help = "Skróty klawiszowe Waypaper'a:\n\nhjkl - Nawigacja (←↓↑→)\nEnter - Ustaw wybraną tapetę\nf - Zmień folder tapet\n"
         self.msg_help += "g - Przewiń na górę\nG - Przewiń na dół\nR - Ustaw losową tapetę\nr - Jeszcze raz buferuj tapety\n"
@@ -236,8 +226,6 @@ class Polish:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Błąd zmieniania tapety:"
-        self.err_disp = "Błąd ustalania nazw monitorów:"
 
         self.tip_refresh = "Ponownie buferuj folder tapet"
         self.tip_fill = "Ustaw sposób wypełnienia"
@@ -284,7 +272,6 @@ class Russian:
         self.msg_changefolder = "Папка"
         self.msg_choosefolder = "Пожалуйста, выберите папку"
         self.msg_caching = "Кэширование обоев..."
-        self.msg_setwith = "Отправлена команда на установку обоев с использованием"
 
         self.msg_help = "Горячие клавиши Waypaper:\n\nhjkl - Навигация (←↓↑→)\nf - Изменить папку с обоями\n"
         self.msg_help += "g - Прокрутка в начало\nG - Прокрутка в конец\nR - Установить случайные обои\nr - Обновить кэш обоев\n"
@@ -298,8 +285,6 @@ class Russian:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Ошибка при смене обоев:"
-        self.err_disp = "Ошибка определения названий мониторов:"
 
         self.tip_refresh = "Обновить папку с изображениями"
         self.tip_fill = "Выбрать тип заполнения"
@@ -347,7 +332,6 @@ class Belarusian:
         self.msg_changefolder = "Тэчка"
         self.msg_choosefolder = "Калі ласка, абярыце тэчку"
         self.msg_caching = "Кэшаванне шпалер..."
-        self.msg_setwith = "Адпраўлена каманда на ўстаноўку шпалер з выкарыстаннем"
 
         self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
         self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
@@ -361,8 +345,6 @@ class Belarusian:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Памылка пры змене шпалер:"
-        self.err_disp = "Памылка вызначэння назваў манітораў:"
 
         self.tip_refresh = "Абнавіць тэчку з выявамі"
         self.tip_fill = "Выбраць тып запаўнення"
@@ -410,7 +392,6 @@ class Chinese:
         self.msg_changefolder = "文件夹"
         self.msg_choosefolder = "请选择一个文件夹"
         self.msg_caching = "缓存壁纸..."
-        self.msg_setwith = "发送设置壁纸的命令是用"
 
         self.msg_help = "Waypaper 的热键：\n\nhjkl -导航 (←↓↑→)\nf -更改壁纸文件夹\n"
         self.msg_help += "g -滚动到顶部\nG -滚动到底部\nR -设置随机壁纸\nr -重新缓存壁纸\n"
@@ -424,8 +405,6 @@ class Chinese:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "更改壁纸时出错："
-        self.err_disp = "确定监视器名称时出错："
 
         self.tip_refresh = "重新缓存图像文件夹"
         self.tip_fill = "选择填充类型"
@@ -472,7 +451,6 @@ class Spanish:
         self.msg_changefolder = "Carpeta"
         self.msg_choosefolder = "Por favor, selecciona una carpeta"
         self.msg_caching = "Almacenando en el caché..."
-        self.msg_setwith = "El comando para actualizar la imagen de fondo fue ejecutado por"
 
         self.msg_help = 'Controles para usar "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imágen seleccionada\nf - Cambiar carpeta de imágenes\n'
         self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imágen aleatoria\nr - Recrear caché de imágenes\n"
@@ -486,8 +464,6 @@ class Spanish:
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
-        self.err_wall = "Error cambiando imagen de fondo:"
-        self.err_disp = "Error buscando nombres de monitores"
 
         self.tip_refresh = "Volver a almacenar la carpeta de imágenes"
         self.tip_fill = "Escoja el tipo de relleno"
