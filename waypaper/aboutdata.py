@@ -1,4 +1,5 @@
-"""Module to store acces application metadata"""
+"""Module to access the application metadata"""
+
 from importlib_metadata import metadata
 
 class AboutData():

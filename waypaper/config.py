@@ -1,4 +1,4 @@
-"""Module responsible for reading and saving the configuration file"""
+"""Module responsible for reading and saving the configuration and state files"""
 
 import configparser
 import pathlib

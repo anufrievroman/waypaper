@@ -1,3 +1,5 @@
+"""Module that contains lists of possible options used in the application"""
+
 from typing import List, Dict
 from screeninfo import get_monitors
 

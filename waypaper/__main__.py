@@ -1,4 +1,4 @@
-"""Main module that runs the program and either runs GUI or just changer wallpaper"""
+"""Main module that either runs cli commands or starts GUI"""
 
 import argparse
 import sys
@@ -15,12 +15,13 @@ from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS, MONITOR_OPTIONS
 from waypaper.translations import load_language
 
 
-# Get application metadata.
+# Get application metadata:
 about = AboutData()
 
 # Get application settings and language package:
 cf = Config()
 cf.read()
+cf.read_state()
 txt = load_language(cf.lang)
 
 # Define command line argument parser and parse user arguments:
@@ -42,11 +43,12 @@ args = parser.parse_args()
 
 def run():
     """Read user arguments and either run GUI app or perform requested action"""
-    cf.read_state() # read default state file, if use_xdg_state is True
+
+    # Read user arguments, and update things if alternative state file was provided:
     cf.read_parameters_from_user_arguments(args)
     if args.state_file:
-        cf.read_state() # read from custom state file if provided
-        cf.read_parameters_from_user_arguments(args) # user arguments override values from state file
+        cf.read_state()
+        cf.read_parameters_from_user_arguments(args)
     cf.check_validity()
 
     # Set monitor and wallpaper from user arguments:

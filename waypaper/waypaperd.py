@@ -1,3 +1,8 @@
+"""
+This is a daemon that randomly changes wallpaper every specified number of minutes.
+THIS IS WORK IN PROGRESS AND NOT USED IN THE PROGRAM YET.
+"""
+
 import time
 import os
 import argparse

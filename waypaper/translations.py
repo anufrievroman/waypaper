@@ -1,4 +1,7 @@
-"""Module with translation into various languages. To add a new language, add a new class"""
+"""
+Module with translations into various languages.
+To add a new language, add a new class, and update the load_language() function.
+"""
 
 
 class English:
