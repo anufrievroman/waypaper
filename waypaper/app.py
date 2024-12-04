@@ -522,7 +522,7 @@ class App(Gtk.Window):
         self.cf.select_wallpaper(path)
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         if self.cf.selected_wallpaper:
-            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor)
         self.cf.attribute_selected_wallpaper()
         self.cf.save()
 
@@ -669,7 +669,7 @@ class App(Gtk.Window):
         print(self.txt.msg_path, self.cf.selected_wallpaper)
         # self.cf.fill_option = self.fill_option_combo.get_active_text().lower() or self.cf.fill_option
         if self.cf.selected_wallpaper:
-            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor, self.txt)
+            change_wallpaper(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor)
         self.cf.attribute_selected_wallpaper()
         self.cf.save()
 

@@ -73,7 +73,7 @@ def run():
             print("The --monitor argument equires also using --wallpaper or --random.")
             sys.exit(0)
 
-        change_wallpaper(wallpaper, cf, monitor, txt)
+        change_wallpaper(wallpaper, cf, monitor)
         time.sleep(0.1)
 
         # Save this wallpaper in config and quit:
@@ -96,7 +96,7 @@ def run():
             if cf.wallpapers[index] is None:
                 continue
 
-            change_wallpaper(wallpaper, cf, monitor, txt)
+            change_wallpaper(wallpaper, cf, monitor)
             time.sleep(0.1)
 
         cf.save()
@@ -106,7 +106,7 @@ def run():
     if args.wallpaper:
         monitor = "All"
         wallpaper = pathlib.Path(args.wallpaper).expanduser()
-        change_wallpaper(wallpaper, cf, monitor, txt)
+        change_wallpaper(wallpaper, cf, monitor)
 
         # Save this wallpaper in config and quit:
         cf.selected_wallpaper = wallpaper
