@@ -38,6 +38,7 @@ parser.add_argument("--state-file", help=txt.msg_arg_statefile)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
 parser.add_argument("--monitor", help=txt.msg_arg_monitor, choices=MONITOR_OPTIONS)
+parser.add_argument("--no-post-command", help=txt.msg_arg_post, action='store_true')
 args = parser.parse_args()
 
 

@@ -207,7 +207,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             pass
 
         # Run a post command:
-        if cf.post_command:
+        if cf.post_command and cf.use_post_command:
             modified_image_path = str(image_path).replace(" ", "\\ ")
             post_command = cf.post_command.replace("$wallpaper", modified_image_path)
             subprocess.Popen(post_command, shell=True)

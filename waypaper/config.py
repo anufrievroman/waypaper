@@ -45,6 +45,7 @@ class Config:
         self.state_dir = user_state_path(self.about.applicationName())
         self.state_file = self.state_dir / "state.ini"
         self.use_xdg_state = False
+        self.use_post_command = True
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -245,3 +246,5 @@ class Config:
         if args.state_file:
             self.use_xdg_state = True # Use of a custom state file implies state is in a separate file, requires use_xdg_state
             self.state_file = pathlib.Path(args.state_file).expanduser()
+        if args.no_post_command:
+            self.use_post_command = False
