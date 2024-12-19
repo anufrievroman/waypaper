@@ -432,7 +432,7 @@ class App(Gtk.Window):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
         self.image_paths = get_image_paths(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders,
-                                           self.cf.show_hidden, self.cf.show_gifs_only, depth=1)
+                                           self.cf.show_hidden, self.cf.show_gifs_only)
         self.sort_images()
 
         # Show caching label:

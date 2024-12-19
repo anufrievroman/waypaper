@@ -6,6 +6,7 @@ import shutil
 
 from pathlib import Path
 from typing import List
+from glob import glob
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 
@@ -21,38 +22,15 @@ def get_image_paths(backend: str,
                     root_folder: str,
                     include_subfolders: bool = False,
                     include_hidden: bool = False,
-                    only_gifs: bool = False,
-                    depth: int = 1):
+                    only_gifs: bool = False):
     """Get a list of file paths depending on the filters that were requested"""
-    image_paths = []
-    for root, directories, files in os.walk(root_folder):
-        # Remove hidden files from consideration:
-        for directory in directories:
-            if directory.startswith('.') and not include_hidden:
-                directories.remove(directory)
+    paths: List[str] = glob("**/*.*", recursive=include_subfolders, include_hidden=include_hidden, root_dir=root_folder)
+    if only_gifs:
+        paths = list(filter(lambda f: f.lower().endswith(".gif"),paths))
+    else:
+        paths = list(filter(lambda x: has_image_extension(x, backend), paths))
+    return list(map(lambda f: os.path.realpath(os.path.join(root_folder, f)),paths))
 
-        # Remove subfolders from consideration:
-        if not include_subfolders and str(root) != str(root_folder):
-            continue
-
-        # Remove deep folders from consideration:
-        if depth is not None and root != root_folder:
-            current_depth = root.count(os.path.sep) - str(root_folder).count(
-                os.path.sep)
-            if current_depth > depth:
-                continue
-
-        # Remove files that are not images from consideration:
-        for filename in files:
-            if filename.startswith('.') and not include_hidden:
-                continue
-            if not has_image_extension(filename, backend):
-                continue
-            if not filename.endswith('.gif') and only_gifs:
-                continue
-            image_paths.append(os.path.join(root, filename))
-        # print(root, directories, files)
-    return image_paths
 
 
 def get_random_file(backend: str,
@@ -64,7 +42,7 @@ def get_random_file(backend: str,
     try:
         # Get all image paths from the folder:
         image_paths = get_image_paths(backend, folder, include_subfolders,
-                                      include_hidden, only_gifs=False, depth=1)
+                                      include_hidden, only_gifs=False)
 
         # Read cache file with already used images:
         cache_file = cache_dir / "used_wallpapers.txt"
