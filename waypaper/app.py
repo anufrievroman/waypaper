@@ -9,6 +9,7 @@ import shutil
 import imageio
 import screeninfo
 from pathlib import Path
+import math
 from PIL import Image
 
 from waypaper.aboutdata import AboutData
@@ -274,7 +275,12 @@ class App(Gtk.Window):
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
+
+        # Connect window resizing events to change the number of columns.
+        self.connect("size-allocate", self.on_window_resize)
+
         self.show_all()
+
 
 
     def create_options_menu(self) -> None:
@@ -773,6 +779,16 @@ class App(Gtk.Window):
 
     def on_focus_out(self, widget, event):
         self.search_state = False
+
+    def on_window_resize(self, event, allocation):
+        if hasattr(self, "thumbnails") and hasattr(self, "image_paths") and hasattr(self, "image_names") and hasattr(self, "grid") and len(self.thumbnails) > 0 and len(self.image_paths) > 0 and len(self.image_names) > 0 and len(self.grid.get_children()) > 0:
+            max_thumbnail_width: int = 0
+            for pixbuf in self.thumbnails:
+                if pixbuf.get_width() > max_thumbnail_width:
+                    max_thumbnail_width = pixbuf.get_width()
+            self.cf.number_of_columns = abs(math.floor(allocation.width / max_thumbnail_width))
+            GLib.idle_add(self.load_image_grid)
+
 
     def run(self) -> None:
         """Run GUI application"""
