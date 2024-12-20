@@ -24,6 +24,8 @@ def get_image_paths(backend: str,
                     only_gifs: bool = False,
                     depth: int = 1):
     """Get a list of file paths depending on the filters that were requested"""
+    if depth < 0:
+        return get_image_paths_infinite_recursion(backend, root_folder, include_subfolders, include_hidden, only_gifs)
     image_paths = []
     for root, directories, files in os.walk(root_folder):
         # Remove hidden files from consideration:
@@ -53,6 +55,20 @@ def get_image_paths(backend: str,
             image_paths.append(os.path.join(root, filename))
         # print(root, directories, files)
     return image_paths
+
+def get_image_paths_infinite_recursion(backend: str,
+                    root_folder: str,
+                    include_subfolders: bool = False,
+                    include_hidden: bool = False,
+                    only_gifs: bool = False):
+    """Get a list of file paths depending on the filters that were requested"""
+    paths: List[str] = glob("**/*.*", recursive=include_subfolders, include_hidden=include_hidden, root_dir=root_folder)
+    if only_gifs:
+        paths = list(filter(lambda f: f.lower().endswith(".gif"),paths))
+    else:
+        paths = list(filter(lambda x: has_image_extension(x, backend), paths))
+    return list(map(lambda f: os.path.realpath(os.path.join(root_folder, f)),paths))
+
 
 
 def get_random_file(backend: str,
