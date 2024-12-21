@@ -79,6 +79,7 @@ class App(Gtk.Window):
         self.init_ui()
         self.backend_option_combo.grab_focus()
         self.search_state = False
+        self.depth = -1 if self.cf.recursive else 1
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -288,10 +289,17 @@ class App(Gtk.Window):
         self.menu.append(self.filter_gifs_checkbox)
 
         # Create subfolder toggle:
-        self.include_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_subfolders)
-        self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
-        self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
-        self.menu.append(self.include_subfolders_checkbox)
+        if not self.cf.recursive:
+            self.include_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_subfolders)
+            self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
+            self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
+            self.menu.append(self.include_subfolders_checkbox)
+
+        self.recursion_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_recursive)
+        self.recursion_checkbox.set_active(self.cf.recursive)
+        self.recursion_checkbox.connect("toggled",self.on_recursion_toggle)
+        self.menu.append(self.recursion_checkbox)
+
 
         # Create hidden toggle:
         self.include_hidden_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_hidden)
@@ -432,7 +440,7 @@ class App(Gtk.Window):
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
         self.image_paths = get_image_paths(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders,
-                                           self.cf.show_hidden, self.cf.show_gifs_only, depth=1)
+                                           self.cf.show_hidden, self.cf.show_gifs_only, self.depth)
         self.sort_images()
 
         # Show caching label:
@@ -555,6 +563,7 @@ class App(Gtk.Window):
     def on_include_subfolders_toggled(self, toggle) -> None:
         """Toggle subfolders visibility via menu"""
         self.cf.include_subfolders = toggle.get_active()
+        self.depth = 1
         threading.Thread(target=self.process_images).start()
 
 
@@ -774,6 +783,15 @@ class App(Gtk.Window):
     def on_focus_out(self, widget, event):
         self.search_state = False
 
+    def on_recursion_toggle(self, toggle):
+        self.cf.recursive = toggle.get_active()
+        if self.cf.recursive:
+            self.cf.include_subfolders = False
+            self.depth = -1
+        else:
+            self.depth = 1
+        self.process_images()
+        
     def run(self) -> None:
         """Run GUI application"""
         self.connect("destroy", self.on_exit_clicked)

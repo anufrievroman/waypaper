@@ -35,6 +35,7 @@ class Config:
         self.wallpapers = []
         self.post_command = ""
         self.include_subfolders = False
+        self.recursive = False
         self.show_hidden = False
         self.show_gifs_only = False
         self.show_transition_options = True
@@ -87,6 +88,7 @@ class Config:
         self.swww_transition_fps = config.get("Settings", "swww_transition_fps", fallback=self.swww_transition_fps)
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
+        self.recursive = config.getboolean("Settings", "recursive", fallback=self.recursive)
         self.show_transition_options = config.getboolean("Settings", "show_transition_options", fallback=self.show_transition_options)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
@@ -199,6 +201,7 @@ class Config:
         config.set("Settings", "sort", self.sort_option)
         config.set("Settings", "color", self.color)
         config.set("Settings", "subfolders", str(self.include_subfolders))
+        config.set("Settings", "recursive", str(self.recursive))
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "show_transition_options", str(self.show_transition_options))
