@@ -3,6 +3,7 @@
 import os
 import random
 import shutil
+from glob import glob
 
 from pathlib import Path
 from typing import List
@@ -25,7 +26,7 @@ def get_image_paths(backend: str,
                     only_gifs: bool = False):
     """Get a list of file paths depending on the filters that were requested"""
     if depth < 0:
-        return get_image_paths_infinite_recursion(backend, root_folder, include_subfolders, include_hidden, only_gifs)
+        return get_image_paths_infinite_recursion(backend, root_folder, True, include_hidden, only_gifs)
     image_paths = []
     for root, directories, files in os.walk(root_folder):
         # Remove hidden files from consideration:
