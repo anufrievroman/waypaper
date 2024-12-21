@@ -23,7 +23,8 @@ def get_image_paths(backend: str,
                     root_folder: str,
                     include_subfolders: bool = False,
                     include_hidden: bool = False,
-                    only_gifs: bool = False):
+                    only_gifs: bool = False,
+                    depth: int = 1):
     """Get a list of file paths depending on the filters that were requested"""
     if depth < 0:
         return get_image_paths_infinite_recursion(backend, root_folder, True, include_hidden, only_gifs)
