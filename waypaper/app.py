@@ -9,12 +9,13 @@ import shutil
 import imageio
 import screeninfo
 from pathlib import Path
+import math
 from PIL import Image
 
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_random_file
+from waypaper.common import get_image_paths, get_random_file, THUMBNAIL_WIDTH
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
@@ -34,7 +35,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
             first_frame = reader.get_data(0)
             # Convert the numpy array to a PIL image (using Image.fromarray if necessary)
             pil_image = Image.fromarray(first_frame)
-            width = 240
+            width = THUMBNAIL_WIDTH
             aspect_ratio = pil_image.height / pil_image.width
             new_height = int(width * aspect_ratio)
             resized_image = pil_image.resize((width, new_height))
@@ -50,7 +51,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-        scaled_width = 240
+        scaled_width = THUMBNAIL_WIDTH
         scaled_height = int(scaled_width / aspect_ratio)
         scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
         scaled_pixbuf.savev(str(output_file), "jpeg", [], [])
@@ -58,7 +59,7 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
     # If image processing failed, create a black placeholder:
     except Exception:
         print(f"Could not generate preview for {os.path.basename(image_path)}")
-        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 240, 135)
+        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, THUMBNAIL_WIDTH, 135)
         black_pixbuf.fill(0x0)
         black_pixbuf.savev(str(output_file), "jpeg", [], [])
 
@@ -274,7 +275,12 @@ class App(Gtk.Window):
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
+
+        # Connect window resizing events to change the number of columns.
+        self.connect("size-allocate", self.on_window_resize)
+
         self.show_all()
+
 
 
     def create_options_menu(self) -> None:
@@ -484,7 +490,7 @@ class App(Gtk.Window):
 
             # Calculate current y coordinate in the scroll window:
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
-            current_row_heights[column] = int(240 / aspect_ratio)
+            current_row_heights[column] = int(THUMBNAIL_WIDTH / aspect_ratio)
             if column == 0:
                 current_y += max(current_row_heights) + 10
                 current_row_heights = [0]*self.cf.number_of_columns
@@ -773,6 +779,12 @@ class App(Gtk.Window):
 
     def on_focus_out(self, widget, event):
         self.search_state = False
+
+    def on_window_resize(self, event, allocation):
+        if hasattr(self, "thumbnails") and hasattr(self, "image_paths") and hasattr(self, "image_names") and hasattr(self, "grid") and len(self.thumbnails) > 0 and len(self.image_paths) > 0 and len(self.image_names) > 0 and len(self.grid.get_children()) > 0:
+            self.cf.number_of_columns = abs(math.floor(allocation.width / THUMBNAIL_WIDTH))
+            GLib.idle_add(self.load_image_grid)
+
 
     def run(self) -> None:
         """Run GUI application"""
