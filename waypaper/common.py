@@ -9,6 +9,7 @@ from typing import List
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 
+THUMBNAIL_WIDTH = 240
 
 def has_image_extension(file_path: str, backend: str) -> bool:
     """Check if the file has image extension"""
