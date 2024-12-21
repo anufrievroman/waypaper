@@ -786,7 +786,7 @@ class App(Gtk.Window):
             for pixbuf in self.thumbnails:
                 if pixbuf.get_width() > max_thumbnail_width:
                     max_thumbnail_width = pixbuf.get_width()
-            self.cf.number_of_columns = abs(math.floor(allocation.width / max_thumbnail_width))
+            self.cf.number_of_columns = abs(math.floor(allocation.width / max_thumbnail_width)) - 1
             GLib.idle_add(self.load_image_grid)
 
 
