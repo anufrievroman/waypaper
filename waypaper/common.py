@@ -58,6 +58,7 @@ def get_image_paths(backend: str,
         # print(root, directories, files)
     return image_paths
 
+
 def get_image_paths_infinite_recursion(backend: str,
                     root_folder: str,
                     include_subfolders: bool = False,
@@ -70,7 +71,6 @@ def get_image_paths_infinite_recursion(backend: str,
     else:
         paths = list(filter(lambda x: has_image_extension(x, backend), paths))
     return list(map(lambda f: os.path.realpath(os.path.join(root_folder, f)),paths))
-
 
 
 def get_random_file(backend: str,
