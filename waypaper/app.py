@@ -695,9 +695,18 @@ class App(Gtk.Window):
 
     def on_key_pressed(self, widget, event) -> bool:
         """Process various key binding"""
+
+        # Processing keys for the search field:
         if self.search_state == True:
+            if event.keyval == Gdk.KEY_Escape:
+                self.search_entry.set_text("")
+                self.search_entry.set_visible(False)
+                self.search_entry.set_visible(True)
+                self.main_box.grab_focus()
+                self.search_state == False
             return
 
+        # Processing rest of the keys:
         elif (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
             Gtk.main_quit()
 
@@ -773,7 +782,7 @@ class App(Gtk.Window):
         else:
             self.load_image_grid()
 
-    def on_clear_button(self,event):
+    def on_clear_button(self, event):
         self.search_entry.set_text("")
         self.main_box.grab_focus()
 
