@@ -698,12 +698,11 @@ class App(Gtk.Window):
 
         # Processing keys for the search field:
         if self.search_state == True:
-            if event.keyval == Gdk.KEY_Escape:
-                self.search_entry.set_text("")
+            if event.keyval in [Gdk.KEY_Escape, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
                 self.search_entry.set_visible(False)
                 self.search_entry.set_visible(True)
                 self.main_box.grab_focus()
-                self.search_state == False
+                self.search_state = False
             return
 
         # Processing rest of the keys:
