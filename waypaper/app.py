@@ -221,6 +221,12 @@ class App(Gtk.Window):
         self.mpv_pause_button.connect("clicked", self.on_mpv_pause_button_clicked)
         self.mpv_pause_button.set_tooltip_text(self.txt.tip_mpv_pause)
 
+        # Create mpv sound toggle:
+        self.mpv_sound_toggle = Gtk.ToggleButton(label=self.txt.msg_sound)
+        self.mpv_sound_toggle.set_active(self.cf.mpvpaper_sound)
+        self.mpv_sound_toggle.connect("toggled", self.on_mpv_sound_toggled)
+        self.mpv_sound_toggle.set_tooltip_text(self.txt.tip_mpv_sound)
+
         # Create a box to contain the bottom row of buttons:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
@@ -389,9 +395,11 @@ class App(Gtk.Window):
         """Show mpv options if backend is mpvpaper"""
         self.options_box.remove(self.mpv_stop_button)
         self.options_box.remove(self.mpv_pause_button)
+        self.options_box.remove(self.mpv_sound_toggle)
         if self.cf.backend == "mpvpaper":
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
+            self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -570,6 +578,12 @@ class App(Gtk.Window):
         """Toggle only gifs checkbox via menu"""
         self.cf.show_gifs_only = toggle.get_active()
         threading.Thread(target=self.process_images).start()
+
+
+    def on_mpv_sound_toggled(self, toggle) -> None:
+        """Toggle sound of mpv player"""
+        self.cf.mpvpaper_sound = toggle.get_active()
+        subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
 
 
     def on_include_subfolders_toggled(self, toggle) -> None:

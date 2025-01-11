@@ -30,6 +30,7 @@ class Config:
         self.swww_transition_angle = 0
         self.swww_transition_duration = 2
         self.swww_transition_fps = 60
+        self.mpvpaper_sound = False
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpapers = []
@@ -86,6 +87,7 @@ class Config:
         self.swww_transition_angle = config.get("Settings", "swww_transition_angle", fallback=self.swww_transition_angle)
         self.swww_transition_duration = config.get("Settings", "swww_transition_duration", fallback=self.swww_transition_duration)
         self.swww_transition_fps = config.get("Settings", "swww_transition_fps", fallback=self.swww_transition_fps)
+        self.mpvpaper_sound = config.getboolean("Settings", "mpvpaper_sound", fallback=self.mpvpaper_sound)
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.include_all_subfolders = config.getboolean("Settings", "all_subfolders", fallback=self.include_all_subfolders)
@@ -212,6 +214,7 @@ class Config:
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
         config.set("Settings", "swww_transition_duration", str(self.swww_transition_duration))
         config.set("Settings", "swww_transition_fps", str(self.swww_transition_fps))
+        config.set("Settings", "mpvpaper_sound", str(self.mpvpaper_sound))
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
 
         try:

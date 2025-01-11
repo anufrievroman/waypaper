@@ -80,7 +80,10 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             except subprocess.CalledProcessError:
                 print("Detected no running mpvpaper, starting new mpvpaper process")
                 command = ["mpvpaper", "--fork"]
-                command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} no-audio loop {fill} --background-color='{cf.color}'"])
+                if cf.mpvpaper_sound:
+                    command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} loop {fill} --background-color='{cf.color}'"])
+                else:
+                    command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} no-audio loop {fill} --background-color='{cf.color}'"])
 
                 # Specify the monitor:
                 if monitor == "All":

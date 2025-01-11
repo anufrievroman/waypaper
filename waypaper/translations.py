@@ -26,6 +26,7 @@ class English:
         self.msg_refresh = "Refresh"
         self.msg_clear = "Clear"
         self.msg_stop = "Stop"
+        self.msg_sound = "Sound"
         self.msg_pause = "Pause"
         self.msg_search = "Search"
         self.msg_random = "Random"
@@ -64,6 +65,7 @@ class English:
         self.tip_transition = "Choose transition type"
         self.tip_mpv_stop = "Stop all mpv processes"
         self.tip_mpv_pause = "Play/Pause video wallpaper"
+        self.tip_mpv_sound = "Play sound of the video"
 
 
 class German:
@@ -89,6 +91,7 @@ class German:
         self.msg_random = "Zufällig"
         self.msg_clear = "Löschen"
         self.msg_stop = "Stopp"
+        self.msg_sound = "Sound"
         self.msg_pause = "Pause"
         self.msg_search = "Suchen"
         self.msg_options = "Optionen"
@@ -126,6 +129,7 @@ class German:
         self.tip_transition = "Übergangstyp auswählen"
         self.tip_mpv_stop = "Stoppe alle mpv-Prozesse"
         self.tip_mpv_pause = "Pause Video-Wallpaper"
+        self.tip_mpv_sound = "Play sound of the video"
 
 class French:
     def __init__(self):
@@ -150,6 +154,7 @@ class French:
         self.msg_random = "Aléatoire"
         self.msg_clear = "Effacer"
         self.msg_stop = "Arrêter"
+        self.msg_sound = "Sound"
         self.msg_pause = "Pause"
         self.msg_search = "Rechercher"
         self.msg_options = "Options"
@@ -187,6 +192,7 @@ class French:
         self.tip_transition = "Choisissez le type de transition"
         self.tip_mpv_stop = "Arrêter tous les processus mpv"
         self.tip_mpv_pause = "Pause du fond d'écran vidéo"
+        self.tip_mpv_sound = "Play sound of the video"
 
 class Polish:
     def __init__(self):
@@ -210,6 +216,7 @@ class Polish:
         self.msg_refresh = "Odświerz"
         self.msg_clear = "Wyczyść"
         self.msg_stop = "Stop"
+        self.msg_sound = "Sound"
         self.msg_pause = "Pauza"
         self.msg_search = "Szukaj"
         self.msg_random = "Losowa"
@@ -249,6 +256,7 @@ class Polish:
         self.tip_transition = "Ustaw sposób przejścia"
         self.tip_mpv_stop = "Zatrzymaj wszystkie procesy mpv"
         self.tip_mpv_pause = "Odtwarzaj/Zatrzymaj animowaną"
+        self.tip_mpv_sound = "Play sound of the video"
 
 class Russian:
     def __init__(self):
@@ -273,6 +281,7 @@ class Russian:
         self.msg_random = "Случайно"
         self.msg_clear = "Очистить"
         self.msg_stop = "Стоп"
+        self.msg_sound = "Звук"
         self.msg_pause = "Пауза"
         self.msg_search = "Поиск"
         self.msg_options = "Опции"
@@ -310,6 +319,7 @@ class Russian:
         self.tip_transition =  "Выберите тип перехода"
         self.tip_mpv_stop = "Остановить все mpv процессы"
         self.tip_mpv_pause = "Плей/пауза видео-обоев"
+        self.tip_mpv_sound = "Проигрывать звук видео-обоев"
 
 
 class Belarusian:
@@ -335,6 +345,7 @@ class Belarusian:
         self.msg_random = "Выпадкова"
         self.msg_clear = "Ачысціць"
         self.msg_stop = "Стоп"
+        self.msg_sound = "Sound"
         self.msg_pause = "Паўза"
         self.msg_search = "Шукаць"
         self.msg_options = "Опцыі"
@@ -372,6 +383,7 @@ class Belarusian:
         self.tip_transition = "Выберыце тып пераходу"
         self.tip_mpv_stop = "Спыніць усе працэсы mpv"
         self.tip_mpv_pause = "Паўза відэа-абояў"
+        self.tip_mpv_sound = "Play sound of the video"
 
 
 class Chinese:
@@ -397,6 +409,7 @@ class Chinese:
         self.msg_random = "随机"
         self.msg_clear = "清除"
         self.msg_stop = "停止"
+        self.msg_sound = "Sound"
         self.msg_pause = "暂停"
         self.msg_search = "搜索"
         self.msg_options = "选项"
@@ -434,6 +447,7 @@ class Chinese:
         self.tip_transition = "选择过渡类型"
         self.tip_mpv_stop = "停止所有 mpv 进程"
         self.tip_mpv_pause = "暂停视频壁纸"
+        self.tip_mpv_sound = "Play sound of the video"
 
 class Spanish:
     def __init__(self):
@@ -458,6 +472,7 @@ class Spanish:
         self.msg_random = "Aleatorio"
         self.msg_clear = "Borrar"
         self.msg_stop = "Detener"
+        self.msg_sound = "Sound"
         self.msg_pause = "Pausa"
         self.msg_search = "Buscar"
         self.msg_options = "Opciones"
@@ -495,6 +510,7 @@ class Spanish:
         self.tip_transition = "Elige el tipo de transición"
         self.tip_mpv_stop = "Detener todos los procesos de mpv"
         self.tip_mpv_pause = "Pausar fondo de pantalla de video"
+        self.tip_mpv_sound = "Play sound of the video"
 
 
 def load_language(lang):
