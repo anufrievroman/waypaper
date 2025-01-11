@@ -471,13 +471,25 @@ class App(Gtk.Window):
         GLib.idle_add(self.load_image_grid)
 
 
-    def load_image_grid(self, thumbnails=None, image_names=None, image_paths=None) -> None:
+    def get_filtered_images(self) -> list:
+        """Filter image paths, names, and thumbnails based on the search query, if any"""
+        # Read what is written in the search bar, and if nothing, return all images:
+        search_query = self.search_entry.get_text().lower()
+        if not search_query:
+            return self.thumbnails, self.image_names, self.image_paths
+
+        # Otherwise, filter only images whos names match the search query:
+        image_names = [name for name in self.image_names if search_query in name.lower()]
+        thumbnails = [self.thumbnails[i] for i in range(len(self.image_names)) if search_query in self.image_names[i].lower()]
+        image_paths = [self.image_paths[i] for i in range(len(self.image_names)) if search_query in self.image_names[i].lower()]
+
+        return thumbnails, image_names, image_paths
+
+
+    def load_image_grid(self) -> None:
         """Reload the grid of images"""
 
-        # If specific set of images was not provided, use everything:
-        thumbnails = thumbnails if thumbnails is not None else self.thumbnails
-        image_names = image_names if image_names is not None else self.image_names
-        image_paths = image_paths if image_paths is not None else self.image_paths
+        thumbnails, image_names, image_paths = self.get_filtered_images()
 
         # Clear existing images:
         for child in self.grid.get_children():
@@ -768,18 +780,7 @@ class App(Gtk.Window):
 
     def on_search_entry_changed(self,entry, event= None):
         """This function is triggered when the user types in the search field"""
-        search_query = entry.get_text().lower()
-
-        # Filter the images and thumbnails based on the search query:
-        if search_query:
-            searched_names = [name for name in self.image_names if search_query in name.lower()]
-            searched_thumbs = [self.thumbnails[i] for i in range(len(self.image_names)) if search_query in self.image_names[i].lower()]
-            searched_paths = [self.image_paths[i] for i in range(len(self.image_names)) if search_query in self.image_names[i].lower()]
-            self.load_image_grid(searched_thumbs, searched_names, searched_paths)
-
-        # If no search query, reset to show all images:
-        else:
-            self.load_image_grid()
+        self.load_image_grid()
 
     def on_clear_button(self, event):
         self.search_entry.set_text("")
