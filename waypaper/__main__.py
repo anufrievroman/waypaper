@@ -5,6 +5,7 @@ import sys
 import time
 import json
 import pathlib
+import threading
 
 from waypaper.aboutdata import AboutData
 from waypaper.app import App
@@ -71,10 +72,10 @@ def run():
 
         # If no wallpaper provided, show error:
         else:
-            print("The --monitor argument equires also using --wallpaper or --random.")
+            print("The --monitor argument requires also using --wallpaper or --random.")
             sys.exit(0)
 
-        change_wallpaper(wallpaper, cf, monitor)
+        threading.Thread(target=change_wallpaper, args=(wallpaper, cf, monitor)).start()
         time.sleep(0.1)
 
         # Save this wallpaper in config and quit:
@@ -87,7 +88,6 @@ def run():
     # Set previous wallpapers or random wallpaper:
     if args.restore or args.random:
         for index, (wallpaper, monitor) in enumerate(zip(cf.wallpapers, cf.monitors)):
-
             if args.random:
                 wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
                 if wallpaper_str:
@@ -97,7 +97,7 @@ def run():
             if cf.wallpapers[index] is None:
                 continue
 
-            change_wallpaper(wallpaper, cf, monitor)
+            threading.Thread(target=change_wallpaper, args=(wallpaper, cf, monitor)).start()
             time.sleep(0.1)
 
         cf.save()
@@ -107,7 +107,7 @@ def run():
     if args.wallpaper:
         monitor = "All"
         wallpaper = pathlib.Path(args.wallpaper).expanduser()
-        change_wallpaper(wallpaper, cf, monitor)
+        threading.Thread(target=change_wallpaper, args=(wallpaper, cf, monitor)).start()
 
         # Save this wallpaper in config and quit:
         cf.selected_wallpaper = wallpaper
