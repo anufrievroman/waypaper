@@ -23,44 +23,42 @@ from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 
 def cache_image(image_path: str, cache_dir: Path) -> None:
-    """Resize and cache images using gtk library"""
+    """Resize and cache images using various libraries depending on the file type"""
     ext = os.path.splitext(image_path)[1].lower()
-    output_file = cache_dir / Path(os.path.basename(image_path))
-
+    cache_file = cache_dir / Path(os.path.basename(image_path))
+    width = 240
     try:
         # If it's a video, extract the first frame:
         if ext in VIDEO_EXTENSIONS:
             reader = imageio.get_reader(image_path)
             first_frame = reader.get_data(0)
-            # Convert the numpy array to a PIL image (using Image.fromarray if necessary)
+            # Convert the numpy array to a PIL image:
             pil_image = Image.fromarray(first_frame)
-            width = 240
             aspect_ratio = pil_image.height / pil_image.width
             new_height = int(width * aspect_ratio)
             resized_image = pil_image.resize((width, new_height))
-            resized_image.save(str(output_file), "JPEG")
+            resized_image.save(str(cache_file), "JPEG")
             return
 
         # If it's an image, create preview depending on the filetype
         if ext == ".webp":
             img = Image.open(image_path)
             data = img.tobytes()
-            width, height = img.size
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, width, height, width * 3)
+            img_width, img_height = img.size
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, img_width, img_height, img_width * 3)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-        scaled_width = 240
-        scaled_height = int(scaled_width / aspect_ratio)
-        scaled_pixbuf = pixbuf.scale_simple(scaled_width, scaled_height, GdkPixbuf.InterpType.BILINEAR)
-        scaled_pixbuf.savev(str(output_file), "jpeg", [], [])
+        height = int(width / aspect_ratio)
+        scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+        scaled_pixbuf.savev(str(cache_file), "jpeg", [], [])
 
     # If image processing failed, create a black placeholder:
     except Exception:
         print(f"Could not generate preview for {os.path.basename(image_path)}")
-        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, 240, 135)
+        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
         black_pixbuf.fill(0x0)
-        black_pixbuf.savev(str(output_file), "jpeg", [], [])
+        black_pixbuf.savev(str(cache_file), "jpeg", [], [])
 
 
 class App(Gtk.Window):
