@@ -181,8 +181,23 @@ class Config:
             self.monitors.append(self.selected_monitor)
             self.wallpapers.append(self.selected_wallpaper)
 
-    def save(self) -> None:
-        """Save current parameters to the configuration and state files"""
+    def save_state_file(self) -> None:
+        """Save some parameters to the state file"""
+        state = configparser.ConfigParser()
+        state.read(self.state_file)
+        if not state.has_section("State"):
+            state.add_section("State")
+        state.set("State", "folder", self.shorten_path(self.image_folder))
+        state.set("State", "monitors", ",".join(self.monitors))
+        state.set("State", "wallpaper", self.shortened_paths(self.wallpapers))
+        try:
+            with open(self.state_file, "w") as statefile:
+                state.write(statefile)
+        except PermissionError:
+            print("Could not save state file due to permission error.")
+
+    def save(self, only_state=False) -> None:
+        """Save current parameters to the configuration file"""
 
         # Write configuration to the file:
         config = configparser.ConfigParser()
@@ -224,19 +239,8 @@ class Config:
             print("Could not save config file due to permission error.")
 
         # If requested, save the state file:
-        if not self.use_xdg_state:
-            return
-
-        # Write the remaining state parameters to the file:
-        state = configparser.ConfigParser()
-        state.read(self.state_file)
-        if not state.has_section("State"):
-            state.add_section("State")
-        state.set("State", "folder", self.shorten_path(self.image_folder))
-        state.set("State", "monitors", ",".join(self.monitors))
-        state.set("State", "wallpaper", self.shortened_paths(self.wallpapers))
-        with open(self.state_file, "w") as statefile:
-            state.write(statefile)
+        if self.use_xdg_state:
+            self.save_state_file()
 
     def read_parameters_from_user_arguments(self, args: Namespace) -> None:
         """

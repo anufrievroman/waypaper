@@ -81,7 +81,10 @@ def run():
         cf.selected_wallpaper = wallpaper
         cf.selected_monitor = monitor
         cf.attribute_selected_wallpaper()
-        cf.save()
+        if cf.use_xdg_state:
+            cf.save_state_file()
+        else:
+            cf.save()
         sys.exit(0)
 
     # Set previous wallpapers or random wallpaper:
@@ -100,7 +103,10 @@ def run():
             change_wallpaper(wallpaper, cf, monitor)
             time.sleep(0.1)
 
-        cf.save()
+        if cf.use_xdg_state:
+            cf.save_state_file()
+        else:
+            cf.save()
         sys.exit(0)
 
     # Set wallpaper from user arguments:
