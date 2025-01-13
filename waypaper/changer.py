@@ -55,7 +55,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             command.extend(["-i", str(image_path)])
             command.extend(["-m", fill, "-c", cf.color])
             subprocess.Popen(command)
-            print(f"Sent command to set wallpaper was set with {cf.backend}")
+            print(f"Sent command to set wallpaper with {cf.backend}")
 
         # mpvpaper backend:
         elif cf.backend == "mpvpaper":
@@ -93,7 +93,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
 
                 command.extend([image_path])
                 subprocess.Popen(command)
-            print(f"Sent command to set wallpaper was set with {cf.backend}")
+            print(f"Sent command to set wallpaper with {cf.backend}")
 
         # swww backend:
         elif cf.backend == "swww":
@@ -140,7 +140,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             if monitor != "All":
                 command.extend(["--outputs", monitor])
             subprocess.Popen(command)
-            print(f"Sent command to set wallpaper was set with {cf.backend}")
+            print(f"Sent command to set wallpaper with {cf.backend}")
 
         # feh backend:
         elif cf.backend == "feh":
@@ -169,7 +169,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             fill = fill_types[cf.fill_option.lower()]
 
             subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
-            print(f"Sent command to set wallpaper was set with {cf.backend}")
+            print(f"Sent command to set wallpaper with {cf.backend}")
 
         # hyprpaper backend:
         elif cf.backend == "hyprpaper":
@@ -204,7 +204,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
                         time.sleep(0.1)
                     except Exception:
                         retry_counter += 1
-                print(f"Sent command to set wallpaper was set with {cf.backend}")
+                print(f"Sent command to set wallpaper with {cf.backend}")
 
         else:
             pass
@@ -214,7 +214,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             modified_image_path = str(image_path).replace(" ", "\\ ")
             post_command = cf.post_command.replace("$wallpaper", modified_image_path)
             subprocess.Popen(post_command, shell=True)
-            print(f'Post command {post_command} executed')
+            print(f'Post command "{post_command}" was executed')
 
     except Exception as e:
         print(f"Error changing wallpaper: {e}")

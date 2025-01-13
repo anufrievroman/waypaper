@@ -57,24 +57,20 @@ def run():
     if args.monitor:
         monitor = args.monitor
 
-        # Set wallpaper from user arguments:
+        # Set wallpaper from user arguments if provided:
         if args.wallpaper:
             wallpaper = pathlib.Path(args.wallpaper).expanduser()
 
-        # Set random wallpaper:
-        elif args.random:
+        # Otherwise set a random wallpaper:
+        else:
             wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
             if wallpaper_str:
                 wallpaper = pathlib.Path(wallpaper_str)
             else:
                 print("Could not get random wallpaper.")
-                wallpaper = pathlib.Path("")
+                sys.exit(0)
 
-        # If no wallpaper provided, show error:
-        else:
-            print("The --monitor argument requires also using --wallpaper or --random.")
-            sys.exit(0)
-
+        # Launch commands to change wallpaper in a separate thread:
         threading.Thread(target=change_wallpaper, args=(wallpaper, cf, monitor)).start()
         time.sleep(0.1)
 
@@ -100,9 +96,11 @@ def run():
             if cf.wallpapers[index] is None:
                 continue
 
+            # Launch commands to change wallpaper in a separate thread:
             threading.Thread(target=change_wallpaper, args=(wallpaper, cf, monitor)).start()
             time.sleep(0.1)
 
+        # Save new wallpapers:
         if cf.use_xdg_state:
             cf.save_state_file()
         else:
@@ -119,7 +117,10 @@ def run():
         cf.selected_wallpaper = wallpaper
         cf.selected_monitor = monitor
         cf.attribute_selected_wallpaper()
-        cf.save()
+        if cf.use_xdg_state:
+            cf.save_state_file()
+        else:
+            cf.save()
         sys.exit(0)
 
     # Output wallpapers and monitors in json format:
