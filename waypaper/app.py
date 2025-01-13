@@ -458,10 +458,12 @@ class App(Gtk.Window):
         self.image_names = []
 
         for image_path in self.image_paths:
+
+            # Skip zero byte files inside the image_path:
             if os.path.getsize(image_path) == 0:
-                # Skip zero byte files inside the image_path
                 self.image_paths.remove(image_path)
                 continue
+
             # If this image is not cached yet, resize and cache it:
             cached_image_path = self.cf.cache_dir / os.path.basename(image_path)
             if not cached_image_path.exists():
@@ -470,7 +472,10 @@ class App(Gtk.Window):
             # Load cached thumbnail:
             thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
             self.thumbnails.append(thumbnail)
-            self.image_names.append(os.path.basename(image_path))
+
+            # Create a name for each image, which contain subfolders:
+            image_name = str(Path(image_path).relative_to(self.cf.image_folder))
+            self.image_names.append(image_name)
 
         # When image processing is done, remove caching label and display the images:
         self.bottom_loading_box.remove(self.loading_label)
