@@ -15,7 +15,7 @@ from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_random_file
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, MPV_TIMERS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -225,6 +225,16 @@ class App(Gtk.Window):
         self.mpv_sound_toggle.connect("toggled", self.on_mpv_sound_toggled)
         self.mpv_sound_toggle.set_tooltip_text(self.txt.tip_mpv_sound)
 
+        # Create mpv times drop:
+        self.mpv_timer_combo = Gtk.ComboBoxText()
+        options = list(MPV_TIMERS.keys())
+        for option in MPV_TIMERS:
+            self.mpv_timer_combo.append_text(option)
+        active_num = next((i for i, (k, v) in enumerate(MPV_TIMERS.items()) if v == self.cf.mpvpaper_timer), None)
+        self.mpv_timer_combo.set_active(active_num)
+        self.mpv_timer_combo.connect("changed", self.on_mpv_timer_changed)
+        self.mpv_timer_combo.set_tooltip_text(self.txt.tip_timer)
+
         # Create a box to contain the bottom row of buttons:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
@@ -394,10 +404,12 @@ class App(Gtk.Window):
         self.options_box.remove(self.mpv_stop_button)
         self.options_box.remove(self.mpv_pause_button)
         self.options_box.remove(self.mpv_sound_toggle)
+        self.options_box.remove(self.mpv_timer_combo)
         if self.cf.backend == "mpvpaper":
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
+            self.options_box.pack_end(self.mpv_timer_combo, False, False, 0)
 
     def fill_option_display(self):
         """Display fill option if backend is not hyprpaper"""
@@ -632,11 +644,18 @@ class App(Gtk.Window):
 
 
     def on_sort_option_changed(self, combo) -> None:
-        """Save sort parameter whet it is changed"""
+        """Save sort parameter when it is changed"""
         selected_option = combo.get_active_text()
         selected_option_num = list(SORT_DISPLAYS.values()).index(selected_option)
         self.cf.sort_option =  list(SORT_DISPLAYS.keys())[selected_option_num]
         threading.Thread(target=self.process_images).start()
+
+
+    def on_mpv_timer_changed(self, combo) -> None:
+        """Save timer parameter when it is changed"""
+        selected_option = combo.get_active_text()
+        selected_option_num = list(MPV_TIMERS.keys()).index(selected_option)
+        self.cf.mpvpaper_timer =  list(MPV_TIMERS.values())[selected_option_num]
 
 
     def on_backend_option_changed(self, combo) -> None:

@@ -66,6 +66,7 @@ class English:
         self.tip_mpv_stop = "Stop all mpv processes"
         self.tip_mpv_pause = "Play/Pause video wallpaper"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 
 class German:
@@ -130,6 +131,7 @@ class German:
         self.tip_mpv_stop = "Stoppe alle mpv-Prozesse"
         self.tip_mpv_pause = "Pause Video-Wallpaper"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 class French:
     def __init__(self):
@@ -193,6 +195,7 @@ class French:
         self.tip_mpv_stop = "Arrêter tous les processus mpv"
         self.tip_mpv_pause = "Pause du fond d'écran vidéo"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 class Polish:
     def __init__(self):
@@ -257,6 +260,7 @@ class Polish:
         self.tip_mpv_stop = "Zatrzymaj wszystkie procesy mpv"
         self.tip_mpv_pause = "Odtwarzaj/Zatrzymaj animowaną"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 class Russian:
     def __init__(self):
@@ -320,6 +324,7 @@ class Russian:
         self.tip_mpv_stop = "Остановить все mpv процессы"
         self.tip_mpv_pause = "Плей/пауза видео-обоев"
         self.tip_mpv_sound = "Проигрывать звук видео-обоев"
+        self.tip_timer = "Как часто автоматически менять обои"
 
 
 class Belarusian:
@@ -384,6 +389,7 @@ class Belarusian:
         self.tip_mpv_stop = "Спыніць усе працэсы mpv"
         self.tip_mpv_pause = "Паўза відэа-абояў"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 
 class Chinese:
@@ -448,6 +454,7 @@ class Chinese:
         self.tip_mpv_stop = "停止所有 mpv 进程"
         self.tip_mpv_pause = "暂停视频壁纸"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 class Spanish:
     def __init__(self):
@@ -511,6 +518,7 @@ class Spanish:
         self.tip_mpv_stop = "Detener todos los procesos de mpv"
         self.tip_mpv_pause = "Pausar fondo de pantalla de video"
         self.tip_mpv_sound = "Play sound of the video"
+        self.tip_timer = "How often to automatically change wallpaper"
 
 
 def load_language(lang):

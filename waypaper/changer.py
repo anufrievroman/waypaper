@@ -73,13 +73,17 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             try:
                 subprocess.check_output(["pgrep", "-f", f"socket-{monitor}"], encoding='utf-8')
                 time.sleep(0.2)
-                print("Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
+                print(f"Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
                 subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}", shell=True)
 
             # If mpvpaper is not running, create a new process in a new socket:
             except subprocess.CalledProcessError:
                 print("Detected no running mpvpaper, starting new mpvpaper process")
                 command = ["mpvpaper", "--fork"]
+                print(cf.mpvpaper_timer)
+                if cf.mpvpaper_timer > 0:
+                    print(cf.mpvpaper_timer)
+                    command.extend(["-n", str(cf.mpvpaper_timer)])
                 if cf.mpvpaper_sound:
                     command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} loop {fill} --background-color='{cf.color}'"])
                 else:
