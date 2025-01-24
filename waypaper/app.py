@@ -77,10 +77,15 @@ class App(Gtk.Window):
         self.init_ui()
         self.backend_option_combo.grab_focus()
         self.is_enering_text = False
-        self.depth = -1 if self.cf.include_all_subfolders else 1
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
+
+    @property
+    def depth(self) -> int:
+        """Calculate the depth of the subfolders depending on active parameters"""
+        return int(self.cf.subfolder_depth) if self.cf.include_subfolders else 0
+
 
     def init_ui(self) -> None:
         """Initialize the UI elements of the application"""
@@ -311,17 +316,10 @@ class App(Gtk.Window):
         self.menu.append(self.filter_gifs_checkbox)
 
         # Create subfolder toggle:
-        if not self.cf.include_all_subfolders:
-            self.include_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_subfolders)
-            self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
-            self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
-            self.menu.append(self.include_subfolders_checkbox)
-
-        self.all_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_all_subfolders)
-        self.all_subfolders_checkbox.set_active(self.cf.include_all_subfolders)
-        self.all_subfolders_checkbox.connect("toggled",self.on_all_subfolders_toggle)
-        self.menu.append(self.all_subfolders_checkbox)
-
+        self.include_subfolders_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_subfolders)
+        self.include_subfolders_checkbox.set_active(self.cf.include_subfolders)
+        self.include_subfolders_checkbox.connect("toggled", self.on_include_subfolders_toggled)
+        self.menu.append(self.include_subfolders_checkbox)
 
         # Create hidden toggle:
         self.include_hidden_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_hidden)
@@ -464,7 +462,6 @@ class App(Gtk.Window):
 
     def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
-
         self.image_paths = get_image_paths(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders,
                                            self.cf.show_hidden, self.cf.show_gifs_only, self.depth)
         self.sort_images()
@@ -612,7 +609,6 @@ class App(Gtk.Window):
     def on_include_subfolders_toggled(self, toggle) -> None:
         """Toggle subfolders visibility via menu"""
         self.cf.include_subfolders = toggle.get_active()
-        self.depth = 1
         threading.Thread(target=self.process_images).start()
 
 
@@ -842,15 +838,6 @@ class App(Gtk.Window):
 
     def on_focus_out(self, widget, event):
         self.is_enering_text = False
-
-    def on_all_subfolders_toggle(self, toggle):
-        self.cf.include_all_subfolders = toggle.get_active()
-        if self.cf.include_all_subfolders:
-            self.cf.include_subfolders = False
-            self.depth = -1
-        else:
-            self.depth = 1
-        self.process_images()
 
     def run(self) -> None:
         """Run GUI application"""
