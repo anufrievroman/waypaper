@@ -76,7 +76,7 @@ class App(Gtk.Window):
         self.highlighted_image_row = 0
         self.init_ui()
         self.backend_option_combo.grab_focus()
-        self.search_state = False
+        self.is_enering_text = False
         self.depth = -1 if self.cf.include_all_subfolders else 1
 
         # Start the image processing in a separate thread:
@@ -264,21 +264,29 @@ class App(Gtk.Window):
         self.swww_angle_entry = Gtk.Entry()
         self.swww_angle_entry.set_width_chars(5)
         self.swww_angle_entry.set_placeholder_text("angle")
+        self.swww_angle_entry.connect("focus-in-event", self.on_focus_in)
+        self.swww_angle_entry.connect("focus-out-event", self.on_focus_out)
 
         #  Get steps for animation
         self.swww_steps_entry = Gtk.Entry()
         self.swww_steps_entry.set_width_chars(5)
         self.swww_steps_entry.set_placeholder_text("steps")
+        self.swww_steps_entry.connect("focus-in-event", self.on_focus_in)
+        self.swww_steps_entry.connect("focus-out-event", self.on_focus_out)
 
         #  Get duration for animation
         self.swww_duration_entry = Gtk.Entry()
         self.swww_duration_entry.set_width_chars(7)
         self.swww_duration_entry.set_placeholder_text("duration")
+        self.swww_duration_entry.connect("focus-in-event", self.on_focus_in)
+        self.swww_duration_entry.connect("focus-out-event", self.on_focus_out)
 
         #  Get fps for animation
         self.swww_fps_entry = Gtk.Entry()
         self.swww_fps_entry.set_width_chars(5)
         self.swww_fps_entry.set_placeholder_text("fps")
+        self.swww_fps_entry.connect("focus-in-event", self.on_focus_in)
+        self.swww_fps_entry.connect("focus-out-event", self.on_focus_out)
 
         # Add different buttons depending on backend:
         self.monitor_option_display()
@@ -743,13 +751,21 @@ class App(Gtk.Window):
     def on_key_pressed(self, widget, event) -> bool:
         """Process various key binding"""
 
-        # Processing keys for the search field:
-        if self.search_state == True:
+        # Processing keys for losing focus on text fields:
+        if self.is_enering_text:
             if event.keyval in [Gdk.KEY_Escape, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
                 self.search_entry.set_visible(False)
                 self.search_entry.set_visible(True)
+                self.swww_angle_entry.set_visible(False)
+                self.swww_angle_entry.set_visible(True)
+                self.swww_steps_entry.set_visible(False)
+                self.swww_steps_entry.set_visible(True)
+                self.swww_duration_entry.set_visible(False)
+                self.swww_duration_entry.set_visible(True)
+                self.swww_fps_entry.set_visible(False)
+                self.swww_fps_entry.set_visible(True)
                 self.main_box.grab_focus()
-                self.search_state = False
+                self.is_enering_text = False
             return
 
         # Processing rest of the keys:
@@ -822,10 +838,10 @@ class App(Gtk.Window):
         self.main_box.grab_focus()
 
     def on_focus_in(self, widget, event):
-        self.search_state = True
+        self.is_enering_text = True
 
     def on_focus_out(self, widget, event):
-        self.search_state = False
+        self.is_enering_text = False
 
     def on_all_subfolders_toggle(self, toggle):
         self.cf.include_all_subfolders = toggle.get_active()
