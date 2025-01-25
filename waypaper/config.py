@@ -40,7 +40,6 @@ class Config:
         self.include_all_subfolders = False
         self.show_hidden = False
         self.show_gifs_only = False
-        self.show_transition_options = True
         self.about = AboutData()
         self.cache_dir = user_cache_path(self.about.applicationName())
         self.config_dir = user_config_path(self.about.applicationName())
@@ -93,7 +92,6 @@ class Config:
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.include_all_subfolders = config.getboolean("Settings", "all_subfolders", fallback=self.include_all_subfolders)
-        self.show_transition_options = config.getboolean("Settings", "show_transition_options", fallback=self.show_transition_options)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
@@ -227,7 +225,6 @@ class Config:
         config.set("Settings", "all_subfolders", str(self.include_all_subfolders))
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
-        config.set("Settings", "show_transition_options", str(self.show_transition_options))
         config.set("Settings", "post_command", self.post_command)
         config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))

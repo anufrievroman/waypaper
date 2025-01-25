@@ -328,13 +328,6 @@ class App(Gtk.Window):
         self.include_hidden_checkbox.connect("toggled", self.on_hidden_files_toggled)
         self.menu.append(self.include_hidden_checkbox)
 
-        # Create show transition options toggle:
-        if self.cf.backend == "swww":
-            self.show_transition_options_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_transitions)
-            self.show_transition_options_checkbox.set_active(self.cf.show_transition_options)
-            self.show_transition_options_checkbox.connect("toggled", self.on_show_transition_options_toggled)
-            self.menu.append(self.show_transition_options_checkbox)
-
         self.menu.show_all()
 
     def on_options_button_clicked(self, widget) -> None:
@@ -370,7 +363,7 @@ class App(Gtk.Window):
         self.options_box.remove(self.swww_fps_entry)
         self.options_box.remove(self.swww_duration_entry)
 
-        if self.cf.backend != "swww" or not self.cf.show_transition_options:
+        if self.cf.backend != "swww":
             return
 
         self.swww_transitions_options = Gtk.ComboBoxText()
@@ -635,13 +628,6 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
-    def on_show_transition_options_toggled(self, toggle) -> None:
-        """Toggle visibility of transition menu"""
-        self.cf.show_transition_options = toggle.get_active()
-        threading.Thread(target=self.process_images).start()
-        self.swww_options_display()
-
-
     def toggle_hidden_files(self) -> None:
         """Toggle visibility of hidden files via keys"""
         self.cf.show_hidden = not self.cf.show_hidden
@@ -679,9 +665,9 @@ class App(Gtk.Window):
         self.cf.selected_monitor = "All"
         self.monitor_option_display()
         self.mpv_options_display()
-        self.swww_options_display()
         self.fill_option_display()
         self.color_picker_display()
+        self.swww_options_display()
         self.show_all()
 
 
