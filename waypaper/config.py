@@ -37,7 +37,7 @@ class Config:
         self.wallpapers = []
         self.post_command = ""
         self.include_subfolders = False
-        self.subfolder_depth = 1
+        self.include_all_subfolders = False
         self.show_hidden = False
         self.show_gifs_only = False
         self.show_transition_options = True
@@ -92,7 +92,7 @@ class Config:
         self.mpvpaper_timer = config.get("Settings", "mpvpaper_timer", fallback=self.mpvpaper_timer)
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
-        self.subfolder_depth = config.get("Settings", "subfolder_depth", fallback=self.subfolder_depth)
+        self.include_all_subfolders = config.getboolean("Settings", "all_subfolders", fallback=self.include_all_subfolders)
         self.show_transition_options = config.getboolean("Settings", "show_transition_options", fallback=self.show_transition_options)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
@@ -167,8 +167,6 @@ class Config:
             self.swww_transition_fps = 60
         if 0 > int(self.mpvpaper_timer):
             self.mpvpaper_timer = 0
-        if 0 > int(self.subfolder_depth):
-            self.subfolder_depth = 1
 
     def attribute_selected_wallpaper(self) -> None:
         """
@@ -226,7 +224,7 @@ class Config:
         config.set("Settings", "sort", self.sort_option)
         config.set("Settings", "color", self.color)
         config.set("Settings", "subfolders", str(self.include_subfolders))
-        config.set("Settings", "subfolder_depth", str(self.subfolder_depth))
+        config.set("Settings", "all_subfolders", str(self.include_all_subfolders))
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "show_transition_options", str(self.show_transition_options))

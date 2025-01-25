@@ -4,10 +4,7 @@ import os
 import random
 import shutil
 from pathlib import Path
-
-from pathlib import Path
 from typing import List
-from glob import glob
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
 
@@ -22,14 +19,13 @@ def has_image_extension(file_path: str, backend: str) -> bool:
 def get_image_paths(backend: str,
                     root_folder: str,
                     include_subfolders: bool = False,
+                    include_all_subfolders: bool = False,
                     include_hidden: bool = False,
-                    only_gifs: bool = False,
-                    depth: int = 1):
+                    only_gifs: bool = False
+                    ):
     """Get a list of file paths depending on the filters that were requested"""
-    if depth < 0:
-        return get_image_paths_infinite_recursion(backend, root_folder, include_hidden, only_gifs)
     image_paths = []
-    for root, directories, files in os.walk(root_folder):
+    for root, directories, files in os.walk(root_folder, followlinks=True):
         # Remove hidden files from consideration:
         for directory in directories:
             if directory.startswith('.') and not include_hidden:
@@ -40,10 +36,9 @@ def get_image_paths(backend: str,
             continue
 
         # Remove deep folders from consideration:
-        if depth is not None and root != root_folder:
-            current_depth = root.count(os.path.sep) - str(root_folder).count(
-                os.path.sep)
-            if current_depth > depth:
+        if not include_all_subfolders and root != root_folder:
+            current_depth = root.count(os.path.sep) - str(root_folder).count(os.path.sep)
+            if current_depth > 1:
                 continue
 
         # Remove files that are not images from consideration:
@@ -55,37 +50,19 @@ def get_image_paths(backend: str,
             if not filename.endswith('.gif') and only_gifs:
                 continue
             image_paths.append(os.path.join(root, filename))
-        # print(root, directories, files)
     return image_paths
-
-
-def get_image_paths_infinite_recursion(backend: str,
-                    root_folder: str,
-                    include_hidden: bool = False,
-                    only_gifs: bool = False):
-    """Get a list of file paths depending on the filters that were requested"""
-    paths = os.walk(root_folder, followlinks=True)
-    paths = map(lambda x: map(lambda y: os.path.join(x[0], y), x[2]), paths)
-    paths = [ x for xs in paths for x in xs ]
-    print(paths)
-    if only_gifs:
-        paths = list(filter(lambda f: f.lower().endswith(".gif"),paths))
-    else:
-        paths = list(filter(lambda x: has_image_extension(x, backend), paths))
-    if not include_hidden:
-        paths = list(filter(lambda x: not x.startswith(".") , paths))
-    return paths
 
 
 def get_random_file(backend: str,
                     folder: str,
                     include_subfolders: bool,
+                    include_all_subfolders: bool,
                     cache_dir: Path,
                     include_hidden: bool = False) -> str | None:
     """Pick a random file from the folder and update cache"""
     try:
         # Get all image paths from the folder:
-        image_paths = get_image_paths(backend, folder, include_subfolders,
+        image_paths = get_image_paths(backend, folder, include_subfolders, include_all_subfolders,
                                       include_hidden, only_gifs=False)
 
         # Read cache file with already used images:

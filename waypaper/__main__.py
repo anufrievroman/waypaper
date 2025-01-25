@@ -63,7 +63,8 @@ def run():
 
         # Otherwise set a random wallpaper:
         else:
-            wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
+            wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders,
+                                            cf.include_all_subfolders, cf.cache_dir, cf.show_hidden)
             if wallpaper_str:
                 wallpaper = pathlib.Path(wallpaper_str)
             else:
@@ -88,7 +89,8 @@ def run():
     if args.restore or args.random:
         for index, (wallpaper, monitor) in enumerate(zip(cf.wallpapers, cf.monitors)):
             if args.random:
-                wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders, cf.cache_dir, cf.show_hidden)
+                wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders,
+                                                cf.include_all_subfolders, cf.cache_dir, cf.show_hidden)
                 if wallpaper_str:
                     wallpaper = pathlib.Path(wallpaper_str)
                     cf.wallpapers[index] = wallpaper
