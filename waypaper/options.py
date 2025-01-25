@@ -27,7 +27,7 @@ IMAGE_EXTENSIONS: Dict[str, List[str]] = {
 SWWW_TRANSITION_TYPES: List[str] = ["any", "none", "simple", "fade", "wipe",  "left", "right", "top",
                                 "bottom", "wave", "grow", "center", "outer", "random"]
 
-MPV_TIMERS = {"Never": 0,
+MPV_TIMERS = {
               "30 sec": 30,
               "1 min": 60,
               "2 min": 120,

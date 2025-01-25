@@ -31,7 +31,7 @@ class Config:
         self.swww_transition_duration = 2
         self.swww_transition_fps = 60
         self.mpvpaper_sound = False
-        self.mpvpaper_timer = MPV_TIMERS["Never"]
+        self.mpvpaper_timer = MPV_TIMERS["10 min"]
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpapers = []
@@ -146,7 +146,7 @@ class Config:
         if self.swww_transition_type not in SWWW_TRANSITION_TYPES:
             self.swww_transition_type = "any"
         if self.mpvpaper_timer not in list(MPV_TIMERS.values()):
-            self.mpvpaper_timer = 0
+            self.mpvpaper_timer = 600
 
         # Check the validity of the number of columns:
         try:

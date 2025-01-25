@@ -25,6 +25,7 @@ class English:
         self.msg_select = "Select"
         self.msg_refresh = "Refresh"
         self.msg_clear = "Clear"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "Stop"
         self.msg_sound = "Sound"
         self.msg_pause = "Pause"
@@ -67,6 +68,7 @@ class English:
         self.tip_mpv_pause = "Play/Pause video wallpaper"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 
 class German:
@@ -91,6 +93,7 @@ class German:
         self.msg_refresh = "Aktualisieren"
         self.msg_random = "Zufällig"
         self.msg_clear = "Löschen"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "Stopp"
         self.msg_sound = "Sound"
         self.msg_pause = "Pause"
@@ -132,6 +135,7 @@ class German:
         self.tip_mpv_pause = "Pause Video-Wallpaper"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 class French:
     def __init__(self):
@@ -155,6 +159,7 @@ class French:
         self.msg_refresh = "Actualiser"
         self.msg_random = "Aléatoire"
         self.msg_clear = "Effacer"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "Arrêter"
         self.msg_sound = "Sound"
         self.msg_pause = "Pause"
@@ -196,6 +201,7 @@ class French:
         self.tip_mpv_pause = "Pause du fond d'écran vidéo"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 class Polish:
     def __init__(self):
@@ -218,6 +224,7 @@ class Polish:
         self.msg_select = "Wybierz"
         self.msg_refresh = "Odświerz"
         self.msg_clear = "Wyczyść"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "Stop"
         self.msg_sound = "Sound"
         self.msg_pause = "Pauza"
@@ -261,6 +268,7 @@ class Polish:
         self.tip_mpv_pause = "Odtwarzaj/Zatrzymaj animowaną"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 class Russian:
     def __init__(self):
@@ -284,6 +292,7 @@ class Russian:
         self.msg_refresh = "Обновить"
         self.msg_random = "Случайно"
         self.msg_clear = "Очистить"
+        self.msg_start = "Начать авто-смену"
         self.msg_stop = "Стоп"
         self.msg_sound = "Звук"
         self.msg_pause = "Пауза"
@@ -325,6 +334,7 @@ class Russian:
         self.tip_mpv_pause = "Плей/пауза видео-обоев"
         self.tip_mpv_sound = "Проигрывать звук видео-обоев"
         self.tip_timer = "Как часто автоматически менять обои"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 
 class Belarusian:
@@ -349,6 +359,7 @@ class Belarusian:
         self.msg_refresh = "Абнавіць"
         self.msg_random = "Выпадкова"
         self.msg_clear = "Ачысціць"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "Стоп"
         self.msg_sound = "Sound"
         self.msg_pause = "Паўза"
@@ -390,6 +401,7 @@ class Belarusian:
         self.tip_mpv_pause = "Паўза відэа-абояў"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 
 class Chinese:
@@ -414,6 +426,7 @@ class Chinese:
         self.msg_refresh = "刷新"
         self.msg_random = "随机"
         self.msg_clear = "清除"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "停止"
         self.msg_sound = "Sound"
         self.msg_pause = "暂停"
@@ -455,6 +468,7 @@ class Chinese:
         self.tip_mpv_pause = "暂停视频壁纸"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 class Spanish:
     def __init__(self):
@@ -478,6 +492,7 @@ class Spanish:
         self.msg_refresh = "Actualizar"
         self.msg_random = "Aleatorio"
         self.msg_clear = "Borrar"
+        self.msg_start = "Start auto-change"
         self.msg_stop = "Detener"
         self.msg_sound = "Sound"
         self.msg_pause = "Pausa"
@@ -519,6 +534,7 @@ class Spanish:
         self.tip_mpv_pause = "Pausar fondo de pantalla de video"
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
+        self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
 
 def load_language(lang):

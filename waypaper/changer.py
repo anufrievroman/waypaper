@@ -23,6 +23,72 @@ def find_process_pid(command: str) -> Optional[int]:
         return None
 
 
+def seek_and_destroy(process: str, monitor: str = "All"):
+    """Find if a backend is already running somewhere and kill it"""
+
+    # Kill all process instances if we want to set for all monitors:
+    if monitor == "All":
+        try:
+            subprocess.check_output(["pgrep", f"{process}"], encoding='utf-8')
+            subprocess.Popen(["killall", f"{process}"])
+            time.sleep(0.005)
+            print(f"Killed previous instances of {process}")
+        except subprocess.CalledProcessError:
+            pass
+
+    # Otherwise, find PID of the process for certain monitor and kill it:
+    else:
+        if process == "mpvpaper":
+            pid = find_process_pid(f"mpvpaper -f socket-{monitor}")
+        elif process == "mpvpaper":
+            pid = find_process_pid(f"swaybg -o {monitor}")
+        else:
+            return
+        try:
+            subprocess.run(['kill', '-9', str(pid)], check=True)
+            print(f"Detected {process} on {monitor} and killed it")
+        except Exception as e:
+            pass
+
+
+def start_mpv_autochange(cf: Config, monitor: str):
+    """Initiate random change of the wallpaper on set time intervals"""
+
+    fill_types = {
+            "fill": "panscan=1.0",
+            "fit": "panscan=0.0",
+            "center": "",
+            "stretch": "--keepaspect=no",
+            "tile": "",
+            }
+
+    fill = fill_types[cf.fill_option.lower()]
+
+    # Stop previously running processes:
+    seek_and_destroy("mpvpaper", monitor)
+
+    # Create a new process in a new socket:
+    print("Detected no running mpvpaper, starting new mpvpaper process")
+    command = ["mpvpaper", "--fork"]
+    if cf.mpvpaper_timer > 0:
+        command.extend(["-n", str(cf.mpvpaper_timer)])
+    if cf.mpvpaper_sound:
+        command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} loop {fill} --background-color='{cf.color}'"])
+    else:
+        command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} no-audio loop {fill} --background-color='{cf.color}'"])
+
+    # Specify the monitor:
+    if monitor == "All":
+        command.extend('*')
+    else:
+        command.extend([monitor])
+
+    # Specify the image folder:
+    command.extend([cf.image_folder])
+    subprocess.Popen(command)
+    print(f"Sent command to initate autochange with mpvpaper backend.")
+
+
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
 
@@ -30,22 +96,9 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
         # swaybg backend:
         if cf.backend == "swaybg":
 
-            # Kill previous swaybg instances if we want to set for all monitors:
-            if monitor == "All":
-                try:
-                    subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
-                    subprocess.Popen(["killall", "swaybg"])
-                    time.sleep(0.005)
-                except subprocess.CalledProcessError:
-                    pass
-
-            # Otherwise, find PID of the process for this monitor and kill it:
-            else:
-                pid = find_process_pid(f"swaybg -o {monitor}")
-                try:
-                    subprocess.run(['kill', '-9', str(pid)], check=True)
-                except Exception as e:
-                    pass
+            # Kill previous swaybg instances if any:
+            seek_and_destroy("swaybg", monitor)
+            pid = find_process_pid(f"swaybg -o {monitor}")
 
             # Launch new swaybg process:
             fill = cf.fill_option.lower()
@@ -80,10 +133,6 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             except subprocess.CalledProcessError:
                 print("Detected no running mpvpaper, starting new mpvpaper process")
                 command = ["mpvpaper", "--fork"]
-                print(cf.mpvpaper_timer)
-                if cf.mpvpaper_timer > 0:
-                    print(cf.mpvpaper_timer)
-                    command.extend(["-n", str(cf.mpvpaper_timer)])
                 if cf.mpvpaper_sound:
                     command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} loop {fill} --background-color='{cf.color}'"])
                 else:
@@ -102,20 +151,9 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
         # swww backend:
         elif cf.backend == "swww":
 
-            # Check with pgrep if other backends they are running and kill them
-            # because swaybg and hyprpaper are known to conflict with swww
-            try:
-                subprocess.check_output(["pgrep", "swaybg"], encoding='utf-8')
-                subprocess.Popen(["killall", "swaybg"])
-                time.sleep(0.005)
-            except subprocess.CalledProcessError:
-                pass
-            try:
-                subprocess.check_output(["pgrep", "hyprpaper"], encoding='utf-8')
-                subprocess.Popen(["killall", "hyprpaper"])
-                time.sleep(0.005)
-            except subprocess.CalledProcessError:
-                pass
+            # Because swaybg and hyprpaper are known to conflict with swww, kill them:
+            seek_and_destroy("swaybg")
+            seek_and_destroy("hyprpaper")
 
             fill_types = {
                     "fill": "crop",
