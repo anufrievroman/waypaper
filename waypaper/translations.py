@@ -21,7 +21,6 @@ class English:
         self.msg_arg_monitor = "specify desired monitor using its name"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "Selected image path:"
         self.msg_select = "Select"
         self.msg_refresh = "Refresh"
         self.msg_clear = "Clear"
@@ -88,7 +87,6 @@ class German:
         self.msg_arg_monitor = "geben Sie den gewünschten Monitor mit seinem Namen an"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "Pfad zum ausgewählten Bild:"
         self.msg_select = "Auswählen"
         self.msg_refresh = "Aktualisieren"
         self.msg_random = "Zufällig"
@@ -154,7 +152,6 @@ class French:
         self.msg_arg_monitor = "spécifiez le moniteur souhaité en utilisant son nom"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "Chemin de l'image sélectionnée :"
         self.msg_select = "Sélectionner"
         self.msg_refresh = "Actualiser"
         self.msg_random = "Aléatoire"
@@ -220,7 +217,6 @@ class Polish:
         self.msg_arg_monitor = "ustaw pożądany monitor używając jego nazwy"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "Ustaw ścieżkę pliku:"
         self.msg_select = "Wybierz"
         self.msg_refresh = "Odświerz"
         self.msg_clear = "Wyczyść"
@@ -287,7 +283,6 @@ class Russian:
         self.msg_arg_monitor = "указать имя монитора для которого устанавливаются обои"
         self.msg_arg_post = "предотвратить выполнение post_command"
 
-        self.msg_path = "Выбранный путь к изображению:"
         self.msg_select = "Выбрать"
         self.msg_refresh = "Обновить"
         self.msg_random = "Случайно"
@@ -354,7 +349,6 @@ class Belarusian:
         self.msg_arg_monitor = "określ żądany monitor, używając jego nazwy"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "Абраны шлях да выявы:"
         self.msg_select = "Выбраць"
         self.msg_refresh = "Абнавіць"
         self.msg_random = "Выпадкова"
@@ -421,7 +415,6 @@ class Chinese:
         self.msg_arg_monitor = "通过其名称指定所需的显示器"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "选择的图像路径："
         self.msg_select = "选择"
         self.msg_refresh = "刷新"
         self.msg_random = "随机"
@@ -487,7 +480,6 @@ class Spanish:
         self.msg_arg_monitor = "especifique el monitor deseado usando su nombre"
         self.msg_arg_post = "prevents ruuning post_command"
 
-        self.msg_path = "Ubicación de la imagen:"
         self.msg_select = "Selecciona"
         self.msg_refresh = "Actualizar"
         self.msg_random = "Aleatorio"

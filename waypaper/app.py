@@ -563,7 +563,6 @@ class App(Gtk.Window):
         """Set selected image as a wallpaper and save the state"""
         self.swww_options_read()
         self.cf.select_wallpaper(path)
-        print(self.txt.msg_path, self.cf.selected_wallpaper)
         if self.cf.selected_wallpaper:
             threading.Thread(target=change_wallpaper, args=(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor)).start()
         self.cf.attribute_selected_wallpaper()
@@ -726,7 +725,6 @@ class App(Gtk.Window):
             self.cf.select_wallpaper(new_wallpaper)
         else:
             return
-        print(self.txt.msg_path, self.cf.selected_wallpaper)
         if self.cf.selected_wallpaper:
             threading.Thread(target=change_wallpaper, args=(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor)).start()
         self.cf.attribute_selected_wallpaper()

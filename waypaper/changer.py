@@ -99,9 +99,9 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
         print("Detected no running mpvpaper, starting new mpvpaper process")
         command = ["mpvpaper", "--fork"]
         if cf.mpvpaper_sound:
-            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} loop {fill} --background-color='{cf.color}'"])
+            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --background-color='{cf.color}'"])
         else:
-            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} no-audio loop {fill} --background-color='{cf.color}'"])
+            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} no-audio loop {fill} --background-color='{cf.color}'"])
 
         # Specify the monitor:
         if monitor == "All":
@@ -110,6 +110,8 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
             command.extend([monitor])
 
         command.extend([image_path])
+
+        print(f"{command=}")
         subprocess.Popen(command)
 
 
@@ -215,6 +217,8 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
+
+    print(f"Selected file: {image_path}")
 
     try:
         if cf.backend == "swaybg":
