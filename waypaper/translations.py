@@ -463,6 +463,72 @@ class Chinese:
         self.tip_timer = "How often to automatically change wallpaper"
         self.tip_start = "Initiate automatic change of wallpaper after a time interval"
 
+class TraditionalChinese:
+    def __init__(self):
+        self.msg_desc = "Wayland 和 X11 的 GUI 壁紙選擇器。是能作為 feh、swaybg、wallutils、hyprpaper、mpvpaper 和 swww 的前端。"
+        self.msg_info = "如要更多資訊, 請前往:\nhttps://github.com/anufrievroman/waypaper"
+        
+        self.msg_arg_help = "版本"
+        self.msg_arg_fill = "壁紙填滿螢幕的方式"
+        self.msg_arg_rest = "重回上一個壁紙"
+        self.msg_arg_back = "選擇壁紙後端"
+        self.msg_arg_rand = "隨機壁紙"
+        self.msg_arg_list = "以 JSON 的格式列出壁紙及輸出到標準輪出"
+        self.msg_arg_wall = "使用選擇了的壁紙"
+        self.msg_arg_folder = "存有壁紙的文件夾"
+        self.msg_arg_statefile = "指定用於儲存程式狀態的自定文件"
+        self.msg_arg_monitor = "用螢幕的名稱來選擇壁紙在那一個螢幕顯示"
+        self.msg_arg_post = "停止更換壁紙後運行的命令"
+
+        self.msg_select = "選擇"
+        self.msg_refresh = "刷新"
+        self.msg_clear = "清除搜尋"
+        self.msg_start = "開始自動更換"
+        self.msg_stop = "停止"
+        self.msg_sound = "聲音開關"
+        self.msg_pause = "暫停"
+        self.msg_search = "搜尋"
+        self.msg_random = "隨機"
+        self.msg_exit = "退出"
+        self.msg_options = "設定"
+        self.msg_subfolders = "顯示子文件夾的圖片"
+        self.msg_all_subfolders = "顯示所有子文件夾的圖片"
+        self.msg_hidden = "顯示隱藏子的圖片"
+        self.msg_gifs = "只顯示 GIF 圖"
+        self.msg_transitions = "顯示翻譯設定"
+        self.msg_changefolder = "文件夾"
+        self.msg_choosefolder = "選擇文件夾"
+        self.msg_caching = "緩存壁紙"
+
+        self.msg_help = "Waypaper 的快捷鍵:\n\nhjkl - 行動 (←↓↑→)\nEnter - 設定選擇壁紙\nf - 選擇壁紙文件夾\n"
+        self.msg_help += "g - 滾動到頂部\nG - 滾動到底部\nR - 隨機壁紙\nr - 重新玩全壁紙\n"
+        self.msg_help += ". - 顯示隱藏的圖片\ns - 顯示在子文件夾的圖片\n? - 協助\nq - 退出\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "刪除緩存時出錯"
+        self.err_backend = "沒有安裝任何壁紙後端.\n"
+        self.err_backend += "請使用包裝管理器安裝至少一個後端:\n\n"
+        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += self.msg_info
+
+        self.tip_refresh = "重新緩存在文件夾中的圖片"
+        self.tip_fill = "選擇壁紙填滿方式"
+        self.tip_backend = "選擇後端"
+        self.tip_sorting = "選擇排序方式"
+        self.tip_display = "選擇螢幕"
+        self.tip_color = "選擇背景顏色"
+        self.tip_random = "隨機壁紙"
+        self.tip_exit = "退出程式"
+        self.tip_transition = "選擇過渡方式"
+        self.tip_mpv_stop = "暫停所有 mpv 程序"
+        self.tip_mpv_pause = "開始/暫停影片壁紙播放"
+        self.tip_mpv_sound = "播放影片聲音"
+        self.tip_timer = "自動選擇壁紙的時間"
+        self.tip_start = "開始定時更換壁紙"
+
+
 class Spanish:
     def __init__(self):
         self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz gráfica para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
@@ -543,6 +609,8 @@ def load_language(lang):
         txt = Polish()
     elif lang == "zh":
         txt = Chinese()
+    elif lang == "zh_HK":
+        txt = TraditionalChinese()
     elif lang == "es":
         txt = Spanish()
     else:
