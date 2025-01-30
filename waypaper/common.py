@@ -17,44 +17,45 @@ def has_image_extension(file_path: str, backend: str) -> bool:
 
 
 def get_image_paths(backend: str,
-                    root_folder: str,
+                    folder_list: list[Path],
                     include_subfolders: bool = False,
                     include_all_subfolders: bool = False,
                     include_hidden: bool = False,
                     only_gifs: bool = False
-                    ):
+                    ) -> list[str]:
     """Get a list of file paths depending on the filters that were requested"""
     image_paths = []
-    for root, directories, files in os.walk(root_folder, followlinks=True):
-        # Remove hidden files from consideration:
-        for directory in directories:
-            if directory.startswith('.') and not include_hidden:
-                directories.remove(directory)
+    for folder in folder_list:
+        for root, directories, files in os.walk(folder, followlinks=True):
+            # Remove hidden files from consideration:
+            for directory in directories:
+                if directory.startswith('.') and not include_hidden:
+                    directories.remove(directory)
 
-        # Remove subfolders from consideration:
-        if not include_subfolders and str(root) != str(root_folder):
-            continue
-
-        # Remove deep folders from consideration:
-        if not include_all_subfolders and root != root_folder:
-            current_depth = root.count(os.path.sep) - str(root_folder).count(os.path.sep)
-            if current_depth > 1:
+            # Remove subfolders from consideration:
+            if not include_subfolders and str(root) != str(folder):
                 continue
 
-        # Remove files that are not images from consideration:
-        for filename in files:
-            if filename.startswith('.') and not include_hidden:
-                continue
-            if not has_image_extension(filename, backend):
-                continue
-            if not filename.endswith('.gif') and only_gifs:
-                continue
-            image_paths.append(os.path.join(root, filename))
+            # Remove deep folders from consideration:
+            if not include_all_subfolders and str(root) != str(folder):
+                current_depth = root.count(os.path.sep) - str(folder).count(os.path.sep)
+                if current_depth > 1:
+                    continue
+
+            # Remove files that are not images from consideration:
+            for filename in files:
+                if filename.startswith('.') and not include_hidden:
+                    continue
+                if not has_image_extension(filename, backend):
+                    continue
+                if not filename.endswith('.gif') and only_gifs:
+                    continue
+                image_paths.append(os.path.join(root, filename))
     return image_paths
 
 
 def get_random_file(backend: str,
-                    folder: str,
+                    folder_list: list[Path],
                     include_subfolders: bool,
                     include_all_subfolders: bool,
                     cache_dir: Path,
@@ -62,7 +63,7 @@ def get_random_file(backend: str,
     """Pick a random file from the folder and update cache"""
     try:
         # Get all image paths from the folder:
-        image_paths = get_image_paths(backend, folder, include_subfolders, include_all_subfolders,
+        image_paths = get_image_paths(backend, folder_list, include_subfolders, include_all_subfolders,
                                       include_hidden, only_gifs=False)
 
         # Read cache file with already used images:

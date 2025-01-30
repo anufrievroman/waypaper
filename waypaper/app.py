@@ -457,7 +457,7 @@ class App(Gtk.Window):
 
     def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
-        self.image_paths = get_image_paths(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders,
+        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
                                            self.cf.include_all_subfolders, self.cf.show_hidden, self.cf.show_gifs_only)
         self.sort_images()
 
@@ -486,7 +486,7 @@ class App(Gtk.Window):
             self.thumbnails.append(thumbnail)
 
             # Create a name for each image, which contain subfolders:
-            image_name = str(Path(image_path).relative_to(self.cf.image_folder))
+            image_name = os.path.basename(image_path)
             self.image_names.append(image_name)
 
         # When image processing is done, remove caching label and display the images:
@@ -577,7 +577,7 @@ class App(Gtk.Window):
         )
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.cf.image_folder = Path(dialog.get_filename())
+            self.cf.image_folder_list = [Path(dialog.get_filename())]
             threading.Thread(target=self.process_images).start()
         dialog.destroy()
 
@@ -719,7 +719,7 @@ class App(Gtk.Window):
 
     def set_random_wallpaper(self) -> None:
         """Choose a random image and set it as the wallpaper"""
-        new_wallpaper =  get_random_file(self.cf.backend, str(self.cf.image_folder), self.cf.include_subfolders,
+        new_wallpaper =  get_random_file(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
                                          self.cf.include_all_subfolders, self.cf.cache_dir)
         if new_wallpaper:
             self.cf.select_wallpaper(new_wallpaper)
