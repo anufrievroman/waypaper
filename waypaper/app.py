@@ -329,7 +329,14 @@ class App(Gtk.Window):
         self.include_hidden_checkbox.connect("toggled", self.on_hidden_files_toggled)
         self.menu.append(self.include_hidden_checkbox)
 
+        # Create show folder path toggle:
+        self.show_image_path_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_show_image_path)
+        self.show_image_path_checkbox.set_active(self.cf.show_image_path)
+        self.show_image_path_checkbox.connect("toggled", self.on_show_image_path_toggled)
+        self.menu.append(self.show_image_path_checkbox)
+
         self.menu.show_all()
+
 
     def on_options_button_clicked(self, widget) -> None:
         '''Position the menu at the button and show it'''
@@ -632,6 +639,12 @@ class App(Gtk.Window):
     def toggle_hidden_files(self) -> None:
         """Toggle visibility of hidden files via keys"""
         self.cf.show_hidden = not self.cf.show_hidden
+        threading.Thread(target=self.process_images).start()
+
+
+    def on_show_image_path_toggled(self, widget) -> None:
+        """Toggle show image relative path in image tooltip"""
+        self.cf.show_image_path = not self.cf.show_image_path
         threading.Thread(target=self.process_images).start()
 
 
