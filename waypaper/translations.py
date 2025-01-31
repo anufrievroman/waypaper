@@ -20,6 +20,7 @@ class English:
         self.msg_arg_statefile = "specify a custom file to store the application state"
         self.msg_arg_monitor = "specify desired monitor using its name"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Select"
         self.msg_refresh = "Refresh"
@@ -86,6 +87,7 @@ class German:
         self.msg_arg_statefile = "specify a custom file to store the application state"
         self.msg_arg_monitor = "geben Sie den gewünschten Monitor mit seinem Namen an"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Auswählen"
         self.msg_refresh = "Aktualisieren"
@@ -151,6 +153,7 @@ class French:
         self.msg_arg_statefile = "specify a custom file to store the application state"
         self.msg_arg_monitor = "spécifiez le moniteur souhaité en utilisant son nom"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Sélectionner"
         self.msg_refresh = "Actualiser"
@@ -216,6 +219,7 @@ class Polish:
         self.msg_arg_statefile = "ustaw plik, żeby przechowywać stan aplikacji"
         self.msg_arg_monitor = "ustaw pożądany monitor używając jego nazwy"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Wybierz"
         self.msg_refresh = "Odświerz"
@@ -282,6 +286,7 @@ class Russian:
         self.msg_arg_statefile = "указать путь к файлу состояния"
         self.msg_arg_monitor = "указать имя монитора для которого устанавливаются обои"
         self.msg_arg_post = "предотвратить выполнение post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Выбрать"
         self.msg_refresh = "Обновить"
@@ -348,6 +353,7 @@ class Belarusian:
         self.msg_arg_statefile = "ўкажыце карыстацкі файл для захавання стану прыкладання"
         self.msg_arg_monitor = "określ żądany monitor, używając jego nazwy"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Выбраць"
         self.msg_refresh = "Абнавіць"
@@ -414,6 +420,7 @@ class Chinese:
         self.msg_arg_statefile = "指定用于存储应用程序状态的自定义文件"
         self.msg_arg_monitor = "通过其名称指定所需的显示器"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "选择"
         self.msg_refresh = "刷新"
@@ -479,6 +486,7 @@ class TraditionalChinese:
         self.msg_arg_statefile = "指定用於儲存程式狀態的自定文件"
         self.msg_arg_monitor = "用螢幕的名稱來選擇壁紙在那一個螢幕顯示"
         self.msg_arg_post = "停止更換壁紙後運行的命令"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "選擇"
         self.msg_refresh = "刷新"
@@ -545,6 +553,7 @@ class Spanish:
         self.msg_arg_statefile = "specify a custom file to store the application state"
         self.msg_arg_monitor = "especifique el monitor deseado usando su nombre"
         self.msg_arg_post = "prevents ruuning post_command"
+        self.msg_arg_show_image_path = "show the relative folder path of the image in the tool tip"
 
         self.msg_select = "Selecciona"
         self.msg_refresh = "Actualizar"

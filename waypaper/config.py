@@ -50,6 +50,7 @@ class Config:
         self.state_file = self.state_dir / "state.ini"
         self.use_xdg_state = False
         self.use_post_command = True
+        self.show_image_path = True
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -103,6 +104,7 @@ class Config:
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
+        self.show_image_path = config.getboolean("Settings", "show_image_path", fallback=self.show_image_path)
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -212,7 +214,7 @@ class Config:
             if i == 0:
                 config_save_folder_str += self.shorten_path(folder)
             else:
-                config_save_folder_str += "\n    " + self.shorten_path(folder)
+                config_save_folder_str += "\n     " + self.shorten_path(folder)
         config.set(section, "folder", config_save_folder_str)
         
 
@@ -233,6 +235,7 @@ class Config:
             config.set("Settings", "wallpaper", self.shortened_paths(self.wallpapers))
 
         # Save the parameters into config:
+        config.set("Settings", "show_image_path", str(self.show_image_path))
         config.set("Settings", "backend", self.backend)
         config.set("Settings", "fill", self.fill_option)
         config.set("Settings", "sort", self.sort_option)
@@ -279,3 +282,5 @@ class Config:
             self.state_file = pathlib.Path(args.state_file).expanduser()
         if args.no_post_command:
             self.use_post_command = False
+        if args.show_image_path:
+            self.show_image_path = True
