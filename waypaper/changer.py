@@ -101,7 +101,7 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
         if cf.mpvpaper_sound:
             command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --background-color='{cf.color}'"])
         else:
-            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} no-audio loop {fill} --background-color='{cf.color}'"])
+            command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --mute=yes --background-color='{cf.color}'"])
 
         # Specify the monitor:
         if monitor == "All":
