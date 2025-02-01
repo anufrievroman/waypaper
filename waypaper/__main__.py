@@ -34,12 +34,13 @@ parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
 parser.add_argument("--random", help=txt.msg_arg_rand, action="store_true")
 parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--wallpaper", help=txt.msg_arg_wall)
-parser.add_argument("--folder", help=txt.msg_arg_folder)
+parser.add_argument("--folder", help=txt.msg_arg_folder, nargs="+", default = [])
 parser.add_argument("--state-file", help=txt.msg_arg_statefile)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
 parser.add_argument("--monitor", help=txt.msg_arg_monitor, choices=MONITOR_OPTIONS)
 parser.add_argument("--no-post-command", help=txt.msg_arg_post, action='store_true')
+parser.add_argument("--show-image-path", help=txt.msg_arg_show_image_path, action="store_true")
 args = parser.parse_args()
 
 
@@ -63,7 +64,7 @@ def run():
 
         # Otherwise set a random wallpaper:
         else:
-            wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders,
+            wallpaper_str = get_random_file(cf.backend, cf.image_folder_list, cf.include_subfolders,
                                             cf.include_all_subfolders, cf.cache_dir, cf.show_hidden)
             if wallpaper_str:
                 wallpaper = pathlib.Path(wallpaper_str)
@@ -89,7 +90,7 @@ def run():
     if args.restore or args.random:
         for index, (wallpaper, monitor) in enumerate(zip(cf.wallpapers, cf.monitors)):
             if args.random:
-                wallpaper_str = get_random_file(cf.backend, str(cf.image_folder), cf.include_subfolders,
+                wallpaper_str = get_random_file(cf.backend, cf.image_folder_list, cf.include_subfolders,
                                                 cf.include_all_subfolders, cf.cache_dir, cf.show_hidden)
                 if wallpaper_str:
                     wallpaper = pathlib.Path(wallpaper_str)
