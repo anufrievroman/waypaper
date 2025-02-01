@@ -14,7 +14,7 @@ from PIL import Image
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths_and_image_name, get_image_name, get_random_file, sort_images
+from waypaper.common import get_image_paths, get_image_name, get_random_file
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, MPV_TIMERS
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
@@ -330,10 +330,10 @@ class App(Gtk.Window):
         self.menu.append(self.include_hidden_checkbox)
 
         # Create show folder path toggle:
-        self.show_image_path_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_show_image_path)
-        self.show_image_path_checkbox.set_active(self.cf.show_image_path)
-        self.show_image_path_checkbox.connect("toggled", self.on_show_image_path_toggled)
-        self.menu.append(self.show_image_path_checkbox)
+        self.show_path_in_tooltip_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_show_path_in_tooltip)
+        self.show_path_in_tooltip_checkbox.set_active(self.cf.show_path_in_tooltip)
+        self.show_path_in_tooltip_checkbox.connect("toggled", self.on_show_path_in_tooltip_toggled)
+        self.menu.append(self.show_path_in_tooltip_checkbox)
 
         self.menu.show_all()
 
@@ -449,26 +449,18 @@ class App(Gtk.Window):
         dialog.run()
         dialog.destroy()
 
-    # def sort_images(self) -> None:
-    #     """Sort images depending on the sorting option"""
-    #     if self.cf.sort_option == "name":
-    #         self.image_paths.sort(key=lambda x: os.path.basename(x))
-    #     elif self.cf.sort_option == "namerev":
-    #         self.image_paths.sort(key=lambda x: os.path.basename(x), reverse=True)
-    #     elif self.cf.sort_option == "date":
-    #         self.image_paths.sort(key=lambda x: os.path.getmtime(x))
-    #     elif self.cf.sort_option == "daterev":
-    #         self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-    #     else:
-    #         pass
 
     def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
-        image_path_with_image_name_list: list[tuple[Path, str]]= \
-            get_image_paths_and_image_name(self.cf.backend, self.cf.image_folder_list, self.cf.sort_option, 
-                                           self.cf.show_image_path, self.cf.include_subfolders,
-                                           self.cf.include_all_subfolders, self.cf.show_hidden, self.cf.show_gifs_only)
-        self.image_paths: list[str] = []
+
+        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
+                                      self.cf.include_all_subfolders, self.cf.show_hidden, self.cf.show_gifs_only)
+
+        # Sort paths:
+        if self.cf.sort_option in ["name", "namerev"]:
+            self.image_paths.sort(reverse=(self.cf.sort_option == "namerev"))
+        if self.cf.sort_option in ["date", "daterev"]:
+            self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=(self.cf.sort_option == "daterev"))
 
         # Show caching label:
         self.loading_label = Gtk.Label(label=self.txt.msg_caching)
@@ -478,8 +470,8 @@ class App(Gtk.Window):
         self.thumbnails = []
         self.image_names = []
 
-        for image_path, image_name in image_path_with_image_name_list:
-            self.image_paths.append(image_path)
+        for image_path in self.image_paths:
+
             # Skip zero byte files inside the image_path:
             if os.path.getsize(image_path) == 0:
                 self.image_paths.remove(image_path)
@@ -494,7 +486,8 @@ class App(Gtk.Window):
             thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
             self.thumbnails.append(thumbnail)
 
-            # Create a name for each image, which contain subfolders:
+            # Get image name, which may or may not include parent folders:
+            image_name = get_image_name(image_path, self.cf.image_folder_list, self.cf.show_path_in_tooltip)
             self.image_names.append(image_name)
 
         # When image processing is done, remove caching label and display the images:
@@ -642,9 +635,9 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
-    def on_show_image_path_toggled(self, widget) -> None:
+    def on_show_path_in_tooltip_toggled(self, widget) -> None:
         """Toggle show image relative path in image tooltip"""
-        self.cf.show_image_path = not self.cf.show_image_path
+        self.cf.show_path_in_tooltip = not self.cf.show_path_in_tooltip
         threading.Thread(target=self.process_images).start()
 
 
