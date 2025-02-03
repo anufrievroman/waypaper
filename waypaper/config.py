@@ -70,10 +70,6 @@ class Config:
         else:
             return ''
 
-    def shortened_paths(self, paths: List[pathlib.Path]) -> str:
-        """Prepare a list of paths to be serialized as a comma separated string"""
-        return ','.join(self.shorten_path(p) for p in paths)
-
     def get_image_folder_list(self, section: str, config) -> list[pathlib.Path]:
         image_folders_str: list[str] =  config.get(section, "folder", fallback = self.image_folder_fallback).split("\n")
         image_folder_list = [pathlib.Path(path_str).expanduser() for path_str in image_folders_str]
@@ -201,7 +197,7 @@ class Config:
             state.add_section("State")
         self.write_folder_list_to_config("State", state)
         state.set("State", "monitors", ",".join(self.monitors))
-        state.set("State", "wallpaper", self.shortened_paths(self.wallpapers))
+        state.set("State", "wallpaper", ','.join(self.shorten_path(p) for p in self.wallpapers))
         try:
             with open(self.state_file, "w") as statefile:
                 state.write(statefile)
@@ -232,7 +228,7 @@ class Config:
         if not self.use_xdg_state:
             self.write_folder_list_to_config("Settings", config)
             config.set("Settings", "monitors", ",".join(self.monitors))
-            config.set("Settings", "wallpaper", self.shortened_paths(self.wallpapers))
+            config.set("Settings", "wallpaper", ','.join(self.shorten_path(p) for p in self.wallpapers))
 
         # Save the parameters into config:
         config.set("Settings", "show_path_in_tooltip", str(self.show_path_in_tooltip))
