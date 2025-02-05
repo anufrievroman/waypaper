@@ -166,13 +166,13 @@ class App(Gtk.Window):
         self.center_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.center_box.set_valign(Gtk.Align.CENTER)
         self.center_box.set_halign(Gtk.Align.CENTER)
-        self.main_box.pack_start(self.scrolled_window, True, True, 0)
+        self.main_box.add(self.scrolled_window)
 
         # Create a grid layout for images:
         self.grid = Gtk.Grid()
         self.grid.set_row_spacing(0)
         self.grid.set_column_spacing(0)
-        self.center_box.pack_start(self.grid, False, False, 0)
+        self.center_box.add(self.grid)
         self.scrolled_window.add(self.center_box)
 
         # BACKEND MENU
@@ -303,7 +303,7 @@ class App(Gtk.Window):
         self.connect("key-press-event", self.on_key_pressed)
 
         # Connect window resizing events to change the number of columns.
-        self.connect("size-allocate", self.on_window_resize)
+        # self.connect("size-allocate", self.on_window_resize)
 
         self.show_all()
 
