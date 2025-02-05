@@ -77,6 +77,7 @@ class App(Gtk.Window):
         self.init_ui()
         self.backend_option_combo.grab_focus()
         self.is_enering_text = False
+        self.number_of_columns = 3
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -157,20 +158,22 @@ class App(Gtk.Window):
 
         # MIDDLE GRID
 
-        # Create an alignment container to place the grid in the top-right corner:
-        self.grid_alignment = Gtk.Alignment(xalign=1, yalign=0.0, xscale=0.5, yscale=1)
-        self.main_box.pack_start(self.grid_alignment, True, True, 0)
-
         # Create a scrolled window for the grid of images:
         self.scrolled_window = Gtk.ScrolledWindow()
-        self.scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        self.grid_alignment.add(self.scrolled_window)
+        self.scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+
+        # Create a box to center the grid:
+        self.center_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.center_box.set_valign(Gtk.Align.CENTER)
+        self.center_box.set_halign(Gtk.Align.CENTER)
+        self.main_box.pack_start(self.scrolled_window, True, True, 0)
 
         # Create a grid layout for images:
         self.grid = Gtk.Grid()
         self.grid.set_row_spacing(0)
         self.grid.set_column_spacing(0)
-        self.scrolled_window.add(self.grid)
+        self.center_box.pack_start(self.grid, False, False, 0)
+        self.scrolled_window.add(self.center_box)
 
         # BACKEND MENU
 
@@ -298,6 +301,10 @@ class App(Gtk.Window):
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
+
+        # Connect window resizing events to change the number of columns.
+        self.connect("size-allocate", self.on_window_resize)
+
         self.show_all()
 
 
@@ -520,18 +527,18 @@ class App(Gtk.Window):
             self.grid.remove(child)
 
         current_y = 0
-        current_row_heights = [0] * self.cf.number_of_columns
+        current_row_heights = [0] * self.number_of_columns
         for index, [thumbnail, name, path] in enumerate(zip(thumbnails, image_names, image_paths)):
 
-            row = index // self.cf.number_of_columns
-            column = index % self.cf.number_of_columns
+            row = index // self.number_of_columns
+            column = index % self.number_of_columns
 
             # Calculate current y coordinate in the scroll window:
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
             current_row_heights[column] = int(240 / aspect_ratio)
             if column == 0:
                 current_y += max(current_row_heights) + 10
-                current_row_heights = [0]*self.cf.number_of_columns
+                current_row_heights = [0]*self.number_of_columns
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
@@ -549,6 +556,12 @@ class App(Gtk.Window):
             button.connect("clicked", self.on_image_clicked, path)
 
         self.show_all()
+
+
+    def on_window_resize(self, event, allocation):
+        """Recalculate the number of columns on window resize and repopulate the grid"""
+        self.number_of_columns = max(1, allocation.width // 250)
+        GLib.idle_add(self.load_image_grid)
 
 
     def scroll_to_selected_image(self) -> None:
@@ -790,12 +803,12 @@ class App(Gtk.Window):
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
-            self.selected_index = min(self.selected_index + self.cf.number_of_columns, len(self.image_paths) - 1)
+            self.selected_index = min(self.selected_index + self.number_of_columns, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
-            self.selected_index = max(self.selected_index - self.cf.number_of_columns, 0)
+            self.selected_index = max(self.selected_index - self.number_of_columns, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 

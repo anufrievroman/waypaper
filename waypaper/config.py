@@ -25,7 +25,6 @@ class Config:
         self.sort_option = SORT_OPTIONS[0]
         self.backend = self.installed_backends[-1]
         self.color = "#ffffff"
-        self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
         self.swww_transition_step = 90
         self.swww_transition_angle = 0
@@ -111,12 +110,6 @@ class Config:
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
 
-        # Read and check the validity of the number of columns:
-        try:
-            self.number_of_columns = config.getint("Settings", "number_of_columns", fallback=self.number_of_columns)
-            self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
-        except Exception:
-            self.number_of_columns = 3
 
     def read_state(self) -> None:
         """Load data from the state.ini file"""
@@ -151,12 +144,6 @@ class Config:
             self.swww_transition_type = "any"
         # if self.mpvpaper_timer not in list(MPV_TIMERS.values()):
             # self.mpvpaper_timer = 600
-
-        # Check the validity of the number of columns:
-        try:
-            self.number_of_columns = int(self.number_of_columns) if int(self.number_of_columns) > 0 else 3
-        except Exception:
-            self.number_of_columns = 3
 
         # Check validity of other swww options:
         if 0 > int(self.swww_transition_angle) > 180:
@@ -241,7 +228,6 @@ class Config:
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "post_command", self.post_command)
-        config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))

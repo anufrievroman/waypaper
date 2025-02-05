@@ -18,7 +18,7 @@ setuptools.setup(
         ]
     },
     install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
-    version='2.4',
+    version='2.5',
     python_requires='>3.10',
     classifiers=[
         "Development Status :: 4 - Beta",
