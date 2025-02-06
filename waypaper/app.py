@@ -74,10 +74,11 @@ class App(Gtk.Window):
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
         self.highlighted_image_row = 0
-        self.init_ui()
-        self.backend_option_combo.grab_focus()
         self.is_enering_text = False
         self.number_of_columns = 3
+        self.is_just_resized = True
+        self.init_ui()
+        self.backend_option_combo.grab_focus()
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -303,7 +304,7 @@ class App(Gtk.Window):
         self.connect("key-press-event", self.on_key_pressed)
 
         # Connect window resizing events to change the number of columns.
-        # self.connect("size-allocate", self.on_window_resize)
+        self.connect("size-allocate", self.on_window_resize)
 
         self.show_all()
 
@@ -558,8 +559,11 @@ class App(Gtk.Window):
         self.show_all()
 
 
-    def on_window_resize(self, event, allocation):
+    def on_window_resize(self, widget, allocation):
         """Recalculate the number of columns on window resize and repopulate the grid"""
+        self.is_just_resized = not self.is_just_resized
+        if self.is_just_resized:
+            return
         self.number_of_columns = max(1, allocation.width // 250)
         GLib.idle_add(self.load_image_grid)
 
@@ -691,12 +695,7 @@ class App(Gtk.Window):
         self.show_all()
 
 
-    def on_transition_option_changed(self, combo) -> None:
-        # Get the active index
-        active_index = combo.get_active()
-
-        # Update the active transition type based on the selected option
-        if active_index >= 0:
+    def on_transition_option_changed(self, combo) -> None: # Get the active index active_index = combo.get_active() Update the active transition type based on the selected option if active_index >= 0:
             self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
             print(f"Transition type changed to: {self.cf.swww_transition_type}")
 
@@ -842,7 +841,7 @@ class App(Gtk.Window):
         return event.keyval in [Gdk.KEY_Up, Gdk.KEY_Down, Gdk.KEY_Left, Gdk.KEY_Right, Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_period]
 
 
-    def on_search_entry_changed(self,entry, event= None):
+    def on_search_entry_changed(self, entry, event=None):
         """This function is triggered when the user types in the search field"""
         self.load_image_grid()
 
