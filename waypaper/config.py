@@ -25,6 +25,7 @@ class Config:
         self.sort_option = SORT_OPTIONS[0]
         self.backend = self.installed_backends[-1]
         self.color = "#ffffff"
+        self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
         self.swww_transition_step = 90
         self.swww_transition_angle = 0
@@ -85,6 +86,7 @@ class Config:
         self.backend = config.get("Settings", "backend", fallback=self.backend)
         self.color = config.get("Settings", "color", fallback=self.color)
         self.post_command = config.get("Settings", "post_command", fallback=self.post_command)
+        self.number_of_columns = int(config.get("Settings", "number_of_columns", fallback=self.number_of_columns))
         self.swww_transition_type = config.get("Settings", "swww_transition_type", fallback=self.swww_transition_type)
         self.swww_transition_step = config.get("Settings", "swww_transition_step", fallback=self.swww_transition_step)
         self.swww_transition_angle = config.get("Settings", "swww_transition_angle", fallback=self.swww_transition_angle)
@@ -228,6 +230,7 @@ class Config:
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "post_command", self.post_command)
+        config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
