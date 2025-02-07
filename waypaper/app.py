@@ -76,7 +76,7 @@ class App(Gtk.Window):
         self.highlighted_image_row = 0
         self.is_enering_text = False
         self.number_of_columns = 3
-        self.is_just_resized = True
+        self.number_of_resize = 0
         self.init_ui()
         self.backend_option_combo.grab_focus()
 
@@ -561,8 +561,8 @@ class App(Gtk.Window):
 
     def on_window_resize(self, widget, allocation):
         """Recalculate the number of columns on window resize and repopulate the grid"""
-        self.is_just_resized = not self.is_just_resized
-        if self.is_just_resized:
+        self.number_of_resize += 1
+        if self.number_of_resize % 5 != 0:
             return
         self.number_of_columns = max(1, allocation.width // 250)
         GLib.idle_add(self.load_image_grid)
