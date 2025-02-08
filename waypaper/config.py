@@ -7,7 +7,7 @@ from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
 from waypaper.aboutdata import AboutData
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS, MPV_TIMERS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
 from waypaper.common import check_installed_backends
 
 
@@ -25,7 +25,6 @@ class Config:
         self.sort_option = SORT_OPTIONS[0]
         self.backend = self.installed_backends[-1]
         self.color = "#ffffff"
-        self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
         self.swww_transition_step = 90
         self.swww_transition_angle = 0
@@ -33,7 +32,6 @@ class Config:
         self.swww_transition_fps = 60
         self.mpvpaper_sound = False
         self.mpvpaper_options = ""
-        # self.mpvpaper_timer = MPV_TIMERS["10 min"]
         self.lang = "en"
         self.monitors = [self.selected_monitor]
         self.wallpapers = []
@@ -86,7 +84,6 @@ class Config:
         self.backend = config.get("Settings", "backend", fallback=self.backend)
         self.color = config.get("Settings", "color", fallback=self.color)
         self.post_command = config.get("Settings", "post_command", fallback=self.post_command)
-        self.number_of_columns = int(config.get("Settings", "number_of_columns", fallback=self.number_of_columns))
         self.swww_transition_type = config.get("Settings", "swww_transition_type", fallback=self.swww_transition_type)
         self.swww_transition_step = config.get("Settings", "swww_transition_step", fallback=self.swww_transition_step)
         self.swww_transition_angle = config.get("Settings", "swww_transition_angle", fallback=self.swww_transition_angle)
@@ -94,7 +91,6 @@ class Config:
         self.swww_transition_fps = config.get("Settings", "swww_transition_fps", fallback=self.swww_transition_fps)
         self.mpvpaper_sound = config.getboolean("Settings", "mpvpaper_sound", fallback=self.mpvpaper_sound)
         self.mpvpaper_options = config.get("Settings", "mpvpaper_options", fallback=self.mpvpaper_options)
-        # self.mpvpaper_timer = config.get("Settings", "mpvpaper_timer", fallback=self.mpvpaper_timer)
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.include_all_subfolders = config.getboolean("Settings", "all_subfolders", fallback=self.include_all_subfolders)
@@ -144,8 +140,6 @@ class Config:
             self.fill_option = FILL_OPTIONS[0]
         if self.swww_transition_type not in SWWW_TRANSITION_TYPES:
             self.swww_transition_type = "any"
-        # if self.mpvpaper_timer not in list(MPV_TIMERS.values()):
-            # self.mpvpaper_timer = 600
 
         # Check validity of other swww options:
         if 0 > int(self.swww_transition_angle) > 180:
@@ -156,8 +150,6 @@ class Config:
             self.swww_transition_duration = 2
         if 0 > int(self.swww_transition_fps):
             self.swww_transition_fps = 60
-        # if 0 > int(self.mpvpaper_timer):
-            # self.mpvpaper_timer = 0
 
     def attribute_selected_wallpaper(self) -> None:
         """
@@ -230,7 +222,6 @@ class Config:
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "post_command", self.post_command)
-        config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
@@ -238,7 +229,6 @@ class Config:
         config.set("Settings", "swww_transition_fps", str(self.swww_transition_fps))
         config.set("Settings", "mpvpaper_sound", str(self.mpvpaper_sound))
         config.set("Settings", "mpvpaper_options", str(self.mpvpaper_options))
-        # config.set("Settings", "mpvpaper_timer", str(self.mpvpaper_timer))
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
 
         try:

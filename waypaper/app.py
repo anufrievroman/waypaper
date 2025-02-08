@@ -3,62 +3,21 @@
 import threading
 import subprocess
 import os
-import time
 import gi
 import shutil
 import imageio
 import screeninfo
 from pathlib import Path
-from PIL import Image
 
 from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_image_name, get_random_file
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, MPV_TIMERS
+from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
-
-
-def cache_image(image_path: str, cache_dir: Path) -> None:
-    """Resize and cache images using various libraries depending on the file type"""
-    ext = os.path.splitext(image_path)[1].lower()
-    cache_file = cache_dir / Path(os.path.basename(image_path))
-    width = 240
-    try:
-        # If it's a video, extract the first frame:
-        if ext in VIDEO_EXTENSIONS:
-            reader = imageio.get_reader(image_path)
-            first_frame = reader.get_data(0)
-            # Convert the numpy array to a PIL image:
-            pil_image = Image.fromarray(first_frame)
-            aspect_ratio = pil_image.height / pil_image.width
-            new_height = int(width * aspect_ratio)
-            resized_image = pil_image.resize((width, new_height))
-            resized_image.save(str(cache_file), "JPEG")
-            return
-
-        # If it's an image, create preview depending on the filetype
-        if ext == ".webp":
-            img = Image.open(image_path)
-            data = img.tobytes()
-            img_width, img_height = img.size
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, img_width, img_height, img_width * 3)
-        else:
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
-        aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
-        height = int(width / aspect_ratio)
-        scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-        scaled_pixbuf.savev(str(cache_file), "jpeg", [], [])
-
-    # If image processing failed, create a black placeholder:
-    except Exception:
-        print(f"Could not generate preview for {os.path.basename(image_path)}")
-        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
-        black_pixbuf.fill(0x0)
-        black_pixbuf.savev(str(cache_file), "jpeg", [], [])
 
 
 class App(Gtk.Window):
@@ -75,7 +34,8 @@ class App(Gtk.Window):
         self.selected_index = 0
         self.highlighted_image_row = 0
         self.is_enering_text = False
-        self.is_just_resized = True
+        self.number_of_columns = 3
+        self.number_of_resize = 0
         self.init_ui()
         self.backend_option_combo.grab_focus()
 
@@ -228,17 +188,6 @@ class App(Gtk.Window):
         self.mpv_sound_toggle.connect("toggled", self.on_mpv_sound_toggled)
         self.mpv_sound_toggle.set_tooltip_text(self.txt.tip_mpv_sound)
 
-
-        # Create mpv times drop:
-        # self.mpv_timer_combo = Gtk.ComboBoxText()
-        # options = list(MPV_TIMERS.keys())
-        # for option in MPV_TIMERS:
-            # self.mpv_timer_combo.append_text(option)
-        # active_num = next((i for i, (k, v) in enumerate(MPV_TIMERS.items()) if v == self.cf.mpvpaper_timer), None)
-        # self.mpv_timer_combo.set_active(active_num)
-        # self.mpv_timer_combo.connect("changed", self.on_mpv_timer_changed)
-        # self.mpv_timer_combo.set_tooltip_text(self.txt.tip_timer)
-
         # Create a box to contain the bottom row of buttons:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
@@ -301,6 +250,9 @@ class App(Gtk.Window):
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
+
+        # Connect window resizing events to change the number of columns.
+        self.connect("size-allocate", self.on_window_resize)
 
         self.show_all()
 
@@ -416,9 +368,7 @@ class App(Gtk.Window):
         self.options_box.remove(self.mpv_stop_button)
         self.options_box.remove(self.mpv_pause_button)
         self.options_box.remove(self.mpv_sound_toggle)
-        # self.options_box.remove(self.mpv_timer_combo)
         if self.cf.backend == "mpvpaper":
-            # self.options_box.pack_end(self.mpv_timer_combo, False, False, 0)
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
@@ -524,18 +474,18 @@ class App(Gtk.Window):
             self.grid.remove(child)
 
         current_y = 0
-        current_row_heights = [0] * self.cf.number_of_columns
+        current_row_heights = [0] * self.number_of_columns
         for index, [thumbnail, name, path] in enumerate(zip(thumbnails, image_names, image_paths)):
 
-            row = index // self.cf.number_of_columns
-            column = index % self.cf.number_of_columns
+            row = index // self.number_of_columns
+            column = index % self.number_of_columns
 
             # Calculate current y coordinate in the scroll window:
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
             current_row_heights[column] = int(240 / aspect_ratio)
             if column == 0:
                 current_y += max(current_row_heights) + 10
-                current_row_heights = [0]*self.cf.number_of_columns
+                current_row_heights = [0]*self.number_of_columns
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
@@ -553,6 +503,20 @@ class App(Gtk.Window):
             button.connect("clicked", self.on_image_clicked, path)
 
         self.show_all()
+
+
+    def on_window_resize(self, widget, allocation) -> None:
+        """Recalculate the number of columns on window resize and repopulate the grid"""
+
+        # As frequent resize freezed the interface, so we only do it each fifth resize:
+        self.number_of_resize += 1
+        if self.number_of_resize < 5:
+            return
+
+        # Calculate new number of columns and reload the grid:
+        self.number_of_columns = max(1, allocation.width // 250)
+        GLib.idle_add(self.load_image_grid)
+        self.number_of_resize = 0
 
 
     def scroll_to_selected_image(self) -> None:
@@ -663,13 +627,6 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
-    # def on_mpv_timer_changed(self, combo) -> None:
-        # """Save timer parameter when it is changed"""
-        # selected_option = combo.get_active_text()
-        # selected_option_num = list(MPV_TIMERS.keys()).index(selected_option)
-        # self.cf.mpvpaper_timer =  list(MPV_TIMERS.values())[selected_option_num]
-
-
     def on_backend_option_changed(self, combo) -> None:
         """Save backend parameter whet it is changed"""
         self.cf.backend = self.backend_option_combo.get_active_text()
@@ -682,9 +639,11 @@ class App(Gtk.Window):
         self.show_all()
 
 
-    def on_transition_option_changed(self, combo) -> None: # Get the active index active_index = combo.get_active() Update the active transition type based on the selected option if active_index >= 0:
-            self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
-            print(f"Transition type changed to: {self.cf.swww_transition_type}")
+    def on_transition_option_changed(self, combo) -> None:
+        """Update the active transition type based on the selected option"""
+        active_index = combo.get_active()
+        self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
+        print(f"Transition type changed to: {self.cf.swww_transition_type}")
 
 
     def on_color_set(self, color_button):
@@ -789,12 +748,12 @@ class App(Gtk.Window):
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
-            self.selected_index = min(self.selected_index + self.cf.number_of_columns, len(self.image_paths) - 1)
+            self.selected_index = min(self.selected_index + self.number_of_columns, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
-            self.selected_index = max(self.selected_index - self.cf.number_of_columns, 0)
+            self.selected_index = max(self.selected_index - self.number_of_columns, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
@@ -847,4 +806,3 @@ class App(Gtk.Window):
         self.connect("destroy", self.on_exit_clicked)
         self.show_all()
         Gtk.main()
-

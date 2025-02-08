@@ -1,12 +1,17 @@
-"""Module with some of the common functions, like file operations"""
+"""Module with some of the common functions, like file and image operations"""
 
 import os
+import gi
 import random
 import shutil
 from pathlib import Path
 from typing import List
+from PIL import Image
 
-from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
+
+from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, VIDEO_EXTENSIONS
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:
@@ -129,3 +134,42 @@ def check_installed_backends() -> List[str]:
         if is_installed:
             installed_backends.append(backend)
     return installed_backends
+
+
+def cache_image(image_path: str, cache_dir: Path) -> None:
+    """Create small copies of images using various libraries depending on the file type"""
+    ext = os.path.splitext(image_path)[1].lower()
+    cache_file = cache_dir / Path(os.path.basename(image_path))
+    width = 240
+    try:
+        # If it's a video, extract the first frame:
+        if ext in VIDEO_EXTENSIONS:
+            reader = imageio.get_reader(image_path)
+            first_frame = reader.get_data(0)
+            # Convert the numpy array to a PIL image:
+            pil_image = Image.fromarray(first_frame)
+            aspect_ratio = pil_image.height / pil_image.width
+            new_height = int(width * aspect_ratio)
+            resized_image = pil_image.resize((width, new_height))
+            resized_image.save(str(cache_file), "JPEG")
+            return
+
+        # If it's an image, create preview depending on the filetype
+        if ext == ".webp":
+            img = Image.open(image_path)
+            data = img.tobytes()
+            img_width, img_height = img.size
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, img_width, img_height, img_width * 3)
+        else:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+        aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
+        height = int(width / aspect_ratio)
+        scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
+        scaled_pixbuf.savev(str(cache_file), "jpeg", [], [])
+
+    # If image processing failed, create a black placeholder:
+    except Exception:
+        print(f"Could not generate preview for {os.path.basename(image_path)}")
+        black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
+        black_pixbuf.fill(0x0)
+        black_pixbuf.savev(str(cache_file), "jpeg", [], [])
