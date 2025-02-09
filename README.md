@@ -93,9 +93,11 @@ Feel free to propose PR and suggest the improvements. I'll highly appreciate hel
 
 ## Support
 
-I am not a professional developer and work on open-source projects in my free time. If you'd like to support the development, consider donations via [buymeacoffee](https://www.buymeacoffee.com/angryprofessor) or cryptocurrencies:
+I am not a professional developer and work on open-source projects in my free time. If you'd like to support the development, consider donations via:
 
+- Cards and PayPal: [BuyMeACoffee](https://www.buymeacoffee.com/angryprofessor)
 - BTC `bc1qpkzmutdqfxkce34skt09vll97s5smpa0r2tyzj`
 - ETH `0x6f1Ce9cA181458Fc153a5f7cBF88044736C3b00C`
 - BNB `0x40f22c372758E35C905458cAF8BB17f51ac133d1`
 - LTC `ltc1qtu33qyv2xlzxda5mmrmk943zpksq8q75tuh85p`
+- XMR `4AHRhpNYUZcPVN78rbUWAzBuvMKQdpwStS5L3kjunnBMWWW2pjYBko1RUF6nQVpgQPdfAkM3jrEWrWKDHz1h4Ucd4gFCZ9j`

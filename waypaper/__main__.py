@@ -125,10 +125,10 @@ def run():
             cf.save()
         sys.exit(0)
 
-    # Output wallpapers and monitors in json format:
+    # Output some information in json format:
     if args.list:
-        wallpapers_and_monitors = list(map(lambda x: {"monitor": x[0], "wallpaper": str(x[1])}, zip(cf.monitors,cf.wallpapers)))
-        print(json.dumps(wallpapers_and_monitors))
+        info = list(map(lambda x: {"monitor": x[0], "wallpaper": str(x[1]), "backend": cf.backend}, zip(cf.monitors, cf.wallpapers)))
+        print(json.dumps(info))
         sys.exit(0)
 
     # Print the version and quit:
