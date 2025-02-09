@@ -738,6 +738,10 @@ class App(Gtk.Window):
         elif event.keyval in [Gdk.KEY_period]:
             self.toggle_hidden_files()
 
+        elif event.keyval in [Gdk.KEY_slash]:
+            self.search_entry.grab_focus()
+            return True
+
         elif event.keyval in [Gdk.KEY_s]:
             self.toggle_include_subfolders()
 

@@ -45,7 +45,7 @@ class English:
 
         self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
-        self.msg_help += ". - Toggle hidden images\ns - Toggle images in subfolders\n? - Help\nq - Exit\n\n"
+        self.msg_help += ". - Toggle hidden images\ns - Toggle images in subfolders\n/ - Search\n? - Help\nq - Exit\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Error deleting cache"
@@ -114,7 +114,7 @@ class German:
 
         self.msg_help = "Waypapers Tastenkürzel:\n\nhjkl - Navigation (←↓↑→)\nf - Hintergrundbild-Ordner ändern\n"
         self.msg_help += "g - Zum Anfang scrollen\nG - Zum Ende scrollen\nR - Zufälliges Hintergrundbild\nr - Hintergrundbilder zwischenspeichern\n"
-        self.msg_help += ". - Versteckte Bilder einbeziehen/ausschließen\ns - Unterordner mit einbeziehen\n? - Hilfe\nq - Beenden\n\n"
+        self.msg_help += ". - Versteckte Bilder einbeziehen/ausschließen\ns - Unterordner mit einbeziehen\n/ - Search\n? - Hilfe\nq - Beenden\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Fehler beim Löschen des Zwischenspeichers"
@@ -181,7 +181,7 @@ class French:
 
         self.msg_help = "Raccourcis clavier de Waypaper :\n\nhjkl - Navigation (←↓↑→)\nf - Changer de dossier de papier peint\n"
         self.msg_help += "g - Faire défiler vers le haut\nG - Faire défiler vers le bas\nR - Définir un papier peint aléatoire\nr - Recréer le cache des papiers peints\n"
-        self.msg_help += ". - Inclure/exclure les images cachées\ns - Inclure/exclure les images des sous-dossiers\n? - Aide\nq - Quitter\n\n"
+        self.msg_help += ". - Inclure/exclure les images cachées\ns - Inclure/exclure les images des sous-dossiers\n/ - Search\n? - Aide\nq - Quitter\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Erreur lors de la suppression du cache"
@@ -248,7 +248,7 @@ class Polish:
 
         self.msg_help = "Skróty klawiszowe Waypaper'a:\n\nhjkl - Nawigacja (←↓↑→)\nEnter - Ustaw wybraną tapetę\nf - Zmień folder tapet\n"
         self.msg_help += "g - Przewiń na górę\nG - Przewiń na dół\nR - Ustaw losową tapetę\nr - Jeszcze raz buferuj tapety\n"
-        self.msg_help += ". - Pokaż/ukryj ukryte tapety\ns - Włącz/wyłącz tapety w podfolderach\n? - Pomoc\nq - Wyjście\n\n"
+        self.msg_help += ". - Pokaż/ukryj ukryte tapety\ns - Włącz/wyłącz tapety w podfolderach\n/ - Szukanie\n? - Pomoc\nq - Wyjście\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Błąd w usuwaniu bufera"
@@ -316,7 +316,7 @@ class Russian:
 
         self.msg_help = "Горячие клавиши Waypaper:\n\nhjkl - Навигация (←↓↑→)\nf - Изменить папку с обоями\n"
         self.msg_help += "g - Прокрутка в начало\nG - Прокрутка в конец\nR - Установить случайные обои\nr - Обновить кэш обоев\n"
-        self.msg_help += ". - Показать/скрыть скрытые файлы \ns - Показать/скрыть вложенные папки\n? - Справка\nq - Выход\n\n"
+        self.msg_help += ". - Показать/скрыть скрытые файлы \ns - Показать/скрыть вложенные папки\n/ - Поиск\n? - Справка\nq - Выход\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Ошибка при удалении кэша"
@@ -384,7 +384,7 @@ class Belarusian:
 
         self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
         self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
-        self.msg_help += ". - Паказаць/схаваць схаваныя файлы \ns - Паказаць/схаваць укладзеныя тэчкі\n? - Даведка\nq - Вынахад\n\n"
+        self.msg_help += ". - Паказаць/схаваць схаваныя файлы \ns - Паказаць/схаваць укладзеныя тэчкі\n/ - Пошук\n? - Даведка\nq - Вынахад\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Памылка пры выдаленні кэша"
@@ -452,7 +452,7 @@ class Chinese:
 
         self.msg_help = "Waypaper 的热键：\n\nhjkl -导航 (←↓↑→)\nf -更改壁纸文件夹\n"
         self.msg_help += "g -滚动到顶部\nG -滚动到底部\nR -设置随机壁纸\nr -重新缓存壁纸\n"
-        self.msg_help += ". - 包括/排除隐藏图像\ns -包含/排除子文件夹中的图像\n？ -帮助\nq -退出\n\n"
+        self.msg_help += ". - 包括/排除隐藏图像\ns -包含/排除子文件夹中的图像\n/ - Search\n？ -帮助\nq -退出\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "删除缓存时出错"
@@ -519,7 +519,7 @@ class TraditionalChinese:
 
         self.msg_help = "Waypaper 的快捷鍵:\n\nhjkl - 行動 (←↓↑→)\nEnter - 設定選擇壁紙\nf - 選擇壁紙文件夾\n"
         self.msg_help += "g - 滾動到頂部\nG - 滾動到底部\nR - 隨機壁紙\nr - 重新玩全壁紙\n"
-        self.msg_help += ". - 顯示隱藏的圖片\ns - 顯示在子文件夾的圖片\n? - 協助\nq - 退出\n\n"
+        self.msg_help += ". - 顯示隱藏的圖片\ns - 顯示在子文件夾的圖片\n/ - Search\n? - 協助\nq - 退出\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "刪除緩存時出錯"
@@ -587,7 +587,7 @@ class Spanish:
 
         self.msg_help = 'Controles para usar "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imágen seleccionada\nf - Cambiar carpeta de imágenes\n'
         self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imágen aleatoria\nr - Recrear caché de imágenes\n"
-        self.msg_help += ". - Ver/Omitir archivos ocultos\ns - Ver/Omitir imágenes en subcarpetas\n? - Ayuda\nq - Cerrar aplicación\n\n"
+        self.msg_help += ". - Ver/Omitir archivos ocultos\ns - Ver/Omitir imágenes en subcarpetas\n/ - Search\n? - Ayuda\nq - Cerrar aplicación\n\n"
         self.msg_help += self.msg_info
 
         self.err_cache = "Error borrando el caché"
