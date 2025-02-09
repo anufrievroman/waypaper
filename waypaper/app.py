@@ -34,7 +34,6 @@ class App(Gtk.Window):
         self.selected_index = 0
         self.highlighted_image_row = 0
         self.is_enering_text = False
-        self.number_of_columns = 3
         self.number_of_resize = 0
         self.init_ui()
         self.backend_option_combo.grab_focus()
@@ -252,7 +251,7 @@ class App(Gtk.Window):
         self.connect("key-press-event", self.on_key_pressed)
 
         # Connect window resizing events to change the number of columns.
-        self.connect("size-allocate", self.on_window_resize)
+        # self.connect("size-allocate", self.on_window_resize)
 
         self.show_all()
 
@@ -474,18 +473,18 @@ class App(Gtk.Window):
             self.grid.remove(child)
 
         current_y = 0
-        current_row_heights = [0] * self.number_of_columns
+        current_row_heights = [0] * self.cf.number_of_columns
         for index, [thumbnail, name, path] in enumerate(zip(thumbnails, image_names, image_paths)):
 
-            row = index // self.number_of_columns
-            column = index % self.number_of_columns
+            row = index // self.cf.number_of_columns
+            column = index % self.cf.number_of_columns
 
             # Calculate current y coordinate in the scroll window:
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
             current_row_heights[column] = int(240 / aspect_ratio)
             if column == 0:
                 current_y += max(current_row_heights) + 10
-                current_row_heights = [0]*self.number_of_columns
+                current_row_heights = [0]*self.cf.number_of_columns
 
             # Create a button with an image and add tooltip:
             image = Gtk.Image.new_from_pixbuf(thumbnail)
@@ -505,18 +504,18 @@ class App(Gtk.Window):
         self.show_all()
 
 
-    def on_window_resize(self, widget, allocation) -> None:
-        """Recalculate the number of columns on window resize and repopulate the grid"""
+    # def on_window_resize(self, widget, allocation) -> None:
+        # """Recalculate the number of columns on window resize and repopulate the grid"""
 
         # As frequent resize freezed the interface, so we only do it each fifth resize:
-        self.number_of_resize += 1
-        if self.number_of_resize < 5:
-            return
+        # self.number_of_resize += 1
+        # if self.number_of_resize < 5:
+            # return
 
         # Calculate new number of columns and reload the grid:
-        self.number_of_columns = max(1, allocation.width // 250)
-        GLib.idle_add(self.load_image_grid)
-        self.number_of_resize = 0
+        # self.cf.number_of_columns = max(1, allocation.width // 250)
+        # GLib.idle_add(self.load_image_grid)
+        # self.number_of_resize = 0
 
 
     def scroll_to_selected_image(self) -> None:
@@ -748,12 +747,12 @@ class App(Gtk.Window):
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
-            self.selected_index = min(self.selected_index + self.number_of_columns, len(self.image_paths) - 1)
+            self.selected_index = min(self.selected_index + self.cf.number_of_columns, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
         elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
-            self.selected_index = max(self.selected_index - self.number_of_columns, 0)
+            self.selected_index = max(self.selected_index - self.cf.number_of_columns, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
