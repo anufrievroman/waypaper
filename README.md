@@ -1,19 +1,19 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper` and `feh`. See details in [the documentation](https://anufrievroman.gitbook.io/waypaper).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper` and `feh`. See [demo](https://www.youtube.com/watch?v=O9OL7iH_KVY) and [documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screen.jpg)
 
 ## Features
 
 - Vim keys
-- Support for GIF animations (with `swww` or `mpvpaper`)
-- Support for videos (with `mpvpaper`)
-- Support for multiple monitors (with `swww` or `swaybg` or `hyprpaper` or `mpvpaper`)
+- Supports GIF animations (with `swww` or `mpvpaper`)
+- Supports videos (with `mpvpaper`)
+- Supports multiple monitors (with `swww` or `swaybg` or `hyprpaper` or `mpvpaper`)
 - Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
 - Works on Xorg (with `feh` or `wallutils`)
-- Restores wallpaper at launch of your WM
-- Caching for fast loading
+- Restores wallpaper after restart (`waypaper --restore`)
+- Fast and minimal
 
 ## Installation
 
@@ -25,7 +25,7 @@ Install a preferred backend from your package manager: [swww](https://github.com
 
 ### 2. Install Waypaper
 
-Waypaper is available as a package in different repositories listed below:
+Install `waypaper`, which is available in different repositories:
 
 #### On all distributions
 
@@ -65,31 +65,23 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 
 `waypaper` command will run GUI application.
 
-### Options
-
 To restore your wallpaper at launch, add `waypaper --restore` to your startup config.
 
-See more [details on user arguments in the documentation](https://anufrievroman.gitbook.io/waypaper/usage).
+## Documentation
 
-### Configuration
-
-See [configuration details in the documentation](https://anufrievroman.gitbook.io/waypaper/configuration).
-
-### Keybindings
-
-See [list of keybindings in the documentation](https://anufrievroman.gitbook.io/waypaper/keybindings).
-
-### Troubleshooting
-
-See typical problems [explained in the documentation](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
+- [CLI options](https://anufrievroman.gitbook.io/waypaper/usage).
+- [Configuration](https://anufrievroman.gitbook.io/waypaper/configuration).
+- [Keybindings](https://anufrievroman.gitbook.io/waypaper/keybindings).
+- [Troubleshooting](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
 
 ## Contribution
 
-Feel free to propose PR and suggest the improvements. I'll highly appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file. Here a few guiding principles for creating pull requests:
+Feel free to propose PR and suggest the improvements. I'll appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file. Here are a few guiding principles for contribution:
 
 - Please do not apply automatic code formatting tools on the entire code base.
-- Please do separate pull requests for each feature, don't combine unrelated changes into one PR.
+- Please propose features separetely, don't combine unrelated changes into one PR.
 - For big changes, please open an issue first to discuss, otherwise PR might be declined.
+- If the changes involve hundreds of lines of code, probably something is wrong. Most things can be done with small adjustments.
 
 ## Support
 

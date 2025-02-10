@@ -92,7 +92,7 @@ class Config:
         self.swww_transition_fps = config.get("Settings", "swww_transition_fps", fallback=self.swww_transition_fps)
         self.mpvpaper_sound = config.getboolean("Settings", "mpvpaper_sound", fallback=self.mpvpaper_sound)
         self.mpvpaper_options = config.get("Settings", "mpvpaper_options", fallback=self.mpvpaper_options)
-        self.number_of_columns = config.get("settings", "number_of_columns", fallback=self.number_of_columns)
+        self.number_of_columns = int(config.get("Settings", "number_of_columns", fallback=self.number_of_columns))
         self.lang = config.get("Settings", "language", fallback=self.lang)
         self.include_subfolders = config.getboolean("Settings", "subfolders", fallback=self.include_subfolders)
         self.include_all_subfolders = config.getboolean("Settings", "all_subfolders", fallback=self.include_all_subfolders)
@@ -142,6 +142,8 @@ class Config:
             self.fill_option = FILL_OPTIONS[0]
         if self.swww_transition_type not in SWWW_TRANSITION_TYPES:
             self.swww_transition_type = "any"
+        if self.number_of_columns <= 0:
+            self.number_of_columns = 1
 
         # Check validity of other swww options:
         if 0 > int(self.swww_transition_angle) > 180:
