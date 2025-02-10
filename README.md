@@ -65,14 +65,16 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 
 `waypaper` command will run GUI application.
 
-To restore your wallpaper at launch, add `waypaper --restore` to your startup config.
+To restore your wallpaper after restart, add `waypaper --restore` to [your WM startup config](https://anufrievroman.gitbook.io/waypaper/usage).
 
 ## Documentation
 
-- [CLI options](https://anufrievroman.gitbook.io/waypaper/usage)
+- [CLI options](https://anufrievroman.gitbook.io/waypaper/usage#cli-options)
 - [Configuration](https://anufrievroman.gitbook.io/waypaper/configuration)
 - [Keybindings](https://anufrievroman.gitbook.io/waypaper/keybindings)
 - [Troubleshooting](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
+- [Automatically changing wallpaper](https://anufrievroman.gitbook.io/waypaper/usage#automatically-changing-wallpaper)
+- [Set wallpaper after restart](https://anufrievroman.gitbook.io/waypaper/usage)
 
 ## Contribution
 

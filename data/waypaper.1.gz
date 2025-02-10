@@ -43,12 +43,20 @@ Set the desired monitor. Should be used together with either \-\-random or \-\-w
 Specify which backend to use, which can be either \fIswaybg, swww, feh\fR, or \fIwallutils\fR. Useful if you use waypaper on both Wayland and Xorg on the same machine. By default, last used backend is used.
 
 .TP
+\fB\-\-state\-file XXX \fP
+Set the path to state file.
+
+.TP
 \fB\-\-fill XXX \fP
 Specifies filling type, which can be eiher \fIfill, stretch, fit, center\fR, or \fItile\fR.
 
 .TP
 \fB\-\-list \fP
-List wallpapers and monitors in json format.
+List wallpapers, monitors, and backend in json format.
+
+.TP
+\fB\-\-no\-post\-command \fP
+Prevent running the post command that was set in the config.
 
 .SH COMMANDS DURING USE
 Press '\fB?\fP' during use to get a list of keybindings.
