@@ -3,6 +3,10 @@ import re
 from pathlib import Path
 
 setup_dir = Path(__file__).resolve().parent
+version = re.search( r'__version__ = "(.*)"', Path(setup_dir, 'waypaper/__main__.py').open().read())
+if version is None:
+    raise SystemExit("Could not determine version to use")
+version = version.group(1)
 
 setuptools.setup(
     name='waypaper',
@@ -19,7 +23,7 @@ setuptools.setup(
         ]
     },
     install_requires=["PyGObject", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
-    version = re.search( r'version = "(.*)"', Path(setup_dir, 'waypaper/__main__.py').open().read()),
+    version=version,
     python_requires='>3.10',
     classifiers=[
         "Development Status :: 4 - Beta",

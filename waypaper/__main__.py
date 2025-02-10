@@ -15,9 +15,7 @@ from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS, MONITOR_OPTIONS
 from waypaper.translations import load_language
 
 
-# Get application metadata:
-name = "waypaper"
-version = 2.5
+__version__ = "2.5"
 
 # Get application settings and language package:
 cf = Config()
@@ -27,7 +25,7 @@ txt = load_language(cf.lang)
 
 # Define command line argument parser and parse user arguments:
 parser = argparse.ArgumentParser(
-    prog=name, description=txt.msg_desc, epilog=txt.msg_info
+    prog="waypaper", description=txt.msg_desc, epilog=txt.msg_info
 )
 parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true")
 parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
@@ -133,7 +131,7 @@ def run():
 
     # Print the version and quit:
     if args.version:
-        print(f"{name} v.{version}")
+        print(f"waypaper v.{__version__}")
         sys.exit(0)
 
     # Start GUI:
