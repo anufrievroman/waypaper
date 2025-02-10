@@ -7,7 +7,6 @@ import json
 import pathlib
 import threading
 
-from waypaper.aboutdata import AboutData
 from waypaper.app import App
 from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
@@ -17,7 +16,8 @@ from waypaper.translations import load_language
 
 
 # Get application metadata:
-about = AboutData()
+name = "waypaper"
+version = 2.5
 
 # Get application settings and language package:
 cf = Config()
@@ -27,7 +27,7 @@ txt = load_language(cf.lang)
 
 # Define command line argument parser and parse user arguments:
 parser = argparse.ArgumentParser(
-    prog=about.applicationName(), description=txt.msg_desc, epilog=txt.msg_info
+    prog=name, description=txt.msg_desc, epilog=txt.msg_info
 )
 parser.add_argument("-v", "--version", help=txt.msg_arg_help, action="store_true")
 parser.add_argument("--restore", help=txt.msg_arg_rest, action="store_true")
@@ -133,7 +133,7 @@ def run():
 
     # Print the version and quit:
     if args.version:
-        print(f"{about.applicationName()} v.{about.applicationVersion()}")
+        print(f"{name} v.{version}")
         sys.exit(0)
 
     # Start GUI:

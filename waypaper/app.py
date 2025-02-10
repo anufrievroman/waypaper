@@ -9,7 +9,6 @@ import imageio
 import screeninfo
 from pathlib import Path
 
-from waypaper.aboutdata import AboutData
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image
@@ -26,7 +25,6 @@ class App(Gtk.Window):
     def __init__(self, txt: Chinese|English|French|German|Polish|Russian|Belarusian|Spanish, cf: Config) -> None:
         super().__init__(title="Waypaper")
         self.cf = cf
-        self.about = AboutData()
         self.txt = txt
         self.check_backends()
         self.set_default_size(820, 600)

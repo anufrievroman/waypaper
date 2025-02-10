@@ -1,5 +1,6 @@
-from pathlib import Path
 import setuptools
+import re
+from pathlib import Path
 
 setup_dir = Path(__file__).resolve().parent
 
@@ -17,8 +18,8 @@ setuptools.setup(
             "waypaper = waypaper.__main__:run"
         ]
     },
-    install_requires=["PyGObject", "importlib_metadata", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
-    version='2.5',
+    install_requires=["PyGObject", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
+    version = re.search( r'version = "(.*)"', Path(setup_dir, 'waypaper/__main__.py').open().read()),
     python_requires='>3.10',
     classifiers=[
         "Development Status :: 4 - Beta",

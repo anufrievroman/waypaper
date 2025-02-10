@@ -6,7 +6,6 @@ from argparse import Namespace
 from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
-from waypaper.aboutdata import AboutData
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
 from waypaper.common import check_installed_backends
 
@@ -15,6 +14,7 @@ class Config:
     """User configuration loaded from the config.ini file"""
     def __init__(self):
         # All paths (folders or wallpapers) are Path objects
+        self.name = "waypaper"
         self.home_path = pathlib.Path.home()
         self.image_folder_list: list[pathlib.Path] = []
         self.image_folder_fallback: str = str(user_pictures_path())
@@ -41,11 +41,10 @@ class Config:
         self.include_all_subfolders = False
         self.show_hidden = False
         self.show_gifs_only = False
-        self.about = AboutData()
-        self.cache_dir = user_cache_path(self.about.applicationName())
-        self.config_dir = user_config_path(self.about.applicationName())
+        self.cache_dir = user_cache_path(self.name)
+        self.config_dir = user_config_path(self.name)
         self.config_file = self.config_dir / "config.ini"
-        self.state_dir = user_state_path(self.about.applicationName())
+        self.state_dir = user_state_path(self.name)
         self.state_file = self.state_dir / "state.ini"
         self.use_xdg_state = False
         self.use_post_command = True

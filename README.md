@@ -69,9 +69,9 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 
 ## Documentation
 
-- [CLI options](https://anufrievroman.gitbook.io/waypaper/usage).
-- [Configuration](https://anufrievroman.gitbook.io/waypaper/configuration).
-- [Keybindings](https://anufrievroman.gitbook.io/waypaper/keybindings).
+- [CLI options](https://anufrievroman.gitbook.io/waypaper/usage)
+- [Configuration](https://anufrievroman.gitbook.io/waypaper/configuration)
+- [Keybindings](https://anufrievroman.gitbook.io/waypaper/keybindings)
 - [Troubleshooting](https://anufrievroman.gitbook.io/waypaper/troubleshooting)
 
 ## Contribution
@@ -79,7 +79,7 @@ To restore your wallpaper at launch, add `waypaper --restore` to your startup co
 Feel free to propose PR and suggest the improvements. I'll appreciate help with packaging for various distributions. If you wish to contribute with translation into your language, please see the `translations.py` file. Here are a few guiding principles for contribution:
 
 - Please do not apply automatic code formatting tools on the entire code base.
-- Please propose features separetely, don't combine unrelated changes into one PR.
+- Please propose features separately, don't combine unrelated changes into one PR.
 - For big changes, please open an issue first to discuss, otherwise PR might be declined.
 - If the changes involve hundreds of lines of code, probably something is wrong. Most things can be done with small adjustments.
 
