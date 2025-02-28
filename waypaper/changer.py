@@ -235,14 +235,14 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_hyprpaper(image_path, cf, monitor)
         if cf.backend != "none":
             filename = Path(image_path).resolve().name
-            print(f"Sent {cf.backend} command to set {filename} on {monitor} display")
+            print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")
 
         # Run a post command:
         if cf.post_command and cf.use_post_command:
             modified_image_path = str(image_path).replace(" ", "\\ ")
             post_command = cf.post_command.replace("$wallpaper", modified_image_path)
             subprocess.Popen(post_command, shell=True)
-            print(f'Executed "{post_command}" post-command')
+            print(f'Executed "{post_command}" post-command\n')
 
     except Exception as e:
-        print(f"Error occured while changing wallpaper: {e}")
+        print(f"Error occured while changing wallpaper: \n{e}")

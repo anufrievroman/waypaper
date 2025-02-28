@@ -13,11 +13,11 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
 - Works on Xorg (with `feh` or `wallutils`)
 - Restores wallpaper after restart (`waypaper --restore`)
-- Fast and minimal
+- Fast and minimal (315 kB)
 
 ## Installation
 
-You need to install at least one of the backends and Waypaper, which works as a frontend.
+Install at least one of the backends and Waypaper, which works as a frontend.
 
 ### 1. Install a backend
 
@@ -37,7 +37,7 @@ If `pipx` is not found, you first need to install `pipx` from your package manag
 
 `yay -S waypaper`
 
-The [waypaper](https://aur.archlinux.org/packages/waypaper) package and developer package [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) are available in AUR, thanks to *metak*. Please upvote to support the project.
+The [waypaper](https://aur.archlinux.org/packages/waypaper) package and unstable developer package [waypaper-git](https://aur.archlinux.org/packages/waypaper-git) are available in AUR, thanks to *metak*. Please upvote to support the project.
 
 #### On NixOS
 
@@ -55,7 +55,6 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 
 - `swww` or `swaybg` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
-- `python-importlib_metadata`
 - `python-imageio`
 - `python-imageio-ffmpeg`
 - `python-screeninfo`
