@@ -47,6 +47,20 @@ class App(Gtk.Window):
         self.main_box = Gtk.VBox(spacing=10)
         self.add(self.main_box)
 
+        # Load and apply CSS
+        css_provider = Gtk.CssProvider()
+        css = b"""
+        .highlighted-button {
+            border: 1px solid @theme_selected_bg_color;
+        }
+        """
+        css_provider.load_from_data(css)
+
+        # Apply CSS to the default screen
+        screen = Gdk.Screen.get_default()
+        context = Gtk.StyleContext()
+        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
         # TOP MENU
 
         # Create a box to contain the top row of items:
@@ -490,6 +504,7 @@ class App(Gtk.Window):
             button = Gtk.Button()
             if index == self.selected_index:
                 button.set_relief(Gtk.ReliefStyle.NORMAL)
+                button.get_style_context().add_class("highlighted-button")
                 self.highlighted_image_y = current_y
             else:
                 button.set_relief(Gtk.ReliefStyle.NONE)
