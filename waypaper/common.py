@@ -4,6 +4,7 @@ import os
 import gi
 import random
 import shutil
+import imageio
 from pathlib import Path
 from typing import List
 from PIL import Image
@@ -168,8 +169,9 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         scaled_pixbuf.savev(str(cache_file), "jpeg", [], [])
 
     # If image processing failed, create a black placeholder:
-    except Exception:
+    except Exception as e:
         print(f"Could not generate preview for {os.path.basename(image_path)}")
+        print(e)
         black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
         black_pixbuf.fill(0x0)
         black_pixbuf.savev(str(cache_file), "jpeg", [], [])
