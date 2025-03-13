@@ -726,18 +726,7 @@ class App(Gtk.Window):
         # Processing keys for losing focus on text fields:
         if self.is_enering_text:
             if event.keyval in [Gdk.KEY_Escape, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
-                self.search_entry.set_visible(False)
-                self.search_entry.set_visible(True)
-                self.swww_angle_entry.set_visible(False)
-                self.swww_angle_entry.set_visible(True)
-                self.swww_steps_entry.set_visible(False)
-                self.swww_steps_entry.set_visible(True)
-                self.swww_duration_entry.set_visible(False)
-                self.swww_duration_entry.set_visible(True)
-                self.swww_fps_entry.set_visible(False)
-                self.swww_fps_entry.set_visible(True)
-                self.main_box.grab_focus()
-                self.is_enering_text = False
+                self.reset_text_entries()
             return
 
         # Processing rest of the keys:
@@ -819,6 +808,21 @@ class App(Gtk.Window):
     def on_focus_out(self, widget, event):
         self.is_enering_text = False
 
+    def reset_text_entries(self) -> None:
+        """Reset all input fields and remove focus from them"""
+        self.search_entry.set_visible(False)
+        self.search_entry.set_visible(True)
+        self.swww_angle_entry.set_visible(False)
+        self.swww_angle_entry.set_visible(True)
+        self.swww_steps_entry.set_visible(False)
+        self.swww_steps_entry.set_visible(True)
+        self.swww_duration_entry.set_visible(False)
+        self.swww_duration_entry.set_visible(True)
+        self.swww_fps_entry.set_visible(False)
+        self.swww_fps_entry.set_visible(True)
+        self.main_box.grab_focus()
+        self.is_enering_text = False
+
     def on_window_clicked(self, widget, event) -> bool:
         """Handle clicks outside of input fields to unfocus them"""
         if self.is_enering_text:
@@ -831,19 +835,7 @@ class App(Gtk.Window):
 
                 if (x < widget_x or x > widget_x + alloc.width or
                     y < widget_y or y > widget_y + alloc.height):
-                    self.search_entry.set_visible(False)
-                    self.search_entry.set_visible(True)
-                    self.swww_angle_entry.set_visible(False)
-                    self.swww_angle_entry.set_visible(True)
-                    self.swww_steps_entry.set_visible(False)
-                    self.swww_steps_entry.set_visible(True)
-                    self.swww_duration_entry.set_visible(False)
-                    self.swww_duration_entry.set_visible(True)
-                    self.swww_fps_entry.set_visible(False)
-                    self.swww_fps_entry.set_visible(True)
-
-                    self.main_box.grab_focus()
-                    self.is_enering_text = False
+                    self.reset_text_entries()
                     return True
 
         return False
