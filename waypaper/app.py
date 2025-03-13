@@ -262,6 +262,8 @@ class App(Gtk.Window):
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
 
+        self.connect("button-press-event", self.on_window_clicked)
+
         # Connect window resizing events to change the number of columns.
         # self.connect("size-allocate", self.on_window_resize)
 
@@ -816,6 +818,35 @@ class App(Gtk.Window):
 
     def on_focus_out(self, widget, event):
         self.is_enering_text = False
+
+    def on_window_clicked(self, widget, event) -> bool:
+        """Handle clicks outside of input fields to unfocus them"""
+        if self.is_enering_text:
+            x, y = event.get_coords()
+
+            focused_widget = self.get_focus()
+            if focused_widget is not None:
+                alloc = focused_widget.get_allocation()
+                widget_x, widget_y = focused_widget.translate_coordinates(self, 0, 0) if focused_widget.translate_coordinates(self, 0, 0) else (0, 0)
+
+                if (x < widget_x or x > widget_x + alloc.width or
+                    y < widget_y or y > widget_y + alloc.height):
+                    self.search_entry.set_visible(False)
+                    self.search_entry.set_visible(True)
+                    self.swww_angle_entry.set_visible(False)
+                    self.swww_angle_entry.set_visible(True)
+                    self.swww_steps_entry.set_visible(False)
+                    self.swww_steps_entry.set_visible(True)
+                    self.swww_duration_entry.set_visible(False)
+                    self.swww_duration_entry.set_visible(True)
+                    self.swww_fps_entry.set_visible(False)
+                    self.swww_fps_entry.set_visible(True)
+
+                    self.main_box.grab_focus()
+                    self.is_enering_text = False
+                    return True
+
+        return False
 
     def run(self) -> None:
         """Run GUI application"""
