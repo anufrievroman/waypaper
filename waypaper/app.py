@@ -726,7 +726,7 @@ class App(Gtk.Window):
         # Processing keys for losing focus on text fields:
         if self.is_enering_text:
             if event.keyval in [Gdk.KEY_Escape, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
-                self.reset_text_entries()
+                self.reset_input_fields()
             return
 
         # Processing rest of the keys:
@@ -808,7 +808,7 @@ class App(Gtk.Window):
     def on_focus_out(self, widget, event):
         self.is_enering_text = False
 
-    def reset_text_entries(self) -> None:
+    def reset_input_fields(self) -> None:
         """Reset all input fields and remove focus from them"""
         self.search_entry.set_visible(False)
         self.search_entry.set_visible(True)
@@ -835,7 +835,7 @@ class App(Gtk.Window):
 
                 if (x < widget_x or x > widget_x + alloc.width or
                     y < widget_y or y > widget_y + alloc.height):
-                    self.reset_text_entries()
+                    self.reset_input_fields()
                     return True
 
         return False
