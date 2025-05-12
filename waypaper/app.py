@@ -34,7 +34,8 @@ class App(Gtk.Window):
         self.is_enering_text = False
         self.number_of_resize = 0
         self.init_ui()
-        self.backend_option_combo.grab_focus()
+        self.main_box.grab_focus()
+        # self.backend_option_combo.grab_focus()
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -432,7 +433,7 @@ class App(Gtk.Window):
         # Show caching label:
         self.loading_label = Gtk.Label(label=self.txt.msg_caching)
         self.bottom_loading_box.add(self.loading_label)
-        self.show_all()
+        self.bottom_loading_box.show_all()
 
         self.thumbnails = []
         self.image_names = []
@@ -516,7 +517,22 @@ class App(Gtk.Window):
             self.grid.attach(button, column, row, 1, 1)
             button.connect("clicked", self.on_image_clicked, path)
 
-        self.show_all()
+        self.grid.show_all()
+        self.toggle_zen_mode()
+
+
+    def toggle_zen_mode(self):
+        """Hide or show UI elements when zen mode is enabled or disabled"""
+        if self.cf.zen_mode:
+            for widget in self.top_container:
+                widget.hide()
+            for widget in self.options_box:
+                widget.hide()
+        else:
+            for widget in self.top_container:
+                widget.show()
+            for widget in self.options_box:
+                widget.show()
 
 
     # def on_window_resize(self, widget, allocation) -> None:
@@ -776,6 +792,10 @@ class App(Gtk.Window):
             self.selected_index = 0
             self.load_image_grid()
             self.scroll_to_selected_image()
+
+        elif event.keyval == Gdk.KEY_z:
+            self.cf.zen_mode = not self.cf.zen_mode
+            self.load_image_grid()
 
         elif event.keyval == Gdk.KEY_G:
             self.selected_index = len(self.image_paths) - 1

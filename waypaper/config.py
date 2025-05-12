@@ -41,6 +41,8 @@ class Config:
         self.include_all_subfolders = False
         self.show_hidden = False
         self.show_gifs_only = False
+        self.zen_mode = False
+        self.hide_all_gui_elements = False
         self.cache_dir = user_cache_path(self.name)
         self.config_dir = user_config_path(self.name)
         self.config_file = self.config_dir / "config.ini"
@@ -97,6 +99,7 @@ class Config:
         self.include_all_subfolders = config.getboolean("Settings", "all_subfolders", fallback=self.include_all_subfolders)
         self.show_hidden = config.getboolean("Settings", "show_hidden", fallback=self.show_hidden)
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
+        self.zen_mode = config.getboolean("Settings", "zen_mode", fallback=self.zen_mode)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
 
@@ -224,6 +227,7 @@ class Config:
         config.set("Settings", "all_subfolders", str(self.include_all_subfolders))
         config.set("Settings", "show_hidden", str(self.show_hidden))
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
+        config.set("Settings", "zen_mode", str(self.zen_mode))
         config.set("Settings", "post_command", self.post_command)
         config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
