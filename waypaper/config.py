@@ -42,7 +42,6 @@ class Config:
         self.show_hidden = False
         self.show_gifs_only = False
         self.zen_mode = False
-        self.hide_all_gui_elements = False
         self.cache_dir = user_cache_path(self.name)
         self.config_dir = user_config_path(self.name)
         self.config_file = self.config_dir / "config.ini"
@@ -61,6 +60,7 @@ class Config:
     def select_wallpaper(self, path_str: str) -> None:
         self.selected_wallpaper = pathlib.Path(path_str)
 
+
     def shorten_path(self, path: pathlib.Path) -> str:
         """Replace home part of paths with tilde"""
         if path.is_relative_to(self.home_path):
@@ -70,10 +70,12 @@ class Config:
         else:
             return ''
 
+
     def get_image_folder_list(self, section: str, config) -> list[pathlib.Path]:
         image_folders_str: list[str] =  config.get(section, "folder", fallback = self.image_folder_fallback).split("\n")
         image_folder_list = [pathlib.Path(path_str).expanduser() for path_str in image_folders_str]
         return image_folder_list
+
 
     def read(self) -> None:
         """Load data from the config.ini or use default if it does not exists"""
@@ -157,6 +159,7 @@ class Config:
         if 0 > int(self.swww_transition_fps):
             self.swww_transition_fps = 60
 
+
     def attribute_selected_wallpaper(self) -> None:
         """
         This function is used before saving config to attribute a wallpaper to a monitor.
@@ -176,6 +179,7 @@ class Config:
             self.monitors.append(self.selected_monitor)
             self.wallpapers.append(self.selected_wallpaper)
 
+
     def save_state_file(self) -> None:
         """Save some parameters to the state file"""
         state = configparser.ConfigParser()
@@ -190,6 +194,7 @@ class Config:
                 state.write(statefile)
         except PermissionError:
             print("Could not save state file due to permission error.")
+
 
     def write_folder_list_to_config(self, section: str, config):
         config_save_folder_str = ""
@@ -248,6 +253,7 @@ class Config:
         # If requested, save the state file:
         if self.use_xdg_state:
             self.save_state_file()
+
 
     def read_parameters_from_user_arguments(self, args: Namespace) -> None:
         """

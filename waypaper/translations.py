@@ -42,6 +42,8 @@ class English:
         self.msg_choosefolder = "Please choose a folder"
         self.msg_caching = "Caching wallpapers..."
         self.msg_show_path_in_tooltip = "Show path in tooltip"
+        self.msg_zen = "Zen mode"
+        self.msg_zen_enter = "You are entering Zen mode.\nPress z to return to normal mode."
 
         self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
@@ -111,7 +113,9 @@ class German:
         self.msg_changefolder = "Ordner"
         self.msg_choosefolder = "Bitte wählen Sie einen Ordner aus"
         self.msg_caching = "Hintergrundbilder werden zwischengespeichert..."
-        self.msg_show_path_in_tooltip = "Show path in tooltip"
+        self.msg_show_path_in_tooltip = "Pfad in Tooltip anzeigen"
+        self.msg_zen = "Zen-Modus"
+        self.msg_zen_enter = "Du betrittst den Zen-Modus.\nDrücke z, um in den normalen Modus zurückzukehren."
 
         self.msg_help = "Waypapers Tastenkürzel:\n\nhjkl - Navigation (←↓↑→)\nf - Hintergrundbild-Ordner ändern\n"
         self.msg_help += "g - Zum Anfang scrollen\nG - Zum Ende scrollen\nR - Zufälliges Hintergrundbild\nr - Hintergrundbilder zwischenspeichern\n"
@@ -180,6 +184,8 @@ class French:
         self.msg_choosefolder = "Veuillez choisir un dossier"
         self.msg_caching = "Mise en cache des papiers peints..."
         self.msg_show_path_in_tooltip = "Afficher le chemin dans l'infobulle"
+        self.msg_zen = "Mode Zen"
+        self.msg_zen_enter = "Vous entrez en mode Zen.\nAppuyez sur z pour revenir au mode normal."
 
         self.msg_help = "Raccourcis clavier de Waypaper :\n\nhjkl - Navigation (←↓↑→)\nf - Changer de dossier de papier peint\n"
         self.msg_help += "g - Faire défiler vers le haut\nG - Faire défiler vers le bas\nR - Définir un papier peint aléatoire\nr - Recréer le cache des papiers peints\n"
@@ -248,6 +254,8 @@ class Polish:
         self.msg_choosefolder = "Proszę wybrać folder"
         self.msg_caching = "Buforowanie tapet..."
         self.msg_show_path_in_tooltip = "Pokaż ścieżkę w podpowiedzi"
+        self.msg_zen = "Tryb Zen"
+        self.msg_zen_enter = "Wchodzisz w tryb Zen.\nNaciśnij z, aby wrócić do trybu normalnego."
 
         self.msg_help = "Skróty klawiszowe Waypaper'a:\n\nhjkl - Nawigacja (←↓↑→)\nEnter - Ustaw wybraną tapetę\nf - Zmień folder tapet\n"
         self.msg_help += "g - Przewiń na górę\nG - Przewiń na dół\nR - Ustaw losową tapetę\nr - Jeszcze raz buferuj tapety\n"
@@ -296,6 +304,8 @@ class Russian:
         self.msg_arg_monitor = "указать имя монитора для которого устанавливаются обои"
         self.msg_arg_post = "предотвратить выполнение post_command"
         self.msg_arg_show_path_in_tooltip = "показывать относительный путь в подсказке"
+        self.msg_zen = "Режим Дзэн"
+        self.msg_zen_enter = "Вы входите в режим Дзэн.\nНажмите z, чтобы вернуться в обычный режим."
 
         self.msg_select = "Выбрать"
         self.msg_refresh = "Обновить"
@@ -386,6 +396,8 @@ class Belarusian:
         self.msg_choosefolder = "Калі ласка, абярыце тэчку"
         self.msg_caching = "Кэшаванне шпалер..."
         self.msg_show_path_in_tooltip = "Show path in tooltip"
+        self.msg_zen = "Рэжым Дзен"
+        self.msg_zen_enter = "Вы ўваходзіце ў рэжым Дзен.\nНацісніце z, каб вярнуцца ў звычайны рэжым."
 
         self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
         self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
@@ -455,6 +467,8 @@ class Chinese:
         self.msg_choosefolder = "请选择一个文件夹"
         self.msg_caching = "缓存壁纸..."
         self.msg_show_path_in_tooltip = "在工具提示中显示路径"
+        self.msg_zen = "禅模式"
+        self.msg_zen_enter = "您正在进入禅模式。\n按 z 返回正常模式。"
 
         self.msg_help = "Waypaper 的热键：\n\nhjkl -导航 (←↓↑→)\nf -更改壁纸文件夹\n"
         self.msg_help += "g -滚动到顶部\nG -滚动到底部\nR -设置随机壁纸\nr -重新缓存壁纸\n"
@@ -523,6 +537,8 @@ class TraditionalChinese:
         self.msg_choosefolder = "選擇文件夾"
         self.msg_caching = "緩存壁紙"
         self.msg_show_path_in_tooltip = "在工具提示中顯示路徑"
+        self.msg_zen = "禪模式"
+        self.msg_zen_enter = "您正在進入禪模式。\n按 z 返回正常模式。"
 
         self.msg_help = "Waypaper 的快捷鍵:\n\nhjkl - 行動 (←↓↑→)\nEnter - 設定選擇壁紙\nf - 選擇壁紙文件夾\n"
         self.msg_help += "g - 滾動到頂部\nG - 滾動到底部\nR - 隨機壁紙\nr - 重新玩全壁紙\n"
@@ -592,6 +608,8 @@ class Spanish:
         self.msg_choosefolder = "Por favor, selecciona una carpeta"
         self.msg_caching = "Almacenando en el caché..."
         self.msg_show_path_in_tooltip = "Mostrar la ruta en la información sobre herramientas"
+        self.msg_zen = "Modo Zen"
+        self.msg_zen_enter = "Estás entrando en el modo Zen.\nPresiona z para volver al modo normal."
 
         self.msg_help = 'Controles para usar "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imágen seleccionada\nf - Cambiar carpeta de imágenes\n'
         self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imágen aleatoria\nr - Recrear caché de imágenes\n"

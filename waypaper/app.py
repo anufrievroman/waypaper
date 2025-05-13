@@ -35,7 +35,6 @@ class App(Gtk.Window):
         self.number_of_resize = 0
         self.init_ui()
         self.main_box.grab_focus()
-        # self.backend_option_combo.grab_focus()
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -305,6 +304,12 @@ class App(Gtk.Window):
         self.show_path_in_tooltip_checkbox.connect("toggled", self.on_show_path_in_tooltip_toggled)
         self.menu.append(self.show_path_in_tooltip_checkbox)
 
+        # Create zen mode toggle:
+        self.zen_mode_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_zen)
+        self.zen_mode_checkbox.set_active(self.cf.zen_mode)
+        self.zen_mode_checkbox.connect("toggled", self.on_zen_mode_toggled)
+        self.menu.append(self.zen_mode_checkbox)
+
         self.menu.show_all()
 
 
@@ -406,7 +411,7 @@ class App(Gtk.Window):
             exit()
 
     def show_message(self, message: str) -> None:
-        """If no backends are installed, show a message"""
+        """Show messages to user with ok button"""
         dialog = Gtk.MessageDialog(
             parent=self,
             flags=0,
@@ -591,6 +596,13 @@ class App(Gtk.Window):
         """Toggle only gifs checkbox via menu"""
         self.cf.show_gifs_only = toggle.get_active()
         threading.Thread(target=self.process_images).start()
+
+
+    def on_zen_mode_toggled(self, toggle) -> None:
+        """Toggle zen mode checkbox via menu"""
+        self.show_message("You are entering Zen mode.\nPress z to return to normal mode.")
+        self.cf.zen_mode = toggle.get_active()
+        self.load_image_grid()
 
 
     def on_mpv_sound_toggled(self, toggle) -> None:
