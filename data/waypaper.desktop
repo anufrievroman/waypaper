@@ -8,4 +8,5 @@ Icon=waypaper
 Terminal=false
 GenericName=Waypaper wallpaper setter
 Categories=Utility;GTK;DesktopSettings;
+Keywords=wallpapers;
 Comment=Change wallpaper on Wayland and X11
