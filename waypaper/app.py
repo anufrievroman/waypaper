@@ -54,6 +54,11 @@ class App(Gtk.Window):
             border: 1px solid @theme_selected_bg_color;
         }
         """
+        try:
+            with open(self.cf.style_file, 'rb') as stylesheet:
+                css = css + stylesheet.read()
+        except OSError:
+            pass
         css_provider.load_from_data(css)
 
         # Apply CSS to the default screen
