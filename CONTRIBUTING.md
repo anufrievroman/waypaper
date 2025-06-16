@@ -24,6 +24,6 @@
 4. Run ``` systemctl --user enable waypaperd.servic ``` to enable it to run every time you log in
 5. Run ``` systemctl --user status waypaperd.service ``` to check if it's running properly
 
-## Installing
+## Packaging
 
 -- TODO: get instructions for building when ready to deploy to AUR/PyPi
