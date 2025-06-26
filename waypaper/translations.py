@@ -640,6 +640,75 @@ class Spanish:
         self.tip_timer = "Frecuencia con la que se cambia automáticamente el fondo de pantalla"
         self.tip_start = "Iniciar el cambio automático del fondo de pantalla después de un intervalo de tiempo"
 
+class Turkish:
+    def __init__(self):
+        self.msg_desc = "Wayland ve X11 için duvar kağıdı ayarlayıcı arayüz. feh, swaybg, wallutils, hyprpaper, mpvpaper ve swww için ön yüz sağlar."
+        self.msg_info = "Daha fazla bilgi için:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "programın sürümünü yazdır"
+        self.msg_arg_fill = "görüntünün ekranı nasıl dolduracağını belirt"
+        self.msg_arg_rest = "son kullanılan duvar kağıdını geri yükle"
+        self.msg_arg_back = "hangi arka ucun kullanılacağını belirt"
+        self.msg_arg_rand = "rastgele bir duvar kağıdı ayarla"
+        self.msg_arg_list = "bazı parametreleri json formatında standart çıktıya yazdır"
+        self.msg_arg_wall = "belirtilen duvar kağıdını ayarla"
+        self.msg_arg_folder = "duvar kağıtlarının taranacağı klasörü belirt"
+        self.msg_arg_statefile = "uygulama durumunu saklamak için özel bir dosya belirt"
+        self.msg_arg_monitor = "istenen monitörü adıyla belirt"
+        self.msg_arg_post = "ayar dosyasında tanımlı post_command komutunu çalıştırmayı engeller"
+        self.msg_arg_show_path_in_tooltip = "ipucunda göreli yolu göster"
+
+        self.msg_select = "Seç"
+        self.msg_refresh = "Yenile"
+        self.msg_clear = "Temizle"
+        self.msg_start = "Otomatik değişimi başlat"
+        self.msg_stop = "Hepsini durdur"
+        self.msg_sound = "Ses"
+        self.msg_pause = "Duraklat"
+        self.msg_search = "Ara"
+        self.msg_random = "Rastgele"
+        self.msg_exit = "Çıkış"
+        self.msg_options = "Ayarlar"
+        self.msg_subfolders = "Alt klasörleri göster"
+        self.msg_all_subfolders = "Tüm alt klasörleri göster"
+        self.msg_hidden = "Gizlileri göster"
+        self.msg_gifs = "Yalnızca gifleri göster"
+        self.msg_transitions = "Geçiş seçeneklerini göster"
+        self.msg_changefolder = "Klasör"
+        self.msg_choosefolder = "Lütfen bir klasör seçin"
+        self.msg_caching = "Duvar kağıtları önbelleğe alınıyor..."
+        self.msg_show_path_in_tooltip = "İpucunda yolu göster"
+        self.msg_zen = "Zen modu"
+        self.msg_zen_enter = "Zen moduna giriyorsunuz.\nNormal moda dönmek için z tuşuna basın."
+
+        self.msg_help = "Waypaper kısayolları:\n\nhjkl - Yön tuşları (←↓↑→)\nEnter - Seçili duvar kağıdını ayarla\nf - Duvar kağıdı klasörünü değiştir\n"
+        self.msg_help += "g - Başa git\nG - Sona git\nR - Rastgele duvar kağıdı\nr - Duvar kağıtlarını yeniden önbelleğe al\n"
+        self.msg_help += "z - Zen modunu aç/kapat\n"
+        self.msg_help += ". - Gizli görselleri aç/kapat\ns - Alt klasörleri dahil et\n/ - Ara\n? - Yardım\nq - Çıkış\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "Önbellek silinirken hata oluştu"
+        self.err_backend = "Sistemde herhangi bir duvar kağıdı arka ucu kurulu değil gibi görünüyor.\n"
+        self.err_backend += "Lütfen aşağıdaki arka uçlardan en az birini kurun:\n\n"
+        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += self.msg_info
+
+        self.tip_refresh = "Görseller klasörünü yeniden önbelleğe al"
+        self.tip_fill = "Doldurma türünü seç"
+        self.tip_backend = "Arka ucu seç"
+        self.tip_sorting = "Sıralama türünü seç"
+        self.tip_display = "Ekranı seç"
+        self.tip_color = "Arka plan rengini seç"
+        self.tip_random = "Rastgele bir duvar kağıdı ayarla"
+        self.tip_exit = "Uygulamadan çık"
+        self.tip_transition = "Geçiş türünü seç"
+        self.tip_mpv_stop = "Tüm mpv işlemlerini durdur"
+        self.tip_mpv_pause = "Video duvar kağıdını oynat/duraklat"
+        self.tip_mpv_sound = "Videonun sesini oynat"
+        self.tip_timer = "Duvar kağıdını ne sıklıkla otomatik değiştirileceğini belirle"
+        self.tip_start = "Belirli aralıklarla duvar kağıdını otomatik değiştirmeyi başlat"
 
 def load_language(lang):
     """Load the language package according to selected language"""
@@ -659,6 +728,8 @@ def load_language(lang):
         txt = TraditionalChinese()
     elif lang == "es":
         txt = Spanish()
+    elif lang == "tr":
+        txt = Turkish()
     else:
         txt = English()
     return txt
