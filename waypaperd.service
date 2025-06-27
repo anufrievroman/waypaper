@@ -1,0 +1,10 @@
+[Unit]
+Description=Waypaper Service to Change Background on an interval
+
+[Service]
+Type=simple
+TimeoutStartSec=0
+ExecStart=python waypaperd 30
+
+[Install]
+WantedBy=default.target
