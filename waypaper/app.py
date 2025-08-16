@@ -6,13 +6,12 @@ import os
 import gi
 import shutil
 import imageio
-import screeninfo
 from pathlib import Path
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitors
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -330,7 +329,7 @@ class App(Gtk.Window):
         monitor_names = ["All"]
         if self.cf.backend in ["feh", "wallutils", "none"]:
             return
-        monitor_names.extend([m.name for m in screeninfo.get_monitors()])
+        monitor_names.extend([m.name for m in get_monitors()])
 
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
