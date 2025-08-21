@@ -159,8 +159,12 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         if ext == ".webp":
             img = Image.open(image_path)
             data = img.tobytes()
+
             img_width, img_height = img.size
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, img_width, img_height, img_width * 3)
+            has_alpha = img.has_transparency_data
+            rowstride = img_width * (3 + int(has_alpha))
+
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, has_alpha, 8, img_width, img_height, rowstride)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
