@@ -329,7 +329,7 @@ class App(Gtk.Window):
         monitor_names = ["All"]
         if self.cf.backend in ["feh", "wallutils", "none"]:
             return
-        monitor_names.extend([m.name for m in get_monitors()])
+        monitor_names.extend(get_monitors())
 
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
