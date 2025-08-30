@@ -447,7 +447,11 @@ class App(Gtk.Window):
         self.thumbnails = []
         self.image_names = []
 
-        for image_path in self.image_paths:
+        # Possible removal from the list in the for loop will cause indexing to get thrown off.
+        # This causes image_paths to be the correct number of elements, but image_names will
+        # be off by however many zero byte files are present. To fix this a copy is made to
+        # iterate through and then the image can be saftley removed from the original lis
+        for image_path in list(self.image_paths):
 
             # Skip zero byte files inside the image_path:
             if os.path.getsize(image_path) == 0:
