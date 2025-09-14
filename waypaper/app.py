@@ -10,7 +10,7 @@ from pathlib import Path
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image
+from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitors
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
@@ -459,7 +459,7 @@ class App(Gtk.Window):
                 continue
 
             # If this image is not cached yet, resize and cache it:
-            cached_image_path = self.cf.cache_dir / os.path.basename(image_path)
+            cached_image_path = get_cached_image_path(image_path, self.cf.cache_dir)
             if not cached_image_path.exists():
                 cache_image(image_path, self.cf.cache_dir)
 
