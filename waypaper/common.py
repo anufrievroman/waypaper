@@ -64,7 +64,7 @@ def get_image_paths(backend: str,
 
 def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
     """Get image name that may or may not include parent folders"""
-    full_path = Path(full_path).resolve()
+    full_path = Path(os.path.normpath(full_path)).absolute()
 
     # If path is not required, just return file name:
     if not include_path:
@@ -72,7 +72,7 @@ def get_image_name(full_path: str, base_folder_list: list[Path], include_path: b
 
     # Otherwise, find from which folder file comes from and append this folder:
     for base_folder in base_folder_list:
-        base_folder = Path(base_folder).resolve()
+        base_folder = Path(os.path.normpath(base_folder)).absolute()
         if not full_path.is_relative_to(base_folder):
             continue
         common_folder = base_folder.name
