@@ -159,18 +159,14 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         if ext == ".webp":
             img = Image.open(image_path)
             data = img.tobytes()
-
             img_width, img_height = img.size
-            has_alpha = img.has_transparency_data
-            rowstride = img_width * (3 + int(has_alpha))
-
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, has_alpha, 8, img_width, img_height, rowstride)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, img_width, img_height, img_width * 3)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
         height = int(width / aspect_ratio)
         scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-        scaled_pixbuf.savev(str(cache_file), "jpeg", [], [])
+        scaled_pixbuf.savev(str(cache_file), "png", [], [])
 
     # If image processing failed, create a black placeholder:
     except Exception as e:
@@ -178,4 +174,4 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         print(e)
         black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
         black_pixbuf.fill(0x0)
-        black_pixbuf.savev(str(cache_file), "jpeg", [], [])
+        black_pixbuf.savev(str(cache_file), "png", [], [])
