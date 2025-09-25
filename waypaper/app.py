@@ -4,6 +4,7 @@ import threading
 import subprocess
 import os
 import gi
+import random
 import shutil
 import imageio
 from pathlib import Path
@@ -438,6 +439,8 @@ class App(Gtk.Window):
             self.image_paths.sort(reverse=(self.cf.sort_option == "namerev"))
         if self.cf.sort_option in ["date", "daterev"]:
             self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=(self.cf.sort_option == "daterev"))
+        if self.cf.sort_option == "random":
+            random.shuffle(self.image_paths)
 
         # Show caching label:
         self.loading_label = Gtk.Label(label=self.txt.msg_caching)
