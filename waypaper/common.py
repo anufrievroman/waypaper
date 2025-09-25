@@ -5,6 +5,7 @@ import gi
 import random
 import shutil
 import imageio
+import hashlib
 from pathlib import Path
 from typing import List
 from PIL import Image
@@ -63,7 +64,7 @@ def get_image_paths(backend: str,
 
 def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
     """Get image name that may or may not include parent folders"""
-    full_path = Path(full_path).resolve()
+    full_path = Path(os.path.normpath(full_path)).absolute()
 
     # If path is not required, just return file name:
     if not include_path:
@@ -71,7 +72,7 @@ def get_image_name(full_path: str, base_folder_list: list[Path], include_path: b
 
     # Otherwise, find from which folder file comes from and append this folder:
     for base_folder in base_folder_list:
-        base_folder = Path(base_folder).resolve()
+        base_folder = Path(os.path.normpath(base_folder)).absolute()
         if not full_path.is_relative_to(base_folder):
             continue
         common_folder = base_folder.name
@@ -137,10 +138,15 @@ def check_installed_backends() -> List[str]:
     return installed_backends
 
 
+def get_cached_image_path(image_path: str, cache_dir: Path) -> Path:
+    real_path_bytes = bytes(os.path.realpath(image_path), encoding="UTF-8")
+    return cache_dir / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.jpg"
+
+
 def cache_image(image_path: str, cache_dir: Path) -> None:
     """Create small copies of images using various libraries depending on the file type"""
     ext = os.path.splitext(image_path)[1].lower()
-    cache_file = cache_dir / Path(os.path.basename(image_path))
+    cache_file = get_cached_image_path(image_path, cache_dir)
     width = 240
     try:
         # If it's a video, extract the first frame:
