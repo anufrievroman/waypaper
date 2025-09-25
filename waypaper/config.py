@@ -27,7 +27,7 @@ class Config:
         self.color = "#ffffff"
         self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
-        self.swww_transition_step = 90
+        self.swww_transition_step = 63
         self.swww_transition_angle = 0
         self.swww_transition_duration = 2
         self.swww_transition_fps = 60
