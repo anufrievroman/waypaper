@@ -140,7 +140,7 @@ def check_installed_backends() -> List[str]:
 
 def get_cached_image_path(image_path: str, cache_dir: Path) -> Path:
     real_path_bytes = bytes(os.path.realpath(image_path), encoding="UTF-8")
-    return cache_dir / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.jpg"
+    return cache_dir / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.png"
 
 
 def cache_image(image_path: str, cache_dir: Path) -> None:
