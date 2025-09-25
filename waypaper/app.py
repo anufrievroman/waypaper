@@ -12,7 +12,7 @@ from pathlib import Path
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitors
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitor_options
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -326,11 +326,13 @@ class App(Gtk.Window):
     def monitor_option_display(self) -> None:
         """Display monitor option if backend is not feh or wallutils"""
         self.options_box.remove(self.monitor_option_combo)
-        # Check available monitors:
-        monitor_names = ["All"]
+
+        # These backends do not support monitors:
         if self.cf.backend in ["feh", "wallutils", "none"]:
             return
-        monitor_names.extend(get_monitors())
+
+        # Check available monitors:
+        monitor_names = get_monitor_options(self.cf.backend)
 
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()

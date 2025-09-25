@@ -2,11 +2,11 @@
 
 import subprocess
 import time
-import screeninfo
 from typing import Optional
 from pathlib import Path
 
 from waypaper.config import Config
+from waypaper.options import get_monitor_names_with_hyprctl
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -199,7 +199,10 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 
     # Decide which monitors are affected:
     if monitor == "All":
-        monitors = [m.name for m in screeninfo.get_monitors()]
+        # monitors = [m.name for m in screeninfo.get_monitors()]
+        # monitor_info = subprocess.run(["hyprctl", "monitors", "-j"], capture_output=True, text=True, check=True)
+        # monitors = [m["name"] for m in json.loads(monitor_info.stdout)]
+        monitors = get_monitor_names_with_hyprctl()
     else:
         monitors: list = [monitor]
 
