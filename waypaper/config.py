@@ -112,9 +112,9 @@ class Config:
         wallpapers_str = config.get("Settings", "wallpaper", fallback="", raw=True)
         self.image_folder_list = self.get_image_folder_list("Settings", config)
         if monitors_str:
-            self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
+            self.monitors = [str(monitor) for monitor in monitors_str.split("\n")]
         if wallpapers_str:
-            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
+            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split("\n")]
 
 
     def read_state(self) -> None:
@@ -130,10 +130,10 @@ class Config:
         wallpapers_str = state.get("State", "wallpaper", fallback="", raw=True)
         self.image_folder_list = self.get_image_folder_list("State", state)
         if monitors_str:
-            self.monitors = [str(monitor) for monitor in monitors_str.split(",")]
+            self.monitors = [str(monitor) for monitor in monitors_str.split("\n")]
             self.selected_monitor = self.monitors[0]
         if wallpapers_str:
-            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split(",")]
+            self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split("\n")]
 
 
     def check_validity(self) -> None:
@@ -189,8 +189,8 @@ class Config:
         if not state.has_section("State"):
             state.add_section("State")
         self.write_folder_list_to_config("State", state)
-        state.set("State", "monitors", ",".join(self.monitors))
-        state.set("State", "wallpaper", ','.join(self.shorten_path(p) for p in self.wallpapers))
+        state.set("State", "monitors", "\n".join(self.monitors))
+        state.set("State", "wallpaper", '\n'.join(self.shorten_path(p) for p in self.wallpapers))
         try:
             with open(self.state_file, "w") as statefile:
                 state.write(statefile)
@@ -221,8 +221,8 @@ class Config:
         # If state file is used, some parameters are not save into config:
         if not self.use_xdg_state:
             self.write_folder_list_to_config("Settings", config)
-            config.set("Settings", "monitors", ",".join(self.monitors))
-            config.set("Settings", "wallpaper", ','.join(self.shorten_path(p) for p in self.wallpapers))
+            config.set("Settings", "monitors", "\n".join(self.monitors))
+            config.set("Settings", "wallpaper", '\n'.join(self.shorten_path(p) for p in self.wallpapers))
 
         # Save the parameters into config:
         config.set("Settings", "show_path_in_tooltip", str(self.show_path_in_tooltip))
