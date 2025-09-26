@@ -710,6 +710,87 @@ class Turkish:
         self.tip_timer = "Duvar kağıdını ne sıklıkla otomatik değiştirileceğini belirle"
         self.tip_start = "Belirli aralıklarla duvar kağıdını otomatik değiştirmeyi başlat"
 
+class Japanese:
+    def __init__(self):
+        self.msg_desc = "Wayland と X11 用の GUI 壁紙設定ツール。feh, swaybg, wallutils, hyprpaper, mpvpaper, swww のフロントエンドとして動作します。"
+        self.msg_info = "詳細は以下をご覧ください:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "プログラムのバージョンを表示"
+        self.msg_arg_fill = "画像を画面に表示する方法を指定"
+        self.msg_arg_rest = "最後に使用した壁紙を復元"
+        self.msg_arg_back = "壁紙設定に使用するバックエンドを指定"
+        self.msg_arg_rand = "ランダムに壁紙を設定"
+        self.msg_arg_list = "いくつかのパラメータを JSON 形式で標準出力に表示"
+        self.msg_arg_wall = "指定した壁紙を設定"
+        self.msg_arg_folder = "壁紙を検索するフォルダを指定"
+        self.msg_arg_statefile = "アプリケーションの状態を保存するカスタムファイルを指定"
+        self.msg_arg_monitor = "モニター名を指定して対象のモニターを選択"
+        self.msg_arg_post = "設定ファイルで指定された post_command の実行を防止"
+        self.msg_arg_show_path_in_tooltip = "ツールチップに相対パスを表示"
+
+        self.msg_select = "選択"
+        self.msg_refresh = "更新"
+        self.msg_clear = "クリア"
+        self.msg_start = "自動変更を開始"
+        self.msg_stop = "すべて停止"
+        self.msg_sound = "サウンド"
+        self.msg_pause = "一時停止"
+        self.msg_search = "検索"
+        self.msg_random = "ランダム"
+        self.msg_exit = "終了"
+        self.msg_options = "オプション"
+        self.msg_subfolders = "サブフォルダを表示"
+        self.msg_all_subfolders = "すべてのサブフォルダを表示"
+        self.msg_hidden = "隠しファイルを表示"
+        self.msg_gifs = "GIF のみ表示"
+        self.msg_transitions = "切り替えオプションを表示"
+        self.msg_changefolder = "フォルダ"
+        self.msg_choosefolder = "フォルダを選択してください"
+        self.msg_caching = "壁紙をキャッシュ中..."
+        self.msg_show_path_in_tooltip = "ツールチップにパスを表示"
+        self.msg_zen = "禅モード"
+        self.msg_zen_enter = "禅モードに入ります。\n通常モードに戻るには z を押してください。"
+
+        self.msg_help = "Waypaper のショートカットキー:\n\n"
+        self.msg_help += "hjkl - 移動 (←↓↑→)\n"
+        self.msg_help += "Enter - 選択した壁紙を設定\n"
+        self.msg_help += "f - 壁紙フォルダを変更\n"
+        self.msg_help += "g - 先頭に移動\n"
+        self.msg_help += "G - 末尾に移動\n"
+        self.msg_help += "R - ランダム壁紙を設定\n"
+        self.msg_help += "r - 壁紙を再キャッシュ\n"
+        self.msg_help += "z - 禅モード切替\n"
+        self.msg_help += ". - 隠し画像を表示切替\n"
+        self.msg_help += "s - サブフォルダ内の画像表示切替\n"
+        self.msg_help += "/ - 検索\n"
+        self.msg_help += "? - ヘルプ\n"
+        self.msg_help += "q - 終了\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "キャッシュ削除エラー"
+        self.err_backend = "壁紙バックエンドがシステムにインストールされていないようです。\n"
+        self.err_backend += "以下のうち少なくとも1つをパッケージマネージャでインストールしてください:\n\n"
+        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += self.msg_info
+
+        self.tip_refresh = "画像フォルダを再キャッシュ"
+        self.tip_fill = "塗り方法を選択"
+        self.tip_backend = "バックエンドを選択"
+        self.tip_sorting = "並べ替え方法を選択"
+        self.tip_display = "ディスプレイを選択"
+        self.tip_color = "背景色を選択"
+        self.tip_random = "ランダムに壁紙を設定"
+        self.tip_exit = "アプリケーションを終了"
+        self.tip_transition = "切り替えタイプを選択"
+        self.tip_mpv_stop = "すべての mpv プロセスを停止"
+        self.tip_mpv_pause = "動画壁紙を再生/一時停止"
+        self.tip_mpv_sound = "動画の音声を再生"
+        self.tip_timer = "自動で壁紙を変更する間隔"
+        self.tip_start = "指定した時間ごとに自動的に壁紙変更を開始"
+
+
 def load_language(lang):
     """Load the language package according to selected language"""
     if lang == "de":
@@ -730,6 +811,8 @@ def load_language(lang):
         txt = Spanish()
     elif lang == "tr":
         txt = Turkish()
+    elif lang == "jp":
+        txt = Japanese()
     else:
         txt = English()
     return txt
