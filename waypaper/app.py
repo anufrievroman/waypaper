@@ -4,14 +4,15 @@ import threading
 import subprocess
 import os
 import gi
+import random
 import shutil
 import imageio
 from pathlib import Path
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitors
+from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitor_options
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 
 gi.require_version("Gtk", "3.0")
@@ -325,11 +326,13 @@ class App(Gtk.Window):
     def monitor_option_display(self) -> None:
         """Display monitor option if backend is not feh or wallutils"""
         self.options_box.remove(self.monitor_option_combo)
-        # Check available monitors:
-        monitor_names = ["All"]
+
+        # These backends do not support monitors:
         if self.cf.backend in ["feh", "wallutils", "none"]:
             return
-        monitor_names.extend(get_monitors())
+
+        # Check available monitors:
+        monitor_names = get_monitor_options(self.cf.backend)
 
         # Create a monitor option dropdown menu:
         self.monitor_option_combo = Gtk.ComboBoxText()
@@ -438,6 +441,8 @@ class App(Gtk.Window):
             self.image_paths.sort(reverse=(self.cf.sort_option == "namerev"))
         if self.cf.sort_option in ["date", "daterev"]:
             self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=(self.cf.sort_option == "daterev"))
+        if self.cf.sort_option == "random":
+            random.shuffle(self.image_paths)
 
         # Show caching label:
         self.loading_label = Gtk.Label(label=self.txt.msg_caching)
@@ -459,7 +464,7 @@ class App(Gtk.Window):
                 continue
 
             # If this image is not cached yet, resize and cache it:
-            cached_image_path = self.cf.cache_dir / os.path.basename(image_path)
+            cached_image_path = get_cached_image_path(image_path, self.cf.cache_dir)
             if not cached_image_path.exists():
                 cache_image(image_path, self.cf.cache_dir)
 

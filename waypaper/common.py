@@ -5,6 +5,7 @@ import gi
 import random
 import shutil
 import imageio
+import hashlib
 from pathlib import Path
 from typing import List
 from PIL import Image
@@ -63,7 +64,7 @@ def get_image_paths(backend: str,
 
 def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
     """Get image name that may or may not include parent folders"""
-    full_path = Path(full_path).resolve()
+    full_path = Path(os.path.normpath(full_path)).absolute()
 
     # If path is not required, just return file name:
     if not include_path:
@@ -71,7 +72,7 @@ def get_image_name(full_path: str, base_folder_list: list[Path], include_path: b
 
     # Otherwise, find from which folder file comes from and append this folder:
     for base_folder in base_folder_list:
-        base_folder = Path(base_folder).resolve()
+        base_folder = Path(os.path.normpath(base_folder)).absolute()
         if not full_path.is_relative_to(base_folder):
             continue
         common_folder = base_folder.name
@@ -137,10 +138,15 @@ def check_installed_backends() -> List[str]:
     return installed_backends
 
 
+def get_cached_image_path(image_path: str, cache_dir: Path) -> Path:
+    real_path_bytes = bytes(os.path.realpath(image_path), encoding="UTF-8")
+    return cache_dir / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.png"
+
+
 def cache_image(image_path: str, cache_dir: Path) -> None:
     """Create small copies of images using various libraries depending on the file type"""
     ext = os.path.splitext(image_path)[1].lower()
-    cache_file = cache_dir / Path(os.path.basename(image_path))
+    cache_file = get_cached_image_path(image_path, cache_dir)
     width = 240
     try:
         # If it's a video, extract the first frame:
@@ -159,18 +165,14 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         if ext == ".webp":
             img = Image.open(image_path)
             data = img.tobytes()
-
             img_width, img_height = img.size
-            has_alpha = img.has_transparency_data
-            rowstride = img_width * (3 + int(has_alpha))
-
-            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, has_alpha, 8, img_width, img_height, rowstride)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_data(data, GdkPixbuf.Colorspace.RGB, False, 8, img_width, img_height, img_width * 3)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
         aspect_ratio = pixbuf.get_width() / pixbuf.get_height()
         height = int(width / aspect_ratio)
         scaled_pixbuf = pixbuf.scale_simple(width, height, GdkPixbuf.InterpType.BILINEAR)
-        scaled_pixbuf.savev(str(cache_file), "jpeg", [], [])
+        scaled_pixbuf.savev(str(cache_file), "png", [], [])
 
     # If image processing failed, create a black placeholder:
     except Exception as e:
@@ -178,4 +180,4 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         print(e)
         black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
         black_pixbuf.fill(0x0)
-        black_pixbuf.savev(str(cache_file), "jpeg", [], [])
+        black_pixbuf.savev(str(cache_file), "png", [], [])

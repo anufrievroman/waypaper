@@ -2,11 +2,11 @@
 
 import subprocess
 import time
-import screeninfo
 from typing import Optional
 from pathlib import Path
 
 from waypaper.config import Config
+from waypaper.options import get_monitor_names_with_hyprctl
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -199,7 +199,10 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 
     # Decide which monitors are affected:
     if monitor == "All":
-        monitors = [m.name for m in screeninfo.get_monitors()]
+        # monitors = [m.name for m in screeninfo.get_monitors()]
+        # monitor_info = subprocess.run(["hyprctl", "monitors", "-j"], capture_output=True, text=True, check=True)
+        # monitors = [m["name"] for m in json.loads(monitor_info.stdout)]
+        monitors = get_monitor_names_with_hyprctl()
     else:
         monitors: list = [monitor]
 
@@ -247,6 +250,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
         if cf.post_command and cf.use_post_command:
             modified_image_path = str(image_path).replace(" ", "\\ ")
             post_command = cf.post_command.replace("$wallpaper", modified_image_path)
+            post_command = post_command.replace("$monitor", monitor)
             subprocess.Popen(post_command, shell=True)
             print(f'Executed "{post_command}" post-command\n')
 
