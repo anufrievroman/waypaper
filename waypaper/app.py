@@ -324,11 +324,11 @@ class App(Gtk.Window):
         self.menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
 
     def monitor_option_display(self) -> None:
-        """Display monitor option if backend is not feh or wallutils"""
+        """Display monitor option if backend is not feh or wallutils or macos"""
         self.options_box.remove(self.monitor_option_combo)
 
         # These backends do not support monitors:
-        if self.cf.backend in ["feh", "wallutils", "none"]:
+        if self.cf.backend in ["feh", "wallutils", "macos", "none"]:
             return
 
         # Check available monitors:

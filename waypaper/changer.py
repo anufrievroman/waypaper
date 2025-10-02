@@ -186,6 +186,12 @@ def change_with_wallutils(image_path: Path, cf: Config, monitor: str):
     subprocess.Popen(["setwallpaper", "--mode", fill, image_path])
 
 
+def change_with_finder(image_path: Path, cf: Config, monitor: str):
+    """Change wallpaper on macOS"""
+    command = f"osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"{image_path}\"'"
+    subprocess.Popen(command, shell=True)
+
+
 def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with hyprpaper backend"""
 
@@ -242,6 +248,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_wallutils(image_path, cf, monitor)
         if cf.backend == "hyprpaper":
             change_with_hyprpaper(image_path, cf, monitor)
+        if cf.backend == "macos":
+            change_with_finder(image_path, cf, monitor)
         if cf.backend != "none":
             filename = Path(image_path).resolve().name
             print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")

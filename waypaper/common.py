@@ -128,8 +128,10 @@ def check_installed_backends() -> List[str]:
     for backend in BACKEND_OPTIONS:
         if backend == "none":
             continue
-        if backend == "wallutils":
+        elif backend == "wallutils":
             binary_name = "setwallpaper"
+        elif backend == "macos":
+            binary_name = "sw_vers"
         else:
             binary_name = backend
         is_installed = bool(shutil.which(binary_name))
