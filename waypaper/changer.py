@@ -138,8 +138,9 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
         subprocess.Popen(["swww-daemon"])
         print("Launched swww-daemon")
 
+    # Get rid of this in future when swww updates everywhere:
     version_p = subprocess.run(["swww", "-V"], capture_output=True, text=True)
-    swww_version = [int(x) for x in version_p.stdout.strip().split(" ")[1].split(".")]
+    swww_version = [int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")]
 
     command = ["swww", "img", image_path]
     command.extend(["--resize", fill])
