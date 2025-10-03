@@ -173,6 +173,23 @@ def change_with_feh(image_path: Path, cf: Config, monitor: str):
     command.extend([str(image_path)])
     subprocess.Popen(command)
 
+def change_with_xwallpaper(image_path: Path, cf: Config, monitor: str):
+    """Change wallpaper with xwallpaper backend"""
+
+    fill_types = {
+            "fill": "--zoom",
+            "fit": "--maximize",
+            "center": "--center",
+            "stretch": "--stretch",
+            "tile": "--tile",
+            }
+    fill = fill_types[cf.fill_option.lower()]
+    # Since xwallpaper doesn't accept 'All', but 'all'
+    if monitor == "All":
+        monitor = "all"
+    command = ["xwallpaper", "--output", monitor, fill]
+    command.extend([str(image_path)])
+    subprocess.Popen(command)
 
 def change_with_wallutils(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with wallutils backend"""
@@ -245,6 +262,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_swww(image_path, cf, monitor)
         if cf.backend == "feh":
             change_with_feh(image_path, cf, monitor)
+        if cf.backend == "xwallpaper":
+            change_with_xwallpaper(image_path, cf, monitor)
         if cf.backend == "wallutils":
             change_with_wallutils(image_path, cf, monitor)
         if cf.backend == "hyprpaper":
