@@ -20,10 +20,11 @@ IMAGE_EXTENSIONS: Dict[str, List[str]] = {
         BACKEND_OPTIONS[1]: ['.gif', '.jpg', '.jpeg', '.png'],
         BACKEND_OPTIONS[2]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
         BACKEND_OPTIONS[3]: ['.gif', '.jpg', '.jpeg', '.png', '.bmp', '.pnm', '.tiff'],
-        BACKEND_OPTIONS[4]: ['.gif', '.jpg', '.jpeg', '.png'],
-        BACKEND_OPTIONS[5]: ['.jpg', '.jpeg', '.png', '.webp'],
-        BACKEND_OPTIONS[6]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff', '.avif'] + VIDEO_EXTENSIONS,
-        BACKEND_OPTIONS[7]: ['.gif', '.jpg', '.jpeg', '.png'],
+        BACKEND_OPTIONS[4]: ['.jpeg', '.png'],
+        BACKEND_OPTIONS[5]: ['.gif', '.jpg', '.jpeg', '.png'],
+        BACKEND_OPTIONS[6]: ['.jpg', '.jpeg', '.png', '.webp'],
+        BACKEND_OPTIONS[7]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff', '.avif'] + VIDEO_EXTENSIONS,
+        BACKEND_OPTIONS[8]: ['.gif', '.jpg', '.jpeg', '.png'],
         }
 
 SWWW_TRANSITION_TYPES: List[str] = ["any", "none", "simple", "fade", "wipe",  "left", "right", "top",
