@@ -24,7 +24,7 @@ class Keys:
             "zen_mode" : ["z"],
             "scroll_to_bottom" : ["G"],
             "help_page" : ["question"],
-            "select_wallpaper" : ["Enter", "KP_Enter"]
+            "select_wallpaper" : ["Return", "KP_Enter"]
         }
     
     def fill_keys_from_file(self, path):
