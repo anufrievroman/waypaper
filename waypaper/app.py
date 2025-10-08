@@ -774,67 +774,67 @@ class App(Gtk.Window):
             return
 
         # Processing rest of the keys:
-        elif event.keyval in self.keys.quit():
+        elif event.keyval in self.keys.quit:
             Gtk.main_quit()
 
-        elif event.keyval in self.keys.clear_cache():
+        elif event.keyval in self.keys.clear_cache:
             self.clear_cache()
 
-        elif event.keyval in self.keys.random_wallpaper():
+        elif event.keyval in self.keys.random_wallpaper:
             self.set_random_wallpaper()
 
-        elif event.keyval in self.keys.hidden_files():
+        elif event.keyval in self.keys.hidden_files:
             self.toggle_hidden_files()
 
-        elif event.keyval in self.keys.search():
+        elif event.keyval in self.keys.search:
             self.search_entry.grab_focus()
             return True
 
-        elif event.keyval in self.keys.include_subfolders():
+        elif event.keyval in self.keys.include_subfolders:
             self.toggle_include_subfolders()
 
-        elif event.keyval in self.keys.navigation_left():
+        elif event.keyval in self.keys.navigation_left:
             self.selected_index = max(self.selected_index - 1, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in self.keys.navigation_down():
+        elif event.keyval in self.keys.navigation_down:
             self.selected_index = min(self.selected_index + self.cf.number_of_columns, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in self.keys.navigation_up():
+        elif event.keyval in self.keys.navigation_up:
             self.selected_index = max(self.selected_index - self.cf.number_of_columns, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in self.keys.navigation_right():
+        elif event.keyval in self.keys.navigation_right:
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in self.keys.choose_folder():
+        elif event.keyval in self.keys.choose_folder:
             self.choose_folder()
 
-        elif event.keyval in self.keys.scroll_to_top():
+        elif event.keyval in self.keys.scroll_to_top:
             self.selected_index = 0
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in self.keys.zen_mode():
+        elif event.keyval in self.keys.zen_mode:
             self.cf.zen_mode = not self.cf.zen_mode
             self.load_image_grid()
 
-        elif event.keyval in self.keys.scroll_to_bottom():
+        elif event.keyval in self.keys.scroll_to_bottom:
             self.selected_index = len(self.image_paths) - 1
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in self.keys.help_page():
+        elif event.keyval in self.keys.help_page:
             message = self.txt.msg_help
             self.show_message(message)
 
-        elif event.keyval in self.keys.select_wallpaper():
+        elif event.keyval in self.keys.select_wallpaper:
             wallpaper_path = self.image_paths[self.selected_index]
             self.set_selected_wallpaper(wallpaper_path)
 
