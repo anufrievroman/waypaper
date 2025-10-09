@@ -769,7 +769,7 @@ class App(Gtk.Window):
 
         # Processing keys for losing focus on text fields:
         if self.is_enering_text:
-            if event.keyval in self.keys.clear_input_fields():
+            if event.keyval in self.keys.clear_input_fields:
                 self.reset_input_fields()
             return
 

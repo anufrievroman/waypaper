@@ -30,25 +30,25 @@ class Keys:
         keybindings = configparser.ConfigParser()
         keybindings.read(self.cf.keybindings_file, 'utf-8')
         
-        self.clear_input_fields = self.fill_out_keys(keybindings.get("Keybindings", "clear_input_fields", fallback=self.clear_input_fields))
-        self.quit = self.fill_out_keys(keybindings.get("Keybindings", "quit", fallback=self.quit))
-        self.clear_cache = self.fill_out_keys(keybindings.get("Keybindings", "clear_cache", fallback=self.clear_cache))
-        self.random_wallpaper = self.fill_out_keys(keybindings.get("Keybindings", "random_wallpaper", fallback=self.random_wallpaper))
-        self.hidden_files = self.fill_out_keys(keybindings.get("Keybindings", "hidden_files", fallback=self.hidden_files))
-        self.search = self.fill_out_keys(keybindings.get("Keybindings", "search", fallback=self.search))
-        self.include_subfolders = self.fill_out_keys(keybindings.get("Keybindings", "include_subfolders", fallback=self.include_subfolders))
-        self.navigation_left = self.fill_out_keys(keybindings.get("Keybindings", "navigation_left", fallback=self.navigation_left))
-        self.navigation_down = self.fill_out_keys(keybindings.get("Keybindings", "navigation_down", fallback=self.navigation_down))
-        self.navigation_up = self.fill_out_keys(keybindings.get("Keybindings", "navigation_up", fallback=self.navigation_up))
-        self.navigation_right = self.fill_out_keys(keybindings.get("Keybindings", "navigation_right", fallback=self.navigation_right))
-        self.choose_folder = self.fill_out_keys(keybindings.get("Keybindings", "choose_folder", fallback=self.choose_folder))
-        self.scroll_to_top = self.fill_out_keys(keybindings.get("Keybindings", "scroll_to_top", fallback=self.scroll_to_top))
-        self.zen_mode = self.fill_out_keys(keybindings.get("Keybindings", "zen_mode", fallback=self.zen_mode))
-        self.scroll_to_bottom = self.fill_out_keys(keybindings.get("Keybindings", "scroll_to_bottom", fallback=self.scroll_to_bottom))
-        self.help_page = self.fill_out_keys(keybindings.get("Keybindings", "help_page", fallback=self.help_page))
-        self.select_wallpaper = self.fill_out_keys(keybindings.get("Keybindings", "select_wallpaper", fallback=self.select_wallpaper))
+        self.clear_input_fields = self.fill_out_keycodes(keybindings.get("Keybindings", "clear_input_fields", fallback=self.clear_input_fields))
+        self.quit = self.fill_out_keycodes(keybindings.get("Keybindings", "quit", fallback=self.quit))
+        self.clear_cache = self.fill_out_keycodes(keybindings.get("Keybindings", "clear_cache", fallback=self.clear_cache))
+        self.random_wallpaper = self.fill_out_keycodes(keybindings.get("Keybindings", "random_wallpaper", fallback=self.random_wallpaper))
+        self.hidden_files = self.fill_out_keycodes(keybindings.get("Keybindings", "hidden_files", fallback=self.hidden_files))
+        self.search = self.fill_out_keycodes(keybindings.get("Keybindings", "search", fallback=self.search))
+        self.include_subfolders = self.fill_out_keycodes(keybindings.get("Keybindings", "include_subfolders", fallback=self.include_subfolders))
+        self.navigation_left = self.fill_out_keycodes(keybindings.get("Keybindings", "navigation_left", fallback=self.navigation_left))
+        self.navigation_down = self.fill_out_keycodes(keybindings.get("Keybindings", "navigation_down", fallback=self.navigation_down))
+        self.navigation_up = self.fill_out_keycodes(keybindings.get("Keybindings", "navigation_up", fallback=self.navigation_up))
+        self.navigation_right = self.fill_out_keycodes(keybindings.get("Keybindings", "navigation_right", fallback=self.navigation_right))
+        self.choose_folder = self.fill_out_keycodes(keybindings.get("Keybindings", "choose_folder", fallback=self.choose_folder))
+        self.scroll_to_top = self.fill_out_keycodes(keybindings.get("Keybindings", "scroll_to_top", fallback=self.scroll_to_top))
+        self.zen_mode = self.fill_out_keycodes(keybindings.get("Keybindings", "zen_mode", fallback=self.zen_mode))
+        self.scroll_to_bottom = self.fill_out_keycodes(keybindings.get("Keybindings", "scroll_to_bottom", fallback=self.scroll_to_bottom))
+        self.help_page = self.fill_out_keycodes(keybindings.get("Keybindings", "help_page", fallback=self.help_page))
+        self.select_wallpaper = self.fill_out_keycodes(keybindings.get("Keybindings", "select_wallpaper", fallback=self.select_wallpaper))
     
-    def fill_out_keys(self, keys):
+    def fill_out_keycodes(self, keys):
         if type(keys) is list:
             return keys
         else:
