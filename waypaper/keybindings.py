@@ -1,4 +1,5 @@
 import gi
+import os
 import configparser
 from waypaper.config import Config
 
@@ -27,6 +28,14 @@ class Keys:
         self.select_wallpaper = [Gdk.keyval_from_name("Return"), Gdk.keyval_from_name("KP_Enter")]
     
     def fill_keys_from_file(self, path):
+
+        try:
+            with open(path, 'r') as file:
+                pass
+        except FileNotFoundError:
+            print(f"File '{path}' does not exist")
+            return
+        
         keybindings = configparser.ConfigParser()
         keybindings.read(self.cf.keybindings_file, 'utf-8')
         
@@ -53,6 +62,6 @@ class Keys:
             return keys
         else:
             result_keycodes = []
-            for key in keys.split(', '):
-                result_keycodes.append(Gdk.keyval_from_name(key))
+            for key in keys.split(','):
+                result_keycodes.append(Gdk.keyval_from_name(key.strip()))
             return result_keycodes
