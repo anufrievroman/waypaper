@@ -48,7 +48,7 @@ def get_monitor_names_with_swww() -> List[str]:
         monitors_info = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
         monitors = monitors_info.split("\n")
         for monitor in monitors[:-1]:
-            connected_monitors.append(monitor.split(':')[0])
+            connected_monitors.append(monitor.split(':')[1].lstrip())
     except Exception as e:
         print(f"Exception: {e}")
     return connected_monitors
