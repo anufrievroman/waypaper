@@ -47,8 +47,14 @@ def get_monitor_names_with_swww() -> List[str]:
         # Check available monitors:
         monitors_info = str(subprocess.check_output(["swww", "query"], encoding='utf-8'))
         monitors = monitors_info.split("\n")
+        version_p = subprocess.run(["swww", "-V"], capture_output=True, text=True)
+        swww_version = [int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")]
         for monitor in monitors[:-1]:
-            connected_monitors.append(monitor.split(':')[1].lstrip())
+            if swww_version >= [0, 11, 0]:
+                connected_monitors.append(monitor.split(':')[1].lstrip())
+            else:
+                connected_monitors.append(monitor.split(':')[0])
+
     except Exception as e:
         print(f"Exception: {e}")
     return connected_monitors
