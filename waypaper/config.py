@@ -125,6 +125,8 @@ class Config:
         state = configparser.ConfigParser()
         state.read(self.state_file, 'utf-8')
 
+        self.backend = state.get("State", "backend", fallback=self.backend)
+
         # Read and convert strings representing lists and paths:
         monitors_str = state.get("State", "monitors", fallback=self.selected_monitor, raw=True)
         wallpapers_str = state.get("State", "wallpaper", fallback="", raw=True)
@@ -188,6 +190,7 @@ class Config:
         state.read(self.state_file)
         if not state.has_section("State"):
             state.add_section("State")
+        state.set("State", "backend", self.backend)
         self.write_folder_list_to_config("State", state)
         state.set("State", "monitors", "\n".join(self.monitors))
         state.set("State", "wallpaper", '\n'.join(self.shorten_path(p) for p in self.wallpapers))
@@ -220,13 +223,13 @@ class Config:
 
         # If state file is used, some parameters are not save into config:
         if not self.use_xdg_state:
+            config.set("Settings", "backend", self.backend)
             self.write_folder_list_to_config("Settings", config)
             config.set("Settings", "monitors", "\n".join(self.monitors))
             config.set("Settings", "wallpaper", '\n'.join(self.shorten_path(p) for p in self.wallpapers))
 
         # Save the parameters into config:
         config.set("Settings", "show_path_in_tooltip", str(self.show_path_in_tooltip))
-        config.set("Settings", "backend", self.backend)
         config.set("Settings", "fill", self.fill_option)
         config.set("Settings", "sort", self.sort_option)
         config.set("Settings", "color", self.color)
