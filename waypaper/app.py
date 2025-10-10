@@ -14,6 +14,7 @@ from waypaper.config import Config
 from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitor_options
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
+from waypaper.keybindings import Keys
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -26,6 +27,7 @@ class App(Gtk.Window):
         super().__init__(title="Waypaper")
         self.cf = cf
         self.txt = txt
+        self.keys = Keys(cf)
         self.check_backends()
         self.set_default_size(820, 600)
         self.connect("delete-event", Gtk.main_quit)
@@ -35,6 +37,7 @@ class App(Gtk.Window):
         self.number_of_resize = 0
         self.init_ui()
         self.main_box.grab_focus()
+        self.keys.fill_keys_from_file(self.cf.keybindings_file)
 
         # Start the image processing in a separate thread:
         threading.Thread(target=self.process_images).start()
@@ -766,72 +769,72 @@ class App(Gtk.Window):
 
         # Processing keys for losing focus on text fields:
         if self.is_enering_text:
-            if event.keyval in [Gdk.KEY_Escape, Gdk.KEY_Return, Gdk.KEY_KP_Enter]:
+            if event.keyval in self.keys.clear_input_fields:
                 self.reset_input_fields()
             return
 
         # Processing rest of the keys:
-        elif (event.keyval == Gdk.KEY_q) or (event.keyval == Gdk.KEY_Escape):
+        elif event.keyval in self.keys.quit:
             Gtk.main_quit()
 
-        elif event.keyval == Gdk.KEY_r:
+        elif event.keyval in self.keys.clear_cache:
             self.clear_cache()
 
-        elif event.keyval == Gdk.KEY_R:
+        elif event.keyval in self.keys.random_wallpaper:
             self.set_random_wallpaper()
 
-        elif event.keyval in [Gdk.KEY_period]:
+        elif event.keyval in self.keys.hidden_files:
             self.toggle_hidden_files()
 
-        elif event.keyval in [Gdk.KEY_slash]:
+        elif event.keyval in self.keys.search:
             self.search_entry.grab_focus()
             return True
 
-        elif event.keyval in [Gdk.KEY_s]:
+        elif event.keyval in self.keys.include_subfolders:
             self.toggle_include_subfolders()
 
-        elif event.keyval in [Gdk.KEY_h, Gdk.KEY_Left]:
+        elif event.keyval in self.keys.navigation_left:
             self.selected_index = max(self.selected_index - 1, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in [Gdk.KEY_j, Gdk.KEY_Down]:
+        elif event.keyval in self.keys.navigation_down:
             self.selected_index = min(self.selected_index + self.cf.number_of_columns, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in [Gdk.KEY_k, Gdk.KEY_Up]:
+        elif event.keyval in self.keys.navigation_up:
             self.selected_index = max(self.selected_index - self.cf.number_of_columns, 0)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval in [Gdk.KEY_l, Gdk.KEY_Right]:
+        elif event.keyval in self.keys.navigation_right:
             self.selected_index = min(self.selected_index + 1, len(self.image_paths) - 1)
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval == Gdk.KEY_f:
+        elif event.keyval in self.keys.choose_folder:
             self.choose_folder()
 
-        elif event.keyval == Gdk.KEY_g:
+        elif event.keyval in self.keys.scroll_to_top:
             self.selected_index = 0
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval == Gdk.KEY_z:
+        elif event.keyval in self.keys.zen_mode:
             self.cf.zen_mode = not self.cf.zen_mode
             self.load_image_grid()
 
-        elif event.keyval == Gdk.KEY_G:
+        elif event.keyval in self.keys.scroll_to_bottom:
             self.selected_index = len(self.image_paths) - 1
             self.load_image_grid()
             self.scroll_to_selected_image()
 
-        elif event.keyval == Gdk.KEY_question:
+        elif event.keyval in self.keys.help_page:
             message = self.txt.msg_help
             self.show_message(message)
 
-        elif event.keyval == Gdk.KEY_Return or event.keyval == Gdk.KEY_KP_Enter:
+        elif event.keyval in self.keys.select_wallpaper:
             wallpaper_path = self.image_paths[self.selected_index]
             self.set_selected_wallpaper(wallpaper_path)
 
