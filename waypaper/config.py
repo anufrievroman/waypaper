@@ -107,7 +107,7 @@ class Config:
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
-        self.keybindings_file = config.get("Settings", "keybindings", fallback=self.keybindings_file)
+        self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -251,7 +251,7 @@ class Config:
         config.set("Settings", "mpvpaper_options", str(self.mpvpaper_options))
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         config.set("Settings", "stylesheet", str(self.style_file))
-        config.set("Settings", "keybindings", str(self.keybindings_file))
+        config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
 
         try:
             with open(self.config_file, "w") as configfile:
