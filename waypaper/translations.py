@@ -45,7 +45,7 @@ class English:
         self.msg_zen = "Zen mode"
         self.msg_zen_enter = "You are entering Zen mode.\nPress z to return to normal mode."
 
-        self.msg_help = "Waypaper's hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
+        self.msg_help = "Waypaper's default hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
         self.msg_help += "z - Toggle zen mode\n"
         self.msg_help += ". - Toggle hidden images\ns - Toggle images in subfolders\n/ - Search\n? - Help\nq - Exit\n\n"

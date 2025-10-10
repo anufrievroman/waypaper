@@ -1,3 +1,5 @@
+"""This module controls custom keybindings, provides the defaults, and loads alternatives from the file"""
+
 import gi
 import os
 import configparser
@@ -8,6 +10,7 @@ from gi.repository import Gdk
 
 class Keys:
     def __init__(self, cf: Config) -> None:
+        """Setting default keybindings"""
         self.cf = cf
         self.clear_input_fields = [Gdk.keyval_from_name("Escape"), Gdk.keyval_from_name("Return"), Gdk.keyval_from_name("KP_Enter")]
         self.quit = [Gdk.keyval_from_name("q"), Gdk.keyval_from_name("Escape")]
@@ -26,19 +29,22 @@ class Keys:
         self.scroll_to_bottom = [Gdk.keyval_from_name("G")]
         self.help_page = [Gdk.keyval_from_name("question")]
         self.select_wallpaper = [Gdk.keyval_from_name("Return"), Gdk.keyval_from_name("KP_Enter")]
-    
-    def fill_keys_from_file(self, path):
 
+    def fill_keys_from_file(self, path):
+        """Loading user-defined keybindings from the provided file"""
+
+        # Show an error is the path is not correct:
         try:
             with open(path, 'r') as file:
                 pass
         except FileNotFoundError:
             print(f"File '{path}' does not exist")
             return
-        
+
+        # Parse the file:
         keybindings = configparser.ConfigParser()
         keybindings.read(self.cf.keybindings_file, 'utf-8')
-        
+
         self.clear_input_fields = self.fill_out_keycodes(keybindings.get("Keybindings", "clear_input_fields", fallback=self.clear_input_fields))
         self.quit = self.fill_out_keycodes(keybindings.get("Keybindings", "quit", fallback=self.quit))
         self.clear_cache = self.fill_out_keycodes(keybindings.get("Keybindings", "clear_cache", fallback=self.clear_cache))
@@ -56,8 +62,9 @@ class Keys:
         self.scroll_to_bottom = self.fill_out_keycodes(keybindings.get("Keybindings", "scroll_to_bottom", fallback=self.scroll_to_bottom))
         self.help_page = self.fill_out_keycodes(keybindings.get("Keybindings", "help_page", fallback=self.help_page))
         self.select_wallpaper = self.fill_out_keycodes(keybindings.get("Keybindings", "select_wallpaper", fallback=self.select_wallpaper))
-    
+
     def fill_out_keycodes(self, keys):
+        """Convert string from the file into lists of keybindings"""
         if type(keys) is list:
             return keys
         else:
