@@ -6,7 +6,7 @@ To add a new language, add a new class, and update the load_language() function.
 
 class English:
     def __init__(self):
-        self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, hyprpaper, mpvpaper, and swww."
+        self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, hyprpaper, mpvpaper, gslapper, and swww."
         self.msg_info = "For more information, visit:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "print version of the program"
@@ -56,7 +56,7 @@ class English:
         self.err_backend += "Use your package manager to install at least one of these backends:\n\n"
         self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
-        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n- gslapper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
 
         self.tip_refresh = "Recache the folder of images"
@@ -77,7 +77,7 @@ class English:
 
 class German:
     def __init__(self):
-        self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils, hyprpaper, mpvpaper, und swww."
+        self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils, hyprpaper, mpvpaper, gslapper, und swww."
         self.msg_info = "Weitere Informationen finden Sie unter:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "gibt die Programmversion aus"
@@ -128,7 +128,7 @@ class German:
         self.err_backend += "Installieren Sie mindestens eines der folgenden Backends:\n\n"
         self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
-        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n- gslapper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
 
         self.tip_refresh = "Erneutes einlesen des Hintergrundbild-Ordners"
@@ -148,7 +148,7 @@ class German:
 
 class French:
     def __init__(self):
-        self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils, hyprpaper, mpvpaper, et swww."
+        self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils, hyprpaper, mpvpaper, gslapper, et swww."
         self.msg_info = "Pour plus d'informations, visitez :\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "afficher la version du programme"
@@ -198,7 +198,7 @@ class French:
         self.err_backend += "Utilisez votre gestionnaire de paquets pour installer au moins l'un de ces backends :\n\n"
         self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
-        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n- gslapper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
 
         self.tip_refresh = "Recréer le dossier d'images"

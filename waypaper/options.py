@@ -5,7 +5,7 @@ import subprocess
 from typing import List, Dict
 
 
-BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "xwallpaper", "wallutils", "hyprpaper", "mpvpaper", "macos"]
+BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "xwallpaper", "wallutils", "hyprpaper", "mpvpaper", "gslapper", "macos"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
 SORT_OPTIONS: List[str] = ["name", "namerev", "date", "daterev", "random"]
 SORT_DISPLAYS: Dict[str, str] = {"name": "Name ↓", "namerev": "Name ↑", "date": "Date ↓", "daterev": "Date ↑", "random": "Random"}
@@ -24,7 +24,8 @@ IMAGE_EXTENSIONS: Dict[str, List[str]] = {
         BACKEND_OPTIONS[5]: ['.gif', '.jpg', '.jpeg', '.png'],
         BACKEND_OPTIONS[6]: ['.jpg', '.jpeg', '.png', '.webp'],
         BACKEND_OPTIONS[7]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff', '.avif'] + VIDEO_EXTENSIONS,
-        BACKEND_OPTIONS[8]: ['.gif', '.jpg', '.jpeg', '.png'],
+        BACKEND_OPTIONS[8]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff', '.avif'] + VIDEO_EXTENSIONS,
+        BACKEND_OPTIONS[9]: ['.gif', '.jpg', '.jpeg', '.png'],
         }
 
 SWWW_TRANSITION_TYPES: List[str] = ["any", "none", "simple", "fade", "wipe",  "left", "right", "top",
