@@ -1,16 +1,16 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper`, `xwallpaper` and `feh`. See [demo](https://www.youtube.com/watch?v=O9OL7iH_KVY) and [documentation](https://anufrievroman.gitbook.io/waypaper).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `swww`, `wallutils`, `hyprpaper`, `mpvpaper`, `gslapper`, `xwallpaper` and `feh`. See [demo](https://www.youtube.com/watch?v=O9OL7iH_KVY) and [documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screen.jpg)
 
 ## Features
 
 - Vim keys
-- Supports GIF animations (with `swww` or `mpvpaper`)
-- Supports videos (with `mpvpaper`)
-- Supports multiple monitors (with `swww` or `swaybg` or `hyprpaper` or `mpvpaper`)
-- Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
+- Supports GIF animations (with `swww` or `mpvpaper` or `gslapper`)
+- Supports videos (with `mpvpaper` or `gslapper`)
+- Supports multiple monitors (with `swww` or `swaybg` or `hyprpaper` or `mpvpaper` or `gslapper`)
+- Works on Wayland (with `swww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper` or `gslapper`)
 - Works on Xorg (with `feh`, `xwallpaper` or `wallutils`)
 - Restores wallpaper after restart (`waypaper --restore`)
 - Fast and minimal (315 kB)
@@ -21,7 +21,7 @@ Install at least one of the backends and Waypaper, which works as a frontend.
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) or [hyprpaper](https://github.com/hyprwm/hyprpaper) on Wayland or [xwallpaper](https://github.com/stoeckmann/xwallpaper) or [feh](https://github.com/derf/feh) on Xorg or [mpvpaper](https://github.com/GhostNaN/mpvpaper) or [wallutils](https://github.com/xyproto/wallutils) on both.
+Install a preferred backend from your package manager: [swww](https://github.com/Horus645/swww) or [swaybg](https://github.com/swaywm/swaybg) or [hyprpaper](https://github.com/hyprwm/hyprpaper) on Wayland or [xwallpaper](https://github.com/stoeckmann/xwallpaper) or [feh](https://github.com/derf/feh) on Xorg or [mpvpaper](https://github.com/GhostNaN/mpvpaper) or [gslapper](https://github.com/Nomadcxx/gSlapper) or [wallutils](https://github.com/xyproto/wallutils) on both.
 
 ### 2. Install Waypaper
 
