@@ -397,9 +397,13 @@ class App(Gtk.Window):
         self.options_box.remove(self.mpv_stop_button)
         self.options_box.remove(self.mpv_pause_button)
         self.options_box.remove(self.mpv_sound_toggle)
-        if self.cf.backend == "mpvpaper" or self.cf.backend == "gslapper":
+        if self.cf.backend == "mpvpaper":
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
+            self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
+        elif self.cf.backend == "gslapper":
+            # Hide pause button for gSlapper since it doesn't support pause functionality
+            self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
 
     def fill_option_display(self):
