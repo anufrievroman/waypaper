@@ -626,12 +626,21 @@ class App(Gtk.Window):
 
 
     def on_mpv_sound_toggled(self, toggle) -> None:
-        """Toggle sound of mpv player"""
+        """Toggle sound of mpv player or gSlapper"""
         self.cf.mpvpaper_sound = toggle.get_active()
         if self.cf.backend == "mpvpaper":
             subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
         elif self.cf.backend == "gslapper":
-            subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/gst-socket-{self.cf.selected_monitor}", shell=True)
+            # For gSlapper, immediately restart with new audio setting
+            from waypaper.changer import change_with_gslapper
+            from pathlib import Path
+            
+            # Get current wallpaper path from config
+            if hasattr(self.cf, 'selected_wallpaper') and self.cf.selected_wallpaper:
+                try:
+                    change_with_gslapper(Path(self.cf.selected_wallpaper), self.cf, self.cf.selected_monitor)
+                except Exception as e:
+                    print(f"Could not restart gSlapper with new audio setting: {e}")
 
 
     def on_include_subfolders_toggled(self, toggle) -> None:
@@ -738,11 +747,12 @@ class App(Gtk.Window):
             subprocess.Popen(["killall", "gslapper"])
 
     def on_mpv_pause_button_clicked(self, widget) -> None:
-        """On clicking mpv pause button, pause mpvpaper or gslapper"""
+        """On clicking mpv pause button, pause mpvpaper or show not supported for gSlapper"""
         if self.cf.backend == "mpvpaper":
             subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
         elif self.cf.backend == "gslapper":
-            subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/gst-socket-{self.cf.selected_monitor}", shell=True)
+            # gSlapper doesn't support pause, so do nothing or show message
+            print("Pause not supported for gSlapper")
 
     def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""

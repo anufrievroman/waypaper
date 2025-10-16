@@ -120,41 +120,52 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with gslapper backend"""
 
-    fill_types = {
-            "fill": "panscan=1.0",
-            "fit": "panscan=0.0",
-            "center": "",
-            "stretch": "--keepaspect=no",
-            "tile": "",
-            }
-    fill = fill_types[cf.fill_option.lower()]
+    # Map waypaper fill options to gSlapper options (using updated gSlapper capabilities):
+    fill_options = {
+        "fill": "panscan=1.0",      # Full screen coverage
+        "fit": "panscan=1.0",       # As you specified for proper video fitting  
+        "center": "original",       # Native resolution
+        "stretch": "stretch",       # New gSlapper stretch support
+        "tile": "panscan=1.0"       # Tiled behavior (using full coverage)
+    }
+    
+    # Get the gSlapper option for current fill setting:
+    gslapper_fill = fill_options.get(cf.fill_option.lower(), "panscan=1.0")
+    print(f"gSlapper fill option: {cf.fill_option} -> {gslapper_fill}")
 
-    # If gslapper is already active on given monitor, try to call that process:
-    try:
-        subprocess.check_output(["pgrep", "-f", f"gslapper.*{monitor}"], encoding='utf-8')
-        time.sleep(0.2)
-        print(f"Detected running gslapper on {monitor}, now trying to call gslapper socket")
-        subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/gst-socket-{monitor}", shell=True)
+    # Kill any existing gSlapper process for this monitor:
+    seek_and_destroy("gslapper", monitor)
 
-    # If gslapper is not running, create a new process:
-    except subprocess.CalledProcessError:
-        print("Detected no running gslapper, starting new gslapper process")
-        command = ["gslapper", "--fork"]
-        if cf.mpvpaper_sound:
-            command.extend(["-o", f"input-ipc-server=/tmp/gst-socket-{monitor} {cf.mpvpaper_options} loop {fill} --background-color='{cf.color}'"])
-        else:
-            command.extend(["-o", f"input-ipc-server=/tmp/gst-socket-{monitor} {cf.mpvpaper_options} loop {fill} --mute=yes --background-color='{cf.color}'"])
-
-        # Specify the monitor:
-        if monitor == "All":
-            command.extend('*')
-        else:
-            command.extend([monitor])
-
-        command.extend([image_path])
-
-        print(f"{command=}")
-        subprocess.Popen(command)
+    # Build gSlapper command with proper options:
+    command = ["gslapper", "--fork"]
+    
+    # Build options list:
+    options = []
+    options.append("loop")  # Always loop videos
+    options.append(gslapper_fill)  # Add the fill/scaling option
+    
+    if not cf.mpvpaper_sound:  # If sound is OFF in UI
+        options.append("no-audio")
+    
+    # Add user's custom options if any:
+    if cf.mpvpaper_options.strip():
+        options.append(cf.mpvpaper_options.strip())
+    
+    # Build options string:
+    if options:
+        command.extend(["-o", " ".join(options)])
+    
+    # Specify the monitor:
+    if monitor == "All":
+        command.append('*')
+    else:
+        command.append(monitor)
+    
+    # Add the image/video path:
+    command.append(str(image_path))
+    
+    print(f"gSlapper command: {command}")
+    subprocess.Popen(command)
 
 
 def change_with_swww(image_path: Path, cf: Config, monitor: str):
