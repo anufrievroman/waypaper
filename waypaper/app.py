@@ -393,13 +393,17 @@ class App(Gtk.Window):
             self.cf.swww_transition_duration = duration
 
     def mpv_options_display(self) -> None:
-        """Show mpv options if backend is mpvpaper, and remove them for other backends"""
+        """Show mpv options if backend is mpvpaper or gslapper, and remove them for other backends"""
         self.options_box.remove(self.mpv_stop_button)
         self.options_box.remove(self.mpv_pause_button)
         self.options_box.remove(self.mpv_sound_toggle)
         if self.cf.backend == "mpvpaper":
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
+            self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
+        elif self.cf.backend == "gslapper":
+            # Hide pause button for gSlapper since it doesn't support pause functionality
+            self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
 
     def fill_option_display(self):
@@ -622,9 +626,21 @@ class App(Gtk.Window):
 
 
     def on_mpv_sound_toggled(self, toggle) -> None:
-        """Toggle sound of mpv player"""
+        """Toggle sound of mpv player or gSlapper"""
         self.cf.mpvpaper_sound = toggle.get_active()
-        subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
+        if self.cf.backend == "mpvpaper":
+            subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
+        elif self.cf.backend == "gslapper":
+            # For gSlapper, immediately restart with new audio setting
+            from waypaper.changer import change_with_gslapper
+            from pathlib import Path
+            
+            # Get current wallpaper path from config
+            if hasattr(self.cf, 'selected_wallpaper') and self.cf.selected_wallpaper:
+                try:
+                    change_with_gslapper(Path(self.cf.selected_wallpaper), self.cf, self.cf.selected_monitor)
+                except Exception as e:
+                    print(f"Could not restart gSlapper with new audio setting: {e}")
 
 
     def on_include_subfolders_toggled(self, toggle) -> None:
@@ -724,12 +740,19 @@ class App(Gtk.Window):
         self.clear_cache()
 
     def on_mpv_stop_button_clicked(self, widget) -> None:
-        """On clicking mpv stop button, kill the mpvpaper"""
-        subprocess.Popen(["killall", "mpvpaper"])
+        """On clicking mpv stop button, kill the mpvpaper or gslapper"""
+        if self.cf.backend == "mpvpaper":
+            subprocess.Popen(["killall", "mpvpaper"])
+        elif self.cf.backend == "gslapper":
+            subprocess.Popen(["killall", "gslapper"])
 
     def on_mpv_pause_button_clicked(self, widget) -> None:
-        """On clicking mpv stop button, kill the mpvpaper"""
-        subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
+        """On clicking mpv pause button, pause mpvpaper or show not supported for gSlapper"""
+        if self.cf.backend == "mpvpaper":
+            subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
+        elif self.cf.backend == "gslapper":
+            # gSlapper doesn't support pause, so do nothing or show message
+            print("Pause not supported for gSlapper")
 
     def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""

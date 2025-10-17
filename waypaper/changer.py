@@ -42,6 +42,8 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             pid = find_process_pid(f"mpvpaper -f socket-{monitor}")
         elif process == "swaybg":
             pid = find_process_pid(f"swaybg -o {monitor}")
+        elif process == "gslapper":
+            pid = find_process_pid(f"gslapper.*{monitor}")
         else:
             return
         try:
@@ -113,6 +115,57 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 
         print(f"{command=}")
         subprocess.Popen(command)
+
+
+def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
+    """Change wallpaper with gslapper backend"""
+
+    # Map waypaper fill options to gSlapper options (using updated gSlapper capabilities):
+    fill_options = {
+        "fill": "panscan=1.0",      # Full screen coverage
+        "fit": "panscan=1.0",       # As you specified for proper video fitting  
+        "center": "original",       # Native resolution
+        "stretch": "stretch",       # New gSlapper stretch support
+        "tile": "panscan=1.0"       # Tiled behavior (using full coverage)
+    }
+    
+    # Get the gSlapper option for current fill setting:
+    gslapper_fill = fill_options.get(cf.fill_option.lower(), "panscan=1.0")
+    print(f"gSlapper fill option: {cf.fill_option} -> {gslapper_fill}")
+
+    # Kill any existing gSlapper process for this monitor:
+    seek_and_destroy("gslapper", monitor)
+
+    # Build gSlapper command with proper options:
+    command = ["gslapper", "--fork"]
+    
+    # Build options list:
+    options = []
+    options.append("loop")  # Always loop videos
+    options.append(gslapper_fill)  # Add the fill/scaling option
+    
+    if not cf.mpvpaper_sound:  # If sound is OFF in UI
+        options.append("no-audio")
+    
+    # Add user's custom options if any:
+    if cf.mpvpaper_options.strip():
+        options.append(cf.mpvpaper_options.strip())
+    
+    # Build options string:
+    if options:
+        command.extend(["-o", " ".join(options)])
+    
+    # Specify the monitor:
+    if monitor == "All":
+        command.append('*')
+    else:
+        command.append(monitor)
+    
+    # Add the image/video path:
+    command.append(str(image_path))
+    
+    print(f"gSlapper command: {command}")
+    subprocess.Popen(command)
 
 
 def change_with_swww(image_path: Path, cf: Config, monitor: str):
@@ -268,6 +321,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_wallutils(image_path, cf, monitor)
         if cf.backend == "hyprpaper":
             change_with_hyprpaper(image_path, cf, monitor)
+        if cf.backend == "gslapper":
+            change_with_gslapper(image_path, cf, monitor)
         if cf.backend == "macos":
             change_with_finder(image_path, cf, monitor)
         if cf.backend != "none":
