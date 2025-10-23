@@ -341,9 +341,12 @@ class App(Gtk.Window):
         self.monitor_option_combo = Gtk.ComboBoxText()
         for monitor in monitor_names:
             self.monitor_option_combo.append_text(monitor)
+        if self.cf.monitors[-1] in monitor_names:
+            self.monitor_option_combo.set_active(monitor_names.index(self.cf.monitors[-1]))
+        else:
             self.monitor_option_combo.set_active(0)
-            self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
-            self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
+        self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
+        self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
 
         # Add it to the row of buttons:
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
