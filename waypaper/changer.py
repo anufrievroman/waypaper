@@ -36,6 +36,18 @@ def seek_and_destroy(process: str, monitor: str = "All"):
         except subprocess.CalledProcessError:
             pass
 
+    # Kill swww-daemon or awww-daemon if both are running at the same time, only works on all monitors
+    elif process == "swww-daemon":
+        try:
+            subprocess.Popen(["swww kill"])
+        except subprocess.CalledProcessError:
+            pass
+    elif process == "awww-daemon":
+        try:
+            subprocess.Popen(["awww kill"])
+        except subprocess.CalledProcessError:
+            pass
+
     # Otherwise, find PID of the process for certain monitor and kill it:
     else:
         if process == "mpvpaper":
@@ -174,6 +186,8 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
     # Because swaybg and hyprpaper are known to conflict with swww, kill them:
     seek_and_destroy("swaybg")
     seek_and_destroy("hyprpaper")
+    # if both swww and awww  are running they conflict
+    seek_and_destroy("awww-daemon")
 
     fill_types = {
             "fill": "crop",
@@ -216,6 +230,8 @@ def change_with_awww(image_path: Path, cf: Config, monitor: str):
     # Because swaybg and hyprpaper are known to conflict with swww, kill them:
     seek_and_destroy("swaybg")
     seek_and_destroy("hyprpaper")
+    # if both swww and awww are running they conflict
+    seek_and_destroy("swww-daemon")
 
     fill_types = {
             "fill": "crop",
