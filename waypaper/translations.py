@@ -6,7 +6,7 @@ To add a new language, add a new class, and update the load_language() function.
 
 class English:
     def __init__(self):
-        self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, hyprpaper, mpvpaper, and swww."
+        self.msg_desc = "GUI wallpaper setter for Wayland and X11. It works as a frontend for feh, swaybg, wallutils, hyprpaper, mpvpaper, and awww."
         self.msg_info = "For more information, visit:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "print version of the program"
@@ -54,7 +54,7 @@ class English:
         self.err_cache = "Error deleting cache"
         self.err_backend = "Looks like none of the wallpaper backends is installed in the system.\n"
         self.err_backend += "Use your package manager to install at least one of these backends:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -77,7 +77,7 @@ class English:
 
 class German:
     def __init__(self):
-        self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils, hyprpaper, mpvpaper, und swww."
+        self.msg_desc = "Grafisches Hintergrundbild-Auswahlwerkzeug für Wayland und X11. Es dient als Frontend für feh, swaybg, wallutils, hyprpaper, mpvpaper, und awww."
         self.msg_info = "Weitere Informationen finden Sie unter:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "gibt die Programmversion aus"
@@ -126,7 +126,7 @@ class German:
         self.err_cache = "Fehler beim Löschen des Zwischenspeichers"
         self.err_backend = "Es konnte kein Hintergrundbild-Backend gefunden werden.\n"
         self.err_backend += "Installieren Sie mindestens eines der folgenden Backends:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -148,7 +148,7 @@ class German:
 
 class French:
     def __init__(self):
-        self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils, hyprpaper, mpvpaper, et swww."
+        self.msg_desc = "Sélecteur de papier peint graphique pour Wayland et X11. Il fonctionne comme une interface pour feh, swaybg, wallutils, hyprpaper, mpvpaper, et awww."
         self.msg_info = "Pour plus d'informations, visitez :\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "afficher la version du programme"
@@ -196,7 +196,7 @@ class French:
         self.err_cache = "Erreur lors de la suppression du cache"
         self.err_backend = "Il semble qu'aucun des backends de papier peint ne soit installé sur le système.\n"
         self.err_backend += "Utilisez votre gestionnaire de paquets pour installer au moins l'un de ces backends :\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -218,7 +218,7 @@ class French:
 
 class Polish:
     def __init__(self):
-        self.msg_desc = "GUI narzędzie do ustawiania tapety dla Wayland i X11. Jest interfejsem dla feh, swaybg, wallutils, hyprpaper, mpvpaper i swww."
+        self.msg_desc = "GUI narzędzie do ustawiania tapety dla Wayland i X11. Jest interfejsem dla feh, swaybg, wallutils, hyprpaper, mpvpaper i awww."
         self.msg_info = "Aby dowiedzieć się więcej, odwiedź:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "pokaż wersję programu"
@@ -267,7 +267,7 @@ class Polish:
         self.err_backend = "Żadne zaplecze nie zostało znalezione.\n"
         self.err_backend += "Use your package manager to install at least one of these backends:\n\n"
         self.err_backend += "Użyj twojego instalera, żeby zainstalować co najmiej jedno zaplecze:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -289,7 +289,7 @@ class Polish:
 
 class Russian:
     def __init__(self):
-        self.msg_desc = "Графический интерфейс для установки обоев на Wayland и X11. Работает как фронтенд для feh, swaybg, wallutils, hyprpaper, mpvpaper и swww."
+        self.msg_desc = "Графический интерфейс для установки обоев на Wayland и X11. Работает как фронтенд для feh, swaybg, wallutils, hyprpaper, mpvpaper и awww."
         self.msg_info = "Для получения дополнительной информации посетите:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "вывести версию программы"
@@ -337,7 +337,7 @@ class Russian:
         self.err_cache = "Ошибка при удалении кэша"
         self.err_backend = "Похоже, что ни один из бэкендов для установки обоев не установлен в системе.\n"
         self.err_backend += "Используйте менеджер пакетов для установки хотя бы одного из следующих бэкендов:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -360,7 +360,7 @@ class Russian:
 
 class Belarusian:
     def __init__(self):
-        self.msg_desc = "Графічны інтэрфейс для ўстаноўкі шпалер на Wayland і X11. Працуе як фронтэнд для feh, swaybg, wallutils, hyprpaper, mpvpaper і swww."
+        self.msg_desc = "Графічны інтэрфейс для ўстаноўкі шпалер на Wayland і X11. Працуе як фронтэнд для feh, swaybg, wallutils, hyprpaper, mpvpaper і awww."
         self.msg_info = "Для атрымання дадатковай інфармацыі наведайце:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "вывесці версію праграмы"
@@ -408,7 +408,7 @@ class Belarusian:
         self.err_cache = "Памылка пры выдаленні кэша"
         self.err_backend = "Падобна, што ніводны з бэкэндаў для ўсталёўкі шпалер не ўсталяваны ў сістэме.\n"
         self.err_backend += "Выкарыстоўвайце менеджэр пакетаў для ўстаноўкі хаця б аднаго з наступных бэкендаў:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -431,7 +431,7 @@ class Belarusian:
 
 class Chinese:
     def __init__(self):
-        self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、mpvpaper、wallutils 和 swww 的前端。"
+        self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、mpvpaper、wallutils 和 awww 的前端。"
         self.msg_info = "欲了解更多信息，请访问:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "版本信息"
@@ -479,7 +479,7 @@ class Chinese:
         self.err_cache = "删除缓存时出错"
         self.err_backend = "系统中似乎没有安装壁纸后端。\n"
         self.err_backend += "使用包管理器安装至少以下后端之一：\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -501,7 +501,7 @@ class Chinese:
 
 class TraditionalChinese:
     def __init__(self):
-        self.msg_desc = "Wayland 和 X11 的 GUI 壁紙選擇器。是能作為 feh、swaybg、wallutils、hyprpaper、mpvpaper 和 swww 的前端。"
+        self.msg_desc = "Wayland 和 X11 的 GUI 壁紙選擇器。是能作為 feh、swaybg、wallutils、hyprpaper、mpvpaper 和 awww 的前端。"
         self.msg_info = "如要更多資訊, 請前往:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "版本"
@@ -549,7 +549,7 @@ class TraditionalChinese:
         self.err_cache = "刪除緩存時出錯"
         self.err_backend = "沒有安裝任何壁紙後端.\n"
         self.err_backend += "請使用包裝管理器安裝至少一個後端:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -572,7 +572,7 @@ class TraditionalChinese:
 
 class Spanish:
     def __init__(self):
-        self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz gráfica para "feh", "swaybg", "wallutils", "swww" y "hyprpaper".'
+        self.msg_desc = 'Cambiador de fondo de pantalla para "Wayland" y "X11". Trabaja como una interfaz gráfica para "feh", "swaybg", "wallutils", "awww" y "hyprpaper".'
         self.msg_info = "Para más información, visita:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "imprime la versión del programa"
@@ -620,7 +620,7 @@ class Spanish:
         self.err_cache = "Error borrando el caché"
         self.err_backend = "Parece ser que ningún programa para actualizar la imagen de fondo está instalado en su sistema.\n"
         self.err_backend += "Por favor, instala uno de los siguientes programas para poder cambiar la imagen de fondo:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -642,7 +642,7 @@ class Spanish:
 
 class Turkish:
     def __init__(self):
-        self.msg_desc = "Wayland ve X11 için duvar kağıdı ayarlayıcı arayüz. feh, swaybg, wallutils, hyprpaper, mpvpaper ve swww için ön yüz sağlar."
+        self.msg_desc = "Wayland ve X11 için duvar kağıdı ayarlayıcı arayüz. feh, swaybg, wallutils, hyprpaper, mpvpaper ve awww için ön yüz sağlar."
         self.msg_info = "Daha fazla bilgi için:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "programın sürümünü yazdır"
@@ -690,7 +690,7 @@ class Turkish:
         self.err_cache = "Önbellek silinirken hata oluştu"
         self.err_backend = "Sistemde herhangi bir duvar kağıdı arka ucu kurulu değil gibi görünüyor.\n"
         self.err_backend += "Lütfen aşağıdaki arka uçlardan en az birini kurun:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
@@ -712,7 +712,7 @@ class Turkish:
 
 class Japanese:
     def __init__(self):
-        self.msg_desc = "Wayland と X11 用の GUI 壁紙設定ツール。feh, swaybg, wallutils, hyprpaper, mpvpaper, swww のフロントエンドとして動作します。"
+        self.msg_desc = "Wayland と X11 用の GUI 壁紙設定ツール。feh, swaybg, wallutils, hyprpaper, mpvpaper, awww のフロントエンドとして動作します。"
         self.msg_info = "詳細は以下をご覧ください:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "プログラムのバージョンを表示"
@@ -770,7 +770,7 @@ class Japanese:
         self.err_cache = "キャッシュ削除エラー"
         self.err_backend = "壁紙バックエンドがシステムにインストールされていないようです。\n"
         self.err_backend += "以下のうち少なくとも1つをパッケージマネージャでインストールしてください:\n\n"
-        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
         self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
         self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
         self.err_backend += self.msg_info
