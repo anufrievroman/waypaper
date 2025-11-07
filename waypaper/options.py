@@ -5,7 +5,7 @@ import subprocess
 from typing import List, Dict
 
 
-BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "xwallpaper", "wallutils", "hyprpaper", "mpvpaper", "gslapper", "macos"]
+BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "awww", "feh", "xwallpaper", "wallutils", "hyprpaper", "mpvpaper", "gslapper", "macos"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
 SORT_OPTIONS: List[str] = ["name", "namerev", "date", "daterev", "random"]
 SORT_DISPLAYS: Dict[str, str] = {"name": "Name ↓", "namerev": "Name ↑", "date": "Date ↓", "daterev": "Date ↑", "random": "Random"}
@@ -60,6 +60,30 @@ def get_monitor_names_with_swww() -> List[str]:
         print(f"Exception: {e}")
     return connected_monitors
 
+def get_monitor_names_with_awww() -> List[str]:
+    """Obtain the list of plugged monitors using awww daemon"""
+    connected_monitors: List[str] = []
+    try:
+        # Check if awww-deamon is already running. If not, launch it:
+        try:
+            subprocess.check_output(["pgrep", "awww-daemon"], encoding='utf-8')
+        except subprocess.CalledProcessError:
+            subprocess.Popen(["awww-daemon"])
+            print("The awww-daemon launched.")
+        # Check available monitors:
+        monitors_info = str(subprocess.check_output(["awww", "query"], encoding='utf-8'))
+        monitors = monitors_info.split("\n")
+        version_p = subprocess.run(["awww", "-V"], capture_output=True, text=True)
+        awww_version = [int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")]
+        for monitor in monitors[:-1]:
+            if awww_version >= [0, 11, 0]:
+                connected_monitors.append(monitor.split(':')[1].lstrip())
+            else:
+                connected_monitors.append(monitor.split(':')[0])
+
+    except Exception as e:
+        print(f"Exception: {e}")
+    return connected_monitors
 
 def get_monitor_names_with_hyprctl() -> List[str]:
     """Obtain the list of plugged monitors using hyprctl"""
@@ -75,6 +99,8 @@ def get_monitors(backend) -> List[str]:
             return get_monitor_names_with_hyprctl()
         elif backend == "swww":
             return get_monitor_names_with_swww()
+        elif backend == "awww":
+            return get_monitor_names_with_awww()
         else:
             from screeninfo import get_monitors as _get_monitors
             return [m.name for m in _get_monitors()]

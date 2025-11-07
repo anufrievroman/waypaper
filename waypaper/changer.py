@@ -210,6 +210,47 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
         command.extend(["--outputs", monitor])
     subprocess.Popen(command)
 
+def change_with_awww(image_path: Path, cf: Config, monitor: str):
+    """Change wallpaper with awww backend"""
+
+    # Because swaybg and hyprpaper are known to conflict with swww, kill them:
+    seek_and_destroy("swaybg")
+    seek_and_destroy("hyprpaper")
+
+    fill_types = {
+            "fill": "crop",
+            "fit": "fit",
+            "center": "no",
+            "stretch": "crop",
+            "tile": "no",
+            }
+    fill = fill_types[cf.fill_option.lower()]
+
+    # Check if swww-daemon is already running. If not, launch it:
+    try:
+        subprocess.check_output(["pgrep", "awww-daemon"], encoding='utf-8')
+    except subprocess.CalledProcessError:
+        subprocess.Popen(["awww-daemon"])
+        print("Launched awww-daemon")
+
+    # Get rid of this in future when swww updates everywhere:
+    version_p = subprocess.run(["awww", "-V"], capture_output=True, text=True)
+    awww_version = [int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")]
+
+    command = ["awww", "img", image_path]
+    command.extend(["--resize", fill])
+    if awww_version >= [0, 11, 0]:
+        command.extend(["--fill-color", cf.color.lstrip("#")])
+    else:
+        command.extend(["--fill-color", cf.color])
+    command.extend(["--transition-type", cf.swww_transition_type])
+    command.extend(["--transition-step", str(cf.swww_transition_step)])
+    command.extend(["--transition-angle", str(cf.swww_transition_angle)])
+    command.extend(["--transition-duration", str(cf.swww_transition_duration)])
+    command.extend(["--transition-fps", str(cf.swww_transition_fps)])
+    if monitor != "All":
+        command.extend(["--outputs", monitor])
+    subprocess.Popen(command)
 
 def change_with_feh(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with feh backend"""
@@ -313,6 +354,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_mpvpaper(image_path, cf, monitor)
         if cf.backend == "swww":
             change_with_swww(image_path, cf, monitor)
+        if cf.backend == "awww":
+            change_with_awww(image_path, cf, monitor)
         if cf.backend == "feh":
             change_with_feh(image_path, cf, monitor)
         if cf.backend == "xwallpaper":

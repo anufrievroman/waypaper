@@ -265,7 +265,7 @@ class App(Gtk.Window):
         self.mpv_options_display()
         self.fill_option_display()
         self.color_picker_display()
-        self.swww_options_display()
+        self.swww_or_awww_options_display()
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
@@ -351,15 +351,15 @@ class App(Gtk.Window):
         # Add it to the row of buttons:
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
-    def swww_options_display(self) -> None:
-        """Show swww transition options if backend is swww"""
+    def swww_or_awww_options_display(self) -> None:
+        """Show swww transition options if backend is swww or awww"""
         self.options_box.remove(self.swww_transitions_options)
         self.options_box.remove(self.swww_angle_entry)
         self.options_box.remove(self.swww_steps_entry)
         self.options_box.remove(self.swww_fps_entry)
         self.options_box.remove(self.swww_duration_entry)
 
-        if self.cf.backend != "swww":
+        if self.cf.backend != "swww" and self.cf.backend != "awww" :
             return
 
         self.swww_transitions_options = Gtk.ComboBoxText()
@@ -378,9 +378,9 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
         self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
 
-    def swww_options_read(self) -> None:
+    def swww_or_awww_options_read(self) -> None:
         """Read swww transition options from the UI if they are valid"""
-        if self.cf.backend != "swww":
+        if self.cf.backend != "swww" and self.cf.backend != "awww":
             return
         angle = self.swww_angle_entry.get_text()
         steps = self.swww_steps_entry.get_text()
@@ -588,7 +588,7 @@ class App(Gtk.Window):
 
     def set_selected_wallpaper(self, path: str) -> None:
         """Set selected image as a wallpaper and save the state"""
-        self.swww_options_read()
+        self.swww_or_awww_options_read()
         self.cf.select_wallpaper(path)
         if self.cf.selected_wallpaper:
             threading.Thread(target=change_wallpaper, args=(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor)).start()
@@ -712,7 +712,7 @@ class App(Gtk.Window):
         self.mpv_options_display()
         self.fill_option_display()
         self.color_picker_display()
-        self.swww_options_display()
+        self.swww_or_awww_options_display()
         self.show_all()
 
 
