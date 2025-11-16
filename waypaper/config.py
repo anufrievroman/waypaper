@@ -256,7 +256,7 @@ class Config:
         try:
             with open(self.config_file, "w") as configfile:
                 config.write(configfile)
-        except PermissionError:
+        except (PermissionError, OSError):
             print("Could not save config file due to permission error.")
 
         # If requested, save the state file:
