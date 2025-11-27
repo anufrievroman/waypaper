@@ -793,7 +793,7 @@ class Japanese:
 
 class Finnish:
     def __init__(self):
-        self.msg_desc = "GUI taustakuva asettaja Waylandille and X11:lle. Se toimii frontendinä feh:lle, swaybg:lle, wallutils:lle, hyprpaper:lle, mpvpaper:lle, and swww:lle."
+        self.msg_desc = "GUI taustakuva valitsia Waylandille and X11:lle. Se toimii frontendinä feh:lle, swaybg:lle, wallutils:lle, hyprpaper:lle, mpvpaper:lle, and swww:lle."
         self.msg_info = "Hanki lisätietoa käymällä:\nhttps://github.com/anufrievroman/waypaper"
 
         self.msg_arg_help = "printtaa ohjelman version"
@@ -801,13 +801,13 @@ class Finnish:
         self.msg_arg_rest = "palauta viime taustakuva"
         self.msg_arg_back = "määritä mitä backendiä käyttää asettaa taustakuvan"
         self.msg_arg_rand = "valitse satunnainen taustakuva"
-        self.msg_arg_list = "lists some parameters in json to standard out"
+        self.msg_arg_list = "listaa jotain paramettereitä jsonissa standard outtiin"
         self.msg_arg_wall = "aseta määritetty taustakuva"
         self.msg_arg_folder = "määritä mistä kansiosta etsiä taustakuvia"
-        self.msg_arg_statefile = "määritä custom tiedosto missä säilyttä ohjelman tila."
+        self.msg_arg_statefile = "määritä custom tiedosto missä säilyttä ohjelman tila"
         self.msg_arg_monitor = "määritä haluttu näyttö nimen avulla"
         self.msg_arg_post = "estää suorittamasta post_command asetettu configssa"
-        self.msg_arg_show_path_in_tooltip = "näytä relatiivipolku tooltipissä"
+        self.msg_arg_show_path_in_tooltip = "näytä relatiivipolku tool-tipissä"
 
         self.msg_select = "Valitse"
         self.msg_refresh = "Lataa uudelleen"
@@ -820,8 +820,8 @@ class Finnish:
         self.msg_random = "Random"
         self.msg_exit = "Exit"
         self.msg_options = "Asetukset"
-        self.msg_subfolders = "Show subfolders"
-        self.msg_all_subfolders = "Show all subfolders"
+        self.msg_subfolders = "Näytä subkansiot"
+        self.msg_all_subfolders = "Näytä kaikki subkansiot"
         self.msg_hidden = "Näytä piilotetut"
         self.msg_gifs = "Näytä vain GIF:it"
         self.msg_transitions = "Näytä siirtymä valinnat"
@@ -833,7 +833,7 @@ class Finnish:
         self.msg_zen_enter = "Sinä siirryt Zen tilaan.\nPaina z vaihtaaksesi takaisin normi tilaan."
 
         self.msg_help = "Waypaperin oletus pikanäppäimet:\n\nhjkl - Navigaatio (←↓↑→)\nEnter - Aseta valittu taustakuva\nf - Vaihda taustakuva kansio\n"
-        self.msg_help += "g -   \nG - Skrollaa pohjaan\nR - Aseta satunnainen taustakuva\nr - Recachee taustakuvat\n"
+        self.msg_help += "g -   \nG - Skrollaa pohjaan\nR - Aseta satunnainen taustakuva\nr - Recacheaa taustakuvat\n"
         self.msg_help += "z - Kytke zen tila\n"
         self.msg_help += ". - Kytke piilotetut kuvat\ns - Kytke kuvat subkansioissa\n/ - Etsi\n? - Apua\nq - Exit\n\n"
         self.msg_help += self.msg_info
