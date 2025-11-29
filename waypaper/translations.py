@@ -791,6 +791,77 @@ class Japanese:
         self.tip_start = "指定した時間ごとに自動的に壁紙変更を開始"
 
 
+class Finnish:
+    def __init__(self):
+        self.msg_desc = "GUI taustakuva valitsia Waylandille and X11:lle. Se toimii frontendinä feh:lle, swaybg:lle, wallutils:lle, hyprpaper:lle, mpvpaper:lle, and swww:lle."
+        self.msg_info = "Hanki lisätietoa käymällä:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "printtaa ohjelman version"
+        self.msg_arg_fill = "määritä miten täyttää näyttö valitulla kuvalla"
+        self.msg_arg_rest = "palauta viime taustakuva"
+        self.msg_arg_back = "määritä mitä backendiä käyttää asettaa taustakuvan"
+        self.msg_arg_rand = "valitse satunnainen taustakuva"
+        self.msg_arg_list = "listaa jotain paramettereitä jsonissa standard outtiin"
+        self.msg_arg_wall = "aseta määritetty taustakuva"
+        self.msg_arg_folder = "määritä mistä kansiosta etsiä taustakuvia"
+        self.msg_arg_statefile = "määritä custom tiedosto missä säilyttä ohjelman tila"
+        self.msg_arg_monitor = "määritä haluttu näyttö nimen avulla"
+        self.msg_arg_post = "estää suorittamasta post_command asetettu configssa"
+        self.msg_arg_show_path_in_tooltip = "näytä relatiivipolku tool-tipissä"
+
+        self.msg_select = "Valitse"
+        self.msg_refresh = "Lataa uudelleen"
+        self.msg_clear = "Clear"
+        self.msg_start = "Aloita automaattinen-vaihto"
+        self.msg_stop = "Pysäytä Kaikki"
+        self.msg_sound = "Ääni"
+        self.msg_pause = "Pause"
+        self.msg_search = "Etsi"
+        self.msg_random = "Random"
+        self.msg_exit = "Exit"
+        self.msg_options = "Asetukset"
+        self.msg_subfolders = "Näytä subkansiot"
+        self.msg_all_subfolders = "Näytä kaikki subkansiot"
+        self.msg_hidden = "Näytä piilotetut"
+        self.msg_gifs = "Näytä vain GIF:it"
+        self.msg_transitions = "Näytä siirtymä valinnat"
+        self.msg_changefolder = "Kansio"
+        self.msg_choosefolder = "Valitse kansio"
+        self.msg_caching = "Cachataan taustakuvia..."
+        self.msg_show_path_in_tooltip = "Näytä polku tooltipissä"
+        self.msg_zen = "Zen tila"
+        self.msg_zen_enter = "Sinä siirryt Zen tilaan.\nPaina z vaihtaaksesi takaisin normi tilaan."
+
+        self.msg_help = "Waypaperin oletus pikanäppäimet:\n\nhjkl - Navigaatio (←↓↑→)\nEnter - Aseta valittu taustakuva\nf - Vaihda taustakuva kansio\n"
+        self.msg_help += "g -   \nG - Skrollaa pohjaan\nR - Aseta satunnainen taustakuva\nr - Recacheaa taustakuvat\n"
+        self.msg_help += "z - Kytke zen tila\n"
+        self.msg_help += ". - Kytke piilotetut kuvat\ns - Kytke kuvat subkansioissa\n/ - Etsi\n? - Apua\nq - Exit\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "Error poistamassa cache"
+        self.err_backend = "Näyttää siltä että yksikään taustakuva backendeistä ei ole ladattu järjestelmälläsi.\n"
+        self.err_backend += "Käytä pakettihallitsijaasi asentaaksesi ainakin yksi näytä backendeistä:\n\n"
+        self.err_backend += "- swaybg (Wayland)\n- swww (Wayland)\n"
+        self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += self.msg_info
+
+        self.tip_refresh = "Uudellencacheaa kuvien kansio"
+        self.tip_fill = "Valitse täyytötapa"
+        self.tip_backend = "Valitse backendi"
+        self.tip_sorting = "Valitse järjestystapa"
+        self.tip_display = "Valitse näyttö"
+        self.tip_color = "Valitse taustaväri"
+        self.tip_random = "Valitse satunnainen taustakuva"
+        self.tip_exit = "Poistu ohjelmasta"
+        self.tip_transition = "Valitse siirtymä tapa"
+        self.tip_mpv_stop = "Pysäyttää kaikki mpv prosessit"
+        self.tip_mpv_pause = "Play/Pause video taustakuva"
+        self.tip_mpv_sound = "Soita videon ääni"
+        self.tip_timer = "Miten usein vaihtaa satunnainen taustakuva"
+        self.tip_start = "Aloita taustakuvan automaattinen vaihto aika intervaalin jälkeen"
+
+
 def load_language(lang):
     """Load the language package according to selected language"""
     if lang == "de":
@@ -813,6 +884,8 @@ def load_language(lang):
         txt = Turkish()
     elif lang == "jp":
         txt = Japanese()
+    elif lang == "fi":
+        txt = Finnish()
     else:
         txt = English()
     return txt
