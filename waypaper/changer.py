@@ -222,7 +222,7 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
     command.extend(["--transition-fps", str(cf.swww_transition_fps)])
     if monitor != "All":
         command.extend(["--outputs", monitor])
-    subprocess.Popen(command)
+    subprocess.run(command)
 
 def change_with_awww(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with awww backend"""
@@ -266,7 +266,7 @@ def change_with_awww(image_path: Path, cf: Config, monitor: str):
     command.extend(["--transition-fps", str(cf.swww_transition_fps)])
     if monitor != "All":
         command.extend(["--outputs", monitor])
-    subprocess.Popen(command)
+    subprocess.run(command)
 
 def change_with_feh(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with feh backend"""
