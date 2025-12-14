@@ -312,6 +312,12 @@ class App(Gtk.Window):
         self.show_path_in_tooltip_checkbox.connect("toggled", self.on_show_path_in_tooltip_toggled)
         self.menu.append(self.show_path_in_tooltip_checkbox)
 
+        # Create auto change backend (x11/wayland)
+        self.auto_change_backend_checkbox = Gtk.CheckMenuItem(label="Auto Change Backend")
+        self.auto_change_backend_checkbox.set_active(self.cf.auto_change_backend)
+        self.auto_change_backend_checkbox.connect("toggled", self.on_auto_change_backend_toggled)
+        self.menu.append(self.auto_change_backend_checkbox)
+
         # Create zen mode toggle:
         self.zen_mode_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_zen)
         self.zen_mode_checkbox.set_active(self.cf.zen_mode)
@@ -619,6 +625,12 @@ class App(Gtk.Window):
         """Toggle only gifs checkbox via menu"""
         self.cf.show_gifs_only = toggle.get_active()
         threading.Thread(target=self.process_images).start()
+
+
+    def on_auto_change_backend_toggled(self, toggle):
+        """Toggle auto change backend checkbox via menu"""
+        self.cf.auto_change_backend = toggle.get_active()
+        self.cf.save()
 
 
     def on_zen_mode_toggled(self, toggle) -> None:

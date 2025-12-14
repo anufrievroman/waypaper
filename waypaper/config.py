@@ -52,6 +52,9 @@ class Config:
         self.use_xdg_state = False
         self.use_post_command = True
         self.show_path_in_tooltip = True
+        self.auto_change_backend = False
+        self.auto_change_backend_x11 = "" # feh
+        self.auto_change_backend_wayland = "" # swww
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -108,6 +111,9 @@ class Config:
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
+        self.auto_change_backend = config.getboolean("Settings", "auto_change_backend", fallback=self.auto_change_backend)
+        self.auto_change_backend_x11 = config.get("Settings", "auto_change_backend_x11", fallback=self.auto_change_backend_x11)
+        self.auto_change_backend_wayland = config.get("Settings", "auto_change_backend_wayland", fallback=self.auto_change_backend_wayland)
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -252,6 +258,9 @@ class Config:
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
+        config.set("Settings", "auto_change_backend", str(self.auto_change_backend))
+        config.set("Settings", "auto_change_backend_x11", self.auto_change_backend_x11)
+        config.set("Settings", "auto_change_backend_wayland", self.auto_change_backend_wayland)
 
         try:
             with open(self.config_file, "w") as configfile:
