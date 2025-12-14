@@ -187,3 +187,12 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
         black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
         black_pixbuf.fill(0x0)
         black_pixbuf.savev(str(cache_file), "png", [], [])
+
+
+def get_session_type() -> str:
+    if os.environ["XDG_SESSION_TYPE"] == "x11":
+        return "x11"
+    elif os.environ["XDG_SESSION_TYPE"] == "wayland":
+        return "wayland"
+    else:
+        return ""

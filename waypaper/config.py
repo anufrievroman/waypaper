@@ -7,7 +7,7 @@ from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
-from waypaper.common import check_installed_backends
+from waypaper.common import check_installed_backends, get_session_type
 
 
 class Config:
@@ -123,6 +123,13 @@ class Config:
             self.monitors = [str(monitor) for monitor in monitors_str.split("\n")]
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split("\n")]
+
+        # Set bankend if auto_change_backend is true
+        if self.auto_change_backend:
+            if get_session_type() == "x11" and self.auto_change_backend_x11 != "":
+                self.backend = self.auto_change_backend_x11
+            elif get_session_type() == "wayland" and self.auto_change_backend_wayland != "":
+                self.backend = self.auto_change_backend_wayland
 
 
     def read_state(self) -> None:
