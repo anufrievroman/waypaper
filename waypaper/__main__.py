@@ -1,6 +1,7 @@
 """Main module that either runs cli commands or starts GUI"""
 
 import argparse
+import os.path
 import sys
 import time
 import json
@@ -34,6 +35,7 @@ parser.add_argument("--fill", help=txt.msg_arg_fill, choices=FILL_OPTIONS)
 parser.add_argument("--wallpaper", help=txt.msg_arg_wall)
 parser.add_argument("--folder", help=txt.msg_arg_folder, nargs="+", default = [])
 parser.add_argument("--state-file", help=txt.msg_arg_statefile)
+parser.add_argument("--config-file", help=txt.msg_arg_configfile)
 parser.add_argument("--backend", help=txt.msg_arg_back, choices=BACKEND_OPTIONS)
 parser.add_argument("--list", help=txt.msg_arg_list, action='store_true')
 parser.add_argument("--monitor", help=txt.msg_arg_monitor, choices=get_monitor_options(cf.backend))
@@ -44,11 +46,13 @@ args = parser.parse_args()
 def run():
     """Read user arguments and either run GUI app or perform requested action"""
 
-    # Read user arguments, and update things if alternative state file was provided:
+    # Read user arguments, and update things if alternative state file or config file was provided:
     cf.read_parameters_from_user_arguments(args)
+    if args.config_file:
+        cf.read()
     if args.state_file:
         cf.read_state()
-        cf.read_parameters_from_user_arguments(args)
+    cf.read_parameters_from_user_arguments(args)
     cf.check_validity()
 
     # Set monitor and wallpaper from user arguments:
