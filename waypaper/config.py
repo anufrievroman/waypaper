@@ -278,5 +278,7 @@ class Config:
         if args.state_file:
             self.use_xdg_state = True # Use of a custom state file implies state is in a separate file, requires use_xdg_state
             self.state_file = pathlib.Path(args.state_file).expanduser()
+        if args.config_file:
+            self.config_file = pathlib.Path(args.config_file).expanduser()
         if args.no_post_command:
             self.use_post_command = False
