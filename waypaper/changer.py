@@ -353,6 +353,7 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 subprocess.check_output(unload_command, encoding="utf-8").strip()
                 subprocess.check_output(preload_command, encoding="utf-8").strip()
             except Exception:
+                pass
                 # Preloading images with Hyprpaper is currently unavailable due to https://github.com/hyprwm/hyprpaper/pull/288
                 # It has not yet been determined if this will be reimplemented - https://github.com/hyprwm/hyprpaper/issues/292
             try:
