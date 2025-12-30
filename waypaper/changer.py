@@ -357,7 +357,15 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 # Preloading images with Hyprpaper is currently unavailable due to https://github.com/hyprwm/hyprpaper/pull/288
                 # It has not yet been determined if this will be reimplemented - https://github.com/hyprwm/hyprpaper/issues/292
             try:
-                result = subprocess.check_output(wallpaper_command, encoding="utf-8").strip()
+                wpresult = subprocess.run(
+                    wallpaper_command,
+                    encoding="utf-8",
+                    capture_output=True,
+                    text=True,
+                    check=True
+                )
+                if wpresult.returncode == 0 or wpresult.stdout.strip() == "ok":
+                    result = "ok"
                 time.sleep(0.1)
             except Exception:
                 retry_counter += 1
