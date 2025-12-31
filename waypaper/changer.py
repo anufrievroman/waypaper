@@ -370,6 +370,14 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
             except Exception:
                 retry_counter += 1
 
+def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
+    fill_types = {
+        "fill": "fill",
+        "fit": "fit",
+        "stretch": "stretch",
+        }
+    fill = fill_types[cf.fill_option.lower()]
+    pass
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
@@ -397,6 +405,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_gslapper(image_path, cf, monitor)
         if cf.backend == "macos":
             change_with_finder(image_path, cf, monitor)
+        if cf.backend == "linux-wallpaperengine":
+            change_with_linux_wallpaperengine(image_path, cf, monitor)
         if cf.backend != "none":
             filename = Path(image_path).resolve().name
             print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")

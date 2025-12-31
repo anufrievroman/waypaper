@@ -12,7 +12,8 @@ from pathlib import Path
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitor_options
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, \
+    get_monitor_options, FILL_OPTIONS_LINUX_WALLPAPERENGINE
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
 
@@ -169,18 +170,7 @@ class App(Gtk.Window):
         self.backend_option_combo.connect("changed", self.on_backend_option_changed)
         self.backend_option_combo.set_tooltip_text(self.txt.tip_backend)
 
-        # Create a fill option dropdown menu:
-        self.fill_option_combo = Gtk.ComboBoxText()
-        for option in FILL_OPTIONS:
-            capitalized_option = option[0].upper() + option[1:]
-            self.fill_option_combo.append_text(capitalized_option)
-        if self.cf.fill_option in FILL_OPTIONS:
-            active_fill_option_index = FILL_OPTIONS.index(self.cf.fill_option)
-            self.fill_option_combo.set_active(active_fill_option_index)
-        else:
-            self.fill_option_combo.set_active(0)
-        self.fill_option_combo.connect("changed", self.on_fill_option_changed)
-        self.fill_option_combo.set_tooltip_text(self.txt.tip_fill)
+        self.create_fill_option_combo()
 
         # Create a color picker:
         self.color_picker_button = Gtk.ColorButton()
@@ -277,6 +267,32 @@ class App(Gtk.Window):
 
         self.show_all()
 
+    def create_fill_option_combo(self):
+        # Create a fill option dropdown menu:
+        self.fill_option_combo = Gtk.ComboBoxText()
+        for option in FILL_OPTIONS:
+            capitalized_option = option[0].upper() + option[1:]
+            self.fill_option_combo.append_text(capitalized_option)
+        if self.cf.fill_option in FILL_OPTIONS:
+            active_fill_option_index = FILL_OPTIONS.index(self.cf.fill_option)
+            self.fill_option_combo.set_active(active_fill_option_index)
+        else:
+            self.fill_option_combo.set_active(0)
+        self.fill_option_combo.connect("changed", self.on_fill_option_changed)
+        self.fill_option_combo.set_tooltip_text(self.txt.tip_fill)
+
+        # Create a fill option (linux-wallpaperengine) dropdown menu:
+        self.fill_option_combo_linux_wallpaperengine = Gtk.ComboBoxText()
+        for option in FILL_OPTIONS_LINUX_WALLPAPERENGINE:
+            capitalized_option = option[0].upper() + option[1:]
+            self.fill_option_combo_linux_wallpaperengine.append_text(capitalized_option)
+        if self.cf.fill_option in FILL_OPTIONS_LINUX_WALLPAPERENGINE:
+            active_fill_option_index = FILL_OPTIONS_LINUX_WALLPAPERENGINE.index(self.cf.fill_option)
+            self.fill_option_combo_linux_wallpaperengine.set_active(active_fill_option_index)
+        else:
+            self.fill_option_combo_linux_wallpaperengine.set_active(0)
+        self.fill_option_combo_linux_wallpaperengine.connect("changed", self.on_fill_option_changed)
+        self.fill_option_combo_linux_wallpaperengine.set_tooltip_text(self.txt.tip_fill)
 
     def create_options_menu(self) -> None:
         """Create a GTK menu with some options of the application"""
@@ -410,10 +426,13 @@ class App(Gtk.Window):
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
 
     def fill_option_display(self):
-        """Display fill option if backend is not hyprpaper"""
+        """Display fill option if backend are not linux-wallpaperengine or hyprpaper"""
         self.options_box.remove(self.fill_option_combo)
-        if self.cf.backend not in ['hyprpaper', 'none']:
+        self.options_box.remove(self.fill_option_combo_linux_wallpaperengine)
+        if self.cf.backend not in ['linux-wallpaperengine', 'hyprpaper', 'none']:
             self.options_box.pack_end(self.fill_option_combo, False, False, 0)
+        elif self.cf.backend == 'linux-wallpaperengine':
+            self.options_box.pack_end(self.fill_option_combo_linux_wallpaperengine, False, False, 0)
 
     def color_picker_display(self):
         """Display color option if backend is not hyprpaper"""
