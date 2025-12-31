@@ -18,6 +18,8 @@ class Config:
         self.home_path = pathlib.Path.home()
         self.image_folder_list: list[pathlib.Path] = []
         self.image_folder_fallback: str = str(user_pictures_path())
+        self.wallpaperengine_folder = pathlib.Path("~/.steam/root/steamapps/workshop/content/431960").expanduser()
+        self.wallpaperengine_wallpaper_id = 0
         self.installed_backends = check_installed_backends()
         self.selected_wallpaper = None
         self.selected_monitor = "All"
@@ -108,6 +110,8 @@ class Config:
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
+        self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+        self.wallpaperengine_wallpaper_id = int(config.get("Setttings", "wallpaperengine_wallpaper_id", fallback=self.wallpaperengine_wallpaper_id))
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -138,6 +142,9 @@ class Config:
             self.selected_monitor = self.monitors[0]
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split("\n")]
+        self.wallpaperengine_folder = pathlib.Path(state.get("State", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+        self.wallpaperengine_wallpaper_id = int(state.get("State", "wallpaperengine_wallpaper_id", fallback=self.wallpaperengine_wallpaper_id))
+
 
 
     def check_validity(self) -> None:
@@ -196,6 +203,8 @@ class Config:
         self.write_folder_list_to_config("State", state)
         state.set("State", "monitors", "\n".join(self.monitors))
         state.set("State", "wallpaper", '\n'.join(self.shorten_path(p) for p in self.wallpapers))
+        state.set("State", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
+        state.set("State", "wallpaperengine_wallpaper_id", str(self.wallpaperengine_wallpaper_id))
         try:
             with open(self.state_file, "w") as statefile:
                 state.write(statefile)
@@ -252,6 +261,8 @@ class Config:
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
+        config.set("Settings", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
+        config.set("Settings", "wallpaperengine_wallpaper_id", str(self.wallpaperengine_wallpaper_id))
 
         try:
             with open(self.config_file, "w") as configfile:
