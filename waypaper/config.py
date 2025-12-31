@@ -54,6 +54,16 @@ class Config:
         self.use_post_command = True
         self.show_path_in_tooltip = True
 
+        # options for linux-wallpaperengine
+        self.linux_wallpaperengine_silent = False
+        self.linux_wallpaperengine_noautomute = False
+        self.linux_wallpaperengine_no_audio_processing = False
+        self.linux_wallpaperengine_disable_particles = False
+        self.linux_wallpaperengine_disable_mouse = False
+        self.linux_wallpaperengine_disable_parallax = False
+        self.linux_wallpaperengine_no_fullscreen_pause = False
+        self.linux_wallpaperengine_fullscreen_pause_only_active = False
+
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -110,6 +120,14 @@ class Config:
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
         self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+        self.linux_wallpaperengine_silent = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_noautomute  = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_no_audio_processing  = config.getboolean("Settings", "linux_wallpaperengine_no_audio_processing", fallback=self.linux_wallpaperengine_no_audio_processing)
+        self.linux_wallpaperengine_disable_particles  = config.getboolean("Settings", "linux_wallpaperengine_disable_particles", fallback=self.linux_wallpaperengine_disable_particles)
+        self.linux_wallpaperengine_disable_mouse  = config.getboolean("Settings", "linux_wallpaperengine_disable_mouse", fallback=self.linux_wallpaperengine_disable_mouse)
+        self.linux_wallpaperengine_disable_parallax  = config.getboolean("Settings", "linux_wallpaperengine_disable_parallax", fallback=self.linux_wallpaperengine_disable_parallax)
+        self.linux_wallpaperengine_no_fullscreen_pause  = config.getboolean("Settings", "linux_wallpaperengine_no_fullscreen_pause", fallback=self.linux_wallpaperengine_no_fullscreen_pause)
+        self.linux_wallpaperengine_fullscreen_pause_only_active  = config.getboolean("Settings", "linux_wallpaperengine_fullscreen_pause_only_active", fallback=self.linux_wallpaperengine_fullscreen_pause_only_active)
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -258,7 +276,13 @@ class Config:
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
         config.set("Settings", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
-
+        config.set("Settings", "linux_wallpaperengine_silent", str(self.linux_wallpaperengine_silent))
+        config.set("Settings", "linux_wallpaperengine_noautomute", str(self.linux_wallpaperengine_noautomute))
+        config.set("Settings", "linux_wallpaperengine_no_audio_processing", str(self.linux_wallpaperengine_no_audio_processing))
+        config.set("Settings", "linux_wallpaperengine_disable_particles", str(self.linux_wallpaperengine_disable_particles))
+        config.set("Settings", "linux_wallpaperengine_disable_mouse", str(self.linux_wallpaperengine_disable_mouse))
+        config.set("Settings", "linux_wallpaperengine_disable_parallax", str(self.linux_wallpaperengine_disable_parallax))
+        config.set("Settings", "linux_wallpaperengine_no_fullscreen_pause", str(self.linux_wallpaperengine_no_fullscreen_pause))
         try:
             with open(self.config_file, "w") as configfile:
                 config.write(configfile)

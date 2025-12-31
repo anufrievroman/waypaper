@@ -380,15 +380,34 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
         "fill": "fill",
         "fit": "fit",
         "stretch": "stretch",
-        "default": "defualt"
+        "default": "default"
         }
-    command = ["linux-wallpaperengine"]
     fill = fill_types[cf.fill_option.lower()]
+    command = ["linux-wallpaperengine"]
+    options = []
+
+    if cf.linux_wallpaperengine_silent:
+        options.append("--silent")
+    if cf.linux_wallpaperengine_noautomute:
+        options.append("--noautomount")
+    if cf.linux_wallpaperengine_no_audio_processing:
+        options.append("--no-audio-processing")
+    if cf.linux_wallpaperengine_no_fullscreen_pause:
+        options.append("--no-full-screen-pause")
+    if cf.linux_wallpaperengine_fullscreen_pause_only_active:
+        options.append("--fullscreen-pause-only-active")
+    if cf.linux_wallpaperengine_disable_particles:
+        options.append("--disable-particles")
+    if cf.linux_wallpaperengine_disable_mouse:
+        options.append("--disable-mouse")
+
     if monitor == "All":
         for monitor in [m.name for m in screeninfo.get_monitors()]:
             command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])
+            command.extend(options)
     else:
         command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])
+        command.extend(options)
 
     print(command)
     subprocess.Popen(command)

@@ -250,12 +250,89 @@ class App(Gtk.Window):
         self.swww_fps_entry.connect("focus-in-event", self.on_focus_in)
         self.swww_fps_entry.connect("focus-out-event", self.on_focus_out)
 
+        # Volume for linux-wallpaperengine
+        self.linux_wallpaperengine_volume_entry = Gtk.Entry()
+        self.linux_wallpaperengine_volume_entry.set_width_chars(6)
+        self.linux_wallpaperengine_volume_entry.set_placeholder_text("volume")
+        self.linux_wallpaperengine_volume_entry.connect("focus-in-event", self.on_focus_in)
+        self.linux_wallpaperengine_volume_entry.connect("focus-out-event", self.on_focus_out)
+
+        # fps for linux-wallpaperengine
+        self.linux_wallpaperengine_fps_entry = Gtk.Entry()
+        self.linux_wallpaperengine_fps_entry.set_width_chars(3)
+        self.linux_wallpaperengine_fps_entry.set_placeholder_text("fps")
+        self.linux_wallpaperengine_fps_entry.connect("focus-in-event", self.on_focus_in)
+        self.linux_wallpaperengine_fps_entry.connect("focus-out-event", self.on_focus_out)
+
+
+        # sound settings linux-wallpaperengine
+        self.linux_wallpaperengine_sound_menu = Gtk.Menu()
+
+        self.linux_wallpaperengine_silent_checkbox = Gtk.CheckMenuItem(label="silent")
+        self.linux_wallpaperengine_silent_checkbox.set_active(self.cf.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_silent_checkbox.connect("toggled", self.on_linux_wallpaperengine_silent_toggled)
+        self.linux_wallpaperengine_sound_menu.append(self.linux_wallpaperengine_silent_checkbox)
+
+        self.linux_wallpaperengine_noautomute_checkbox = Gtk.CheckMenuItem(label="noautomute")
+        self.linux_wallpaperengine_noautomute_checkbox.set_active(self.cf.linux_wallpaperengine_noautomute)
+        self.linux_wallpaperengine_noautomute_checkbox.connect("toggled", self.on_linux_wallpaperengine_noautomnute_toggled)
+        self.linux_wallpaperengine_sound_menu.append(self.linux_wallpaperengine_noautomute_checkbox)
+
+        self.linux_wallpaperengine_no_audio_processing_checkbox = Gtk.CheckMenuItem(label="no-audio-processing")
+        self.linux_wallpaperengine_no_audio_processing_checkbox.set_active(self.cf.linux_wallpaperengine_no_audio_processing)
+        self.linux_wallpaperengine_no_audio_processing_checkbox.connect("toggled", self.on_linux_wallpaperengine_no_audio_prcoessing_toggled)
+        self.linux_wallpaperengine_sound_menu.append(self.linux_wallpaperengine_no_audio_processing_checkbox)
+
+        self.linux_wallpaperengine_sound_menu.show_all()
+        self.linux_wallpaperengine_sound_menu_button = Gtk.Button(label="Sound")
+        self.linux_wallpaperengine_sound_menu_button.connect("clicked", self.on_sound_menu_button_clicked)
+
+        # wallpaper configuration options
+        self.linux_wallpaperengine_config_menu = Gtk.Menu()
+
+        self.linux_wallpaperengine_disable_particles_checkbox = Gtk.CheckMenuItem(label="disable-particles")
+        self.linux_wallpaperengine_disable_particles_checkbox.set_active(self.cf.linux_wallpaperengine_disable_particles)
+        self.linux_wallpaperengine_disable_particles_checkbox.connect("toggled", self.on_linux_wallpaperengine_disable_particles_toggled)
+        self.linux_wallpaperengine_config_menu.append(self.linux_wallpaperengine_disable_particles_checkbox)
+
+        self.linux_wallpaperengine_disable_mouse_checkbox = Gtk.CheckMenuItem(label="disable-mouse")
+        self.linux_wallpaperengine_disable_mouse_checkbox.set_active(self.cf.linux_wallpaperengine_disable_mouse)
+        self.linux_wallpaperengine_disable_mouse_checkbox.connect("toggled", self.on_linux_wallpaperengine_disable_mouse_toggled)
+        self.linux_wallpaperengine_config_menu.append(self.linux_wallpaperengine_disable_mouse_checkbox)
+
+        self.linux_wallpaperengine_disable_pararllax_checkbox = Gtk.CheckMenuItem(label="disable-parallax")
+        self.linux_wallpaperengine_disable_pararllax_checkbox.set_active(self.cf.linux_wallpaperengine_disable_parallax)
+        self.linux_wallpaperengine_disable_pararllax_checkbox.connect("toggled", self.on_linux_wallpaperengine_disable_parallax_toggled)
+        self.linux_wallpaperengine_config_menu.append(self.linux_wallpaperengine_disable_pararllax_checkbox)
+
+        self.linux_wallpaperengine_config_menu.show_all()
+        self.linux_wallpaperengine_config_menu_button = Gtk.Button(label="Config")
+        self.linux_wallpaperengine_config_menu_button.connect("clicked", self.on_config_menu_button_clicked)
+
+        # Performance Options
+        self.linux_wallpaperengine_performance_menu = Gtk.Menu()
+
+        self.linux_wallpaperengine_no_fullscreen_pause_checkbox = Gtk.CheckMenuItem(label="no-fullscreen-pause")
+        self.linux_wallpaperengine_no_fullscreen_pause_checkbox.set_active(self.cf.linux_wallpaperengine_no_fullscreen_pause)
+        self.linux_wallpaperengine_no_fullscreen_pause_checkbox.connect("toggled", self.linux_wallpaperengine_no_fullscreen_pause_toggled)
+        self.linux_wallpaperengine_performance_menu.append( self.linux_wallpaperengine_no_fullscreen_pause_checkbox)
+
+        self.linux_wallpaperengine_fullscreen_pause_only_active_checkbox = Gtk.CheckMenuItem(label="fullscreen-pause-only-active")
+        self.linux_wallpaperengine_fullscreen_pause_only_active_checkbox.set_active(self.cf.linux_wallpaperengine_fullscreen_pause_only_active)
+        self.linux_wallpaperengine_fullscreen_pause_only_active_checkbox.connect("toggled", self.linux_wallpaperengine_fullscreen_pause_only_active_toggled)
+        self.linux_wallpaperengine_performance_menu.append( self.linux_wallpaperengine_fullscreen_pause_only_active_checkbox)
+
+        self.linux_wallpaperengine_performance_menu.show_all()
+        self.linux_wallpaperengine_performance_menu_button = Gtk.Button(label="Performance")
+        self.linux_wallpaperengine_performance_menu_button.connect("clicked", self.on_performance_menu_button_clicked)
+
         # Add different buttons depending on backend:
         self.monitor_option_display()
         self.mpv_options_display()
         self.fill_option_display()
         self.color_picker_display()
         self.swww_or_awww_options_display()
+        self.linux_wallpaperengine_options_display()
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
@@ -434,10 +511,60 @@ class App(Gtk.Window):
         elif self.cf.backend == 'linux-wallpaperengine':
             self.options_box.pack_end(self.fill_option_combo_linux_wallpaperengine, False, False, 0)
 
+    def on_sound_menu_button_clicked(self, widget):
+        self.linux_wallpaperengine_sound_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
+
+    def on_config_menu_button_clicked(self, widget):
+        self.linux_wallpaperengine_config_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
+
+    def on_performance_menu_button_clicked(self, widget):
+        self.linux_wallpaperengine_performance_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
+
+    def on_linux_wallpaperengine_silent_toggled(self, widget):
+        self.cf.linux_wallpaperengine_silent = not self.cf.linux_wallpaperengine_silent
+
+    def on_linux_wallpaperengine_noautomnute_toggled(self, widget):
+        self.cf.linux_wallpaperengine_noautomute = not self.cf.linux_wallpaperengine_noautomute
+
+    def on_linux_wallpaperengine_no_audio_prcoessing_toggled(self, widget):
+        self.cf.linux_wallpaperengine_no_audio_processing = not self.cf.linux_wallpaperengine_no_audio_processing
+
+    def on_linux_wallpaperengine_disable_particles_toggled(self, widget):
+        self.cf.linux_wallpaperengine_disable_particles = not self.cf.linux_wallpaperengine_disable_particles
+
+    def on_linux_wallpaperengine_disable_mouse_toggled(self, widget):
+        self.cf.linux_wallpaperengine_disable_mouse = not self.cf.linux_wallpaperengine_disable_mouse
+
+    def on_linux_wallpaperengine_disable_parallax_toggled(self, widget):
+        self.cf.linux_wallpaperengine_disable_parallax = not self.cf.linux_wallpaperengine_disable_parallax
+
+    def linux_wallpaperengine_no_fullscreen_pause_toggled(self, widget):
+        self.cf.linux_wallpaperengine_no_fullscreen_pause = not self.cf.linux_wallpaperengine_no_fullscreen_pause
+
+    def linux_wallpaperengine_fullscreen_pause_only_active_toggled(self, widget):
+        self.cf.linux_wallpaperengine_fullscreen_pause_only_active = not self.cf.linux_wallpaperengine_fullscreen_pause_only_active
+
+
+    def linux_wallpaperengine_options_display(self):
+        self.options_box.remove(self.linux_wallpaperengine_performance_menu_button)
+        self.options_box.remove(self.linux_wallpaperengine_sound_menu_button)
+        self.options_box.remove(self.linux_wallpaperengine_config_menu_button)
+        self.options_box.remove(self.linux_wallpaperengine_volume_entry)
+        self.options_box.remove(self.linux_wallpaperengine_fps_entry)
+
+        if self.cf.backend != "linux-wallpaperengine":
+            return
+
+        self.options_box.pack_end(self.linux_wallpaperengine_config_menu_button, False, False, 0)
+        self.options_box.pack_end(self.linux_wallpaperengine_sound_menu_button, False, False, 0)
+        self.options_box.pack_end(self.linux_wallpaperengine_performance_menu_button, False, False, 0)
+        self.options_box.pack_end(self.linux_wallpaperengine_volume_entry, False, False, 0)
+        self.options_box.pack_end(self.linux_wallpaperengine_fps_entry, False, False, 0)
+
     def color_picker_display(self):
         """Display color option if backend is not hyprpaper"""
         self.options_box.remove(self.color_picker_button)
-        if self.cf.backend not in ['hyprpaper', 'none']:
+        if self.cf.backend not in ['linux-wallpaperengine', 'hyprpaper', 'none']:
             self.options_box.pack_end(self.color_picker_button, False, False, 0)
 
     def check_backends(self) -> None:
@@ -662,7 +789,7 @@ class App(Gtk.Window):
             # For gSlapper, immediately restart with new audio setting
             from waypaper.changer import change_with_gslapper
             from pathlib import Path
-            
+
             # Get current wallpaper path from config
             if hasattr(self.cf, 'selected_wallpaper') and self.cf.selected_wallpaper:
                 try:
@@ -738,6 +865,7 @@ class App(Gtk.Window):
         self.fill_option_display()
         self.color_picker_display()
         self.swww_or_awww_options_display()
+        self.linux_wallpaperengine_options_display()
         self.show_all()
 
 
