@@ -55,6 +55,8 @@ class Config:
         self.show_path_in_tooltip = True
 
         # options for linux-wallpaperengine
+        self.linux_wallpaperengine_fps = 30
+        self.linux_wallpaperengine_volume = 15
         self.linux_wallpaperengine_silent = False
         self.linux_wallpaperengine_noautomute = False
         self.linux_wallpaperengine_no_audio_processing = False
@@ -120,9 +122,11 @@ class Config:
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
         self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+        self.linux_wallpaperengine_volume = int(config.get("Settings", "linux_wallpaperengine_volume", fallback=self.linux_wallpaperengine_volume))
         self.linux_wallpaperengine_silent = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
         self.linux_wallpaperengine_noautomute  = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
         self.linux_wallpaperengine_no_audio_processing  = config.getboolean("Settings", "linux_wallpaperengine_no_audio_processing", fallback=self.linux_wallpaperengine_no_audio_processing)
+        self.linux_wallpaperengine_fps = int(config.get("Settings", "linux_wallpaperengine_fps", fallback=self.linux_wallpaperengine_fps))
         self.linux_wallpaperengine_disable_particles  = config.getboolean("Settings", "linux_wallpaperengine_disable_particles", fallback=self.linux_wallpaperengine_disable_particles)
         self.linux_wallpaperengine_disable_mouse  = config.getboolean("Settings", "linux_wallpaperengine_disable_mouse", fallback=self.linux_wallpaperengine_disable_mouse)
         self.linux_wallpaperengine_disable_parallax  = config.getboolean("Settings", "linux_wallpaperengine_disable_parallax", fallback=self.linux_wallpaperengine_disable_parallax)
@@ -276,9 +280,11 @@ class Config:
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
         config.set("Settings", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
+        config.set("Settings", "linux_wallpaperengine_volume", str(self.linux_wallpaperengine_volume))
         config.set("Settings", "linux_wallpaperengine_silent", str(self.linux_wallpaperengine_silent))
         config.set("Settings", "linux_wallpaperengine_noautomute", str(self.linux_wallpaperengine_noautomute))
         config.set("Settings", "linux_wallpaperengine_no_audio_processing", str(self.linux_wallpaperengine_no_audio_processing))
+        config.set("Settings", "linux_wallpaperengine_fps", str(self.linux_wallpaperengine_fps))
         config.set("Settings", "linux_wallpaperengine_disable_particles", str(self.linux_wallpaperengine_disable_particles))
         config.set("Settings", "linux_wallpaperengine_disable_mouse", str(self.linux_wallpaperengine_disable_mouse))
         config.set("Settings", "linux_wallpaperengine_disable_parallax", str(self.linux_wallpaperengine_disable_parallax))

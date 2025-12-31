@@ -401,6 +401,9 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     if cf.linux_wallpaperengine_disable_mouse:
         options.append("--disable-mouse")
 
+    options.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
+    options.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
+
     if monitor == "All":
         for monitor in [m.name for m in screeninfo.get_monitors()]:
             command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])

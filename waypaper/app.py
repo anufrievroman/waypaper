@@ -264,7 +264,6 @@ class App(Gtk.Window):
         self.linux_wallpaperengine_fps_entry.connect("focus-in-event", self.on_focus_in)
         self.linux_wallpaperengine_fps_entry.connect("focus-out-event", self.on_focus_out)
 
-
         # sound settings linux-wallpaperengine
         self.linux_wallpaperengine_sound_menu = Gtk.Menu()
 
@@ -544,6 +543,14 @@ class App(Gtk.Window):
     def linux_wallpaperengine_fullscreen_pause_only_active_toggled(self, widget):
         self.cf.linux_wallpaperengine_fullscreen_pause_only_active = not self.cf.linux_wallpaperengine_fullscreen_pause_only_active
 
+    def linux_wallpaperengine_options_read(self):
+        fps = self.linux_wallpaperengine_fps_entry.get_text()
+        volume = self.linux_wallpaperengine_volume_entry.get_text()
+
+        if fps.isdigit():
+            self.cf.linux_wallpaperengine_fps = int(fps)
+        if volume.isdigit():
+            self.cf.linux_wallpaperengine_volume = int(volume)
 
     def linux_wallpaperengine_options_display(self):
         self.options_box.remove(self.linux_wallpaperengine_performance_menu_button)
@@ -741,6 +748,7 @@ class App(Gtk.Window):
     def set_selected_wallpaper(self, path: str) -> None:
         """Set selected image as a wallpaper and save the state"""
         self.swww_or_awww_options_read()
+        self.linux_wallpaperengine_options_read()
         self.cf.select_wallpaper(path)
         if self.cf.selected_wallpaper:
             threading.Thread(target=change_wallpaper, args=(self.cf.selected_wallpaper, self.cf, self.cf.selected_monitor)).start()
