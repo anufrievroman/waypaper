@@ -375,9 +375,12 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
         "fill": "fill",
         "fit": "fit",
         "stretch": "stretch",
+        "default": "defualt"
         }
     fill = fill_types[cf.fill_option.lower()]
-    pass
+    command = ["linux-wallpaperengine", "--screen-root", monitor, "--scaling", fill, "-bg", image_path]
+    print(command)
+    subprocess.Popen(command)
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
