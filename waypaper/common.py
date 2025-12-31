@@ -61,6 +61,13 @@ def get_image_paths(backend: str,
                 image_path_list.append(os.path.join(root, image_name))
     return image_path_list
 
+def get_wallpaperengine_preview(wallpaperengine_folder: Path):
+    image_path_list = []
+    for root, directories, files in os.walk(wallpaperengine_folder):
+        for file in files:
+            if Path(file).stem == "preview":
+                image_path_list.append(os.path.join(root, file))
+    return image_path_list
 
 def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
     """Get image name that may or may not include parent folders"""
@@ -96,7 +103,7 @@ def get_random_file(backend: str,
         if cache_file.exists():
             with cache_file.open('r') as file:
                 used_images = [line.strip() for line in file.readlines()]
-        # Create it if the file does not exists:
+        # Create it if the file does not exist:
         else:
             cache_file.touch()
             used_images = []

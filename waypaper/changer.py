@@ -4,6 +4,7 @@ import subprocess
 import time
 from typing import Optional
 from pathlib import Path
+import screeninfo
 
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl
@@ -29,7 +30,7 @@ def seek_and_destroy(process: str, monitor: str = "All"):
     # Kill all process instances if we want to set for all monitors:
     if monitor == "All":
         try:
-            subprocess.check_output(["pgrep", f"{process}"], encoding='utf-8')
+            subprocess.check_output(["pgrep", "-f", f"{process}"], encoding='utf-8')
             subprocess.Popen(["killall", f"{process}"])
             time.sleep(0.1)
             print(f"Killed all previous instances of {process}")
@@ -56,6 +57,8 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             pid = find_process_pid(f"swaybg -o {monitor}")
         elif process == "gslapper":
             pid = find_process_pid(f"gslapper.*{monitor}")
+        elif process == "linux-wallpaperengine":
+            pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
         else:
             return
         try:
@@ -371,14 +374,22 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 retry_counter += 1
 
 def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
+    seek_and_destroy("linux-wallpaperengine", monitor)
+
     fill_types = {
         "fill": "fill",
         "fit": "fit",
         "stretch": "stretch",
         "default": "defualt"
         }
+    command = ["linux-wallpaperengine"]
     fill = fill_types[cf.fill_option.lower()]
-    command = ["linux-wallpaperengine", "--screen-root", monitor, "--scaling", fill, "-bg", image_path]
+    if monitor == "All":
+        for monitor in [m.name for m in screeninfo.get_monitors()]:
+            command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])
+    else:
+        command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])
+
     print(command)
     subprocess.Popen(command)
 

@@ -11,7 +11,7 @@ from pathlib import Path
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
+from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, \
     get_monitor_options, FILL_OPTIONS_LINUX_WALLPAPERENGINE
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
@@ -462,7 +462,10 @@ class App(Gtk.Window):
     def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
 
-        self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
+        if self.cf.backend == "linux-wallpaperengine":
+            self.image_paths = get_wallpaperengine_preview(self.cf.wallpaperengine_folder)
+        else:
+            self.image_paths = get_image_paths(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
                                       self.cf.include_all_subfolders, self.cf.show_hidden, self.cf.show_gifs_only)
 
         # Sort paths:
