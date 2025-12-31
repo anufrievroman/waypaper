@@ -7,7 +7,7 @@ from pathlib import Path
 import screeninfo
 
 from waypaper.config import Config
-from waypaper.options import get_monitor_names_with_hyprctl
+from waypaper.options import get_monitor_names_with_hyprctl, CLAMP_LINUX_WALLPAPERENGINE
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -400,16 +400,18 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
         options.append("--disable-particles")
     if cf.linux_wallpaperengine_disable_mouse:
         options.append("--disable-mouse")
+    if cf.linux_wallpaperengine_clamp != CLAMP_LINUX_WALLPAPERENGINE[0]:
+        options.extend(["--clamp", cf.linux_wallpaperengine_clamp])
 
     options.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
     options.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
 
     if monitor == "All":
         for monitor in [m.name for m in screeninfo.get_monitors()]:
-            command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])
+            command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
             command.extend(options)
     else:
-        command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", image_path.parent])
+        command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
         command.extend(options)
 
     print(command)

@@ -13,7 +13,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperegine_image_name
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, \
-    get_monitor_options, FILL_OPTIONS_LINUX_WALLPAPERENGINE
+    get_monitor_options, FILL_OPTIONS_LINUX_WALLPAPERENGINE, CLAMP_LINUX_WALLPAPERENGINE
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
 
@@ -325,13 +325,27 @@ class App(Gtk.Window):
         self.linux_wallpaperengine_performance_menu_button = Gtk.Button(label="Performance")
         self.linux_wallpaperengine_performance_menu_button.connect("clicked", self.on_performance_menu_button_clicked)
 
+        # linux-wallpaperengine --clamp
+        self.linux_wallpaperengine_clamp_combo = Gtk.ComboBoxText()
+        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[0].capitalize())
+        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[1].capitalize())
+        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[2].capitalize())
+        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[3].capitalize())
+        if self.cf.linux_wallpaperengine_clamp in CLAMP_LINUX_WALLPAPERENGINE:
+            self.linux_wallpaperengine_clamp_combo.set_active(CLAMP_LINUX_WALLPAPERENGINE.index(self.cf.linux_wallpaperengine_clamp))
+        else:
+            self.linux_wallpaperengine_clamp_combo.set_active(0)
+        self.linux_wallpaperengine_clamp_combo.connect("changed", self.linux_wallpaperengine_clamp_changed)
+        self.linux_wallpaperengine_clamp_combo.set_tooltip_text("clamp")
+
         # Add different buttons depending on backend:
         self.monitor_option_display()
         self.mpv_options_display()
+        self.linux_wallpaperengine_options_display()
         self.fill_option_display()
         self.color_picker_display()
         self.swww_or_awww_options_display()
-        self.linux_wallpaperengine_options_display()
+
 
         # Connect the key press events to various actions:
         self.connect("key-press-event", self.on_key_pressed)
@@ -543,6 +557,9 @@ class App(Gtk.Window):
     def linux_wallpaperengine_fullscreen_pause_only_active_toggled(self, widget):
         self.cf.linux_wallpaperengine_fullscreen_pause_only_active = not self.cf.linux_wallpaperengine_fullscreen_pause_only_active
 
+    def linux_wallpaperengine_clamp_changed(self, widget):
+        self.cf.linux_wallpaperengine_clamp = self.linux_wallpaperengine_clamp_combo.get_active_text().lower()
+
     def linux_wallpaperengine_options_read(self):
         fps = self.linux_wallpaperengine_fps_entry.get_text()
         volume = self.linux_wallpaperengine_volume_entry.get_text()
@@ -553,6 +570,7 @@ class App(Gtk.Window):
             self.cf.linux_wallpaperengine_volume = int(volume)
 
     def linux_wallpaperengine_options_display(self):
+        self.options_box.remove(self.linux_wallpaperengine_clamp_combo)
         self.options_box.remove(self.linux_wallpaperengine_performance_menu_button)
         self.options_box.remove(self.linux_wallpaperengine_sound_menu_button)
         self.options_box.remove(self.linux_wallpaperengine_config_menu_button)
@@ -562,6 +580,7 @@ class App(Gtk.Window):
         if self.cf.backend != "linux-wallpaperengine":
             return
 
+        self.options_box.pack_end(self.linux_wallpaperengine_clamp_combo, False, False, 0)
         self.options_box.pack_end(self.linux_wallpaperengine_config_menu_button, False, False, 0)
         self.options_box.pack_end(self.linux_wallpaperengine_sound_menu_button, False, False, 0)
         self.options_box.pack_end(self.linux_wallpaperengine_performance_menu_button, False, False, 0)

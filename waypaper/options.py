@@ -8,6 +8,7 @@ from typing import List, Dict
 BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "xwallpaper", "wallutils", "hyprpaper", "mpvpaper", "gslapper", "macos", "awww", "linux-wallpaperengine"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
 FILL_OPTIONS_LINUX_WALLPAPERENGINE = ["fill", "stretch", "fit", "default"]
+CLAMP_LINUX_WALLPAPERENGINE = ["none", "clamp", "fit", "fill"]
 SORT_OPTIONS: List[str] = ["name", "namerev", "date", "daterev", "random"]
 SORT_DISPLAYS: Dict[str, str] = {"name": "Name ↓", "namerev": "Name ↑", "date": "Date ↓", "daterev": "Date ↑", "random": "Random"}
 
