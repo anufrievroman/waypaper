@@ -9,6 +9,7 @@ import hashlib
 from pathlib import Path
 from typing import List
 from PIL import Image
+import json
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -68,6 +69,14 @@ def get_wallpaperengine_preview(wallpaperengine_folder: Path):
             if Path(file).stem == "preview":
                 image_path_list.append(os.path.join(root, file))
     return image_path_list
+
+def get_wallpaperegine_image_name(full_path: str):
+    full_path = Path(full_path)
+    image_dir = full_path.parent
+    with open(image_dir / "project.json", "r") as f:
+        project = json.load(f)
+    return project["title"]
+
 
 def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
     """Get image name that may or may not include parent folders"""

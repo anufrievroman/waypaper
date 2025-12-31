@@ -11,7 +11,7 @@ from pathlib import Path
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path
+from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperegine_image_name
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, \
     get_monitor_options, FILL_OPTIONS_LINUX_WALLPAPERENGINE
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
@@ -505,7 +505,10 @@ class App(Gtk.Window):
             self.thumbnails.append(thumbnail)
 
             # Get image name, which may or may not include parent folders:
-            image_name = get_image_name(image_path, self.cf.image_folder_list, self.cf.show_path_in_tooltip)
+            if self.cf.backend == 'linux-wallpaperengine':
+                image_name = get_wallpaperegine_image_name(image_path)
+            else:
+                image_name = get_image_name(image_path, self.cf.image_folder_list, self.cf.show_path_in_tooltip)
             self.image_names.append(image_name)
 
         # When image processing is done, remove caching label and display the images:
