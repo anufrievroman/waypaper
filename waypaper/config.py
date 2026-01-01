@@ -62,7 +62,7 @@ class Config:
         self.linux_wallpaperengine_silent = False
         self.linux_wallpaperengine_noautomute = False
         self.linux_wallpaperengine_no_audio_processing = False
-        self.linux_wallpaperengine_disable_particles = False
+        self.linux_wallpaperengine_disable_particles = True
         self.linux_wallpaperengine_disable_mouse = False
         self.linux_wallpaperengine_disable_parallax = False
         self.linux_wallpaperengine_no_fullscreen_pause = False
