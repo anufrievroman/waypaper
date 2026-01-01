@@ -6,7 +6,8 @@ from argparse import Namespace
 from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS, \
+    LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.common import check_installed_backends
 
 
@@ -18,6 +19,7 @@ class Config:
         self.home_path = pathlib.Path.home()
         self.image_folder_list: list[pathlib.Path] = []
         self.image_folder_fallback: str = str(user_pictures_path())
+        self.wallpaperengine_folder = pathlib.Path("~/.steam/root/steamapps/workshop/content/431960").expanduser()
         self.installed_backends = check_installed_backends()
         self.selected_wallpaper = None
         self.selected_monitor = "All"
@@ -53,6 +55,19 @@ class Config:
         self.use_post_command = True
         self.show_path_in_tooltip = True
 
+        # options for linux-wallpaperengine
+        self.linux_wallpaperengine_clamp = LINUX_WALLPAPERENGINE_CLAMP[0]
+        self.linux_wallpaperengine_fps = 30
+        self.linux_wallpaperengine_volume = 15
+        self.linux_wallpaperengine_silent = False
+        self.linux_wallpaperengine_noautomute = False
+        self.linux_wallpaperengine_no_audio_processing = False
+        self.linux_wallpaperengine_disable_particles = True
+        self.linux_wallpaperengine_disable_mouse = False
+        self.linux_wallpaperengine_disable_parallax = False
+        self.linux_wallpaperengine_no_fullscreen_pause = False
+        self.linux_wallpaperengine_fullscreen_pause_only_active = False
+
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -80,7 +95,7 @@ class Config:
 
 
     def read(self) -> None:
-        """Load data from the config.ini or use default if it does not exists"""
+        """Load data from the config.ini or use default if it does not exist"""
         config = configparser.ConfigParser()
         config.read(self.config_file, 'utf-8')
 
@@ -108,6 +123,18 @@ class Config:
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
+        self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+        self.linux_wallpaperengine_clamp = config.get("Settings", "linux_wallpaperengine_clamp", fallback=self.linux_wallpaperengine_clamp)
+        self.linux_wallpaperengine_volume = int(config.get("Settings", "linux_wallpaperengine_volume", fallback=self.linux_wallpaperengine_volume))
+        self.linux_wallpaperengine_silent = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_noautomute  = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_no_audio_processing  = config.getboolean("Settings", "linux_wallpaperengine_no_audio_processing", fallback=self.linux_wallpaperengine_no_audio_processing)
+        self.linux_wallpaperengine_fps = int(config.get("Settings", "linux_wallpaperengine_fps", fallback=self.linux_wallpaperengine_fps))
+        self.linux_wallpaperengine_disable_particles  = config.getboolean("Settings", "linux_wallpaperengine_disable_particles", fallback=self.linux_wallpaperengine_disable_particles)
+        self.linux_wallpaperengine_disable_mouse  = config.getboolean("Settings", "linux_wallpaperengine_disable_mouse", fallback=self.linux_wallpaperengine_disable_mouse)
+        self.linux_wallpaperengine_disable_parallax  = config.getboolean("Settings", "linux_wallpaperengine_disable_parallax", fallback=self.linux_wallpaperengine_disable_parallax)
+        self.linux_wallpaperengine_no_fullscreen_pause  = config.getboolean("Settings", "linux_wallpaperengine_no_fullscreen_pause", fallback=self.linux_wallpaperengine_no_fullscreen_pause)
+        self.linux_wallpaperengine_fullscreen_pause_only_active  = config.getboolean("Settings", "linux_wallpaperengine_fullscreen_pause_only_active", fallback=self.linux_wallpaperengine_fullscreen_pause_only_active)
 
         # Read and convert strings representing lists and paths:
         monitors_str = config.get("Settings", "monitors", fallback=self.selected_monitor, raw=True)
@@ -138,6 +165,8 @@ class Config:
             self.selected_monitor = self.monitors[0]
         if wallpapers_str:
             self.wallpapers = [pathlib.Path(paper).expanduser() for paper in wallpapers_str.split("\n")]
+        self.wallpaperengine_folder = pathlib.Path(state.get("State", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+
 
 
     def check_validity(self) -> None:
@@ -196,6 +225,7 @@ class Config:
         self.write_folder_list_to_config("State", state)
         state.set("State", "monitors", "\n".join(self.monitors))
         state.set("State", "wallpaper", '\n'.join(self.shorten_path(p) for p in self.wallpapers))
+        state.set("State", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
         try:
             with open(self.state_file, "w") as statefile:
                 state.write(statefile)
@@ -252,7 +282,17 @@ class Config:
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
-
+        config.set("Settings", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
+        config.set("Settings", "linux_wallpaperengine_clamp", self.linux_wallpaperengine_clamp)
+        config.set("Settings", "linux_wallpaperengine_volume", str(self.linux_wallpaperengine_volume))
+        config.set("Settings", "linux_wallpaperengine_silent", str(self.linux_wallpaperengine_silent))
+        config.set("Settings", "linux_wallpaperengine_noautomute", str(self.linux_wallpaperengine_noautomute))
+        config.set("Settings", "linux_wallpaperengine_no_audio_processing", str(self.linux_wallpaperengine_no_audio_processing))
+        config.set("Settings", "linux_wallpaperengine_fps", str(self.linux_wallpaperengine_fps))
+        config.set("Settings", "linux_wallpaperengine_disable_particles", str(self.linux_wallpaperengine_disable_particles))
+        config.set("Settings", "linux_wallpaperengine_disable_mouse", str(self.linux_wallpaperengine_disable_mouse))
+        config.set("Settings", "linux_wallpaperengine_disable_parallax", str(self.linux_wallpaperengine_disable_parallax))
+        config.set("Settings", "linux_wallpaperengine_no_fullscreen_pause", str(self.linux_wallpaperengine_no_fullscreen_pause))
         try:
             with open(self.config_file, "w") as configfile:
                 config.write(configfile)

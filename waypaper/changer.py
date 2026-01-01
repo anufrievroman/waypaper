@@ -4,9 +4,10 @@ import subprocess
 import time
 from typing import Optional
 from pathlib import Path
+import screeninfo
 
 from waypaper.config import Config
-from waypaper.options import get_monitor_names_with_hyprctl
+from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -29,7 +30,7 @@ def seek_and_destroy(process: str, monitor: str = "All"):
     # Kill all process instances if we want to set for all monitors:
     if monitor == "All":
         try:
-            subprocess.check_output(["pgrep", f"{process}"], encoding='utf-8')
+            subprocess.check_output(["pgrep", "-f", f"{process}"], encoding='utf-8')
             subprocess.Popen(["killall", f"{process}"])
             time.sleep(0.1)
             print(f"Killed all previous instances of {process}")
@@ -56,6 +57,8 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             pid = find_process_pid(f"swaybg -o {monitor}")
         elif process == "gslapper":
             pid = find_process_pid(f"gslapper.*{monitor}")
+        elif process == "linux-wallpaperengine":
+            pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
         else:
             return
         try:
@@ -370,6 +373,49 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
             except Exception:
                 retry_counter += 1
 
+def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
+    seek_and_destroy("linux-wallpaperengine", monitor)
+
+    fill_types = {
+        "fill": "fill",
+        "fit": "fit",
+        "stretch": "stretch",
+        "default": "default"
+        }
+    fill = fill_types[cf.fill_option.lower()]
+    command = ["linux-wallpaperengine"]
+    options = []
+
+    if cf.linux_wallpaperengine_silent:
+        options.append("--silent")
+    if cf.linux_wallpaperengine_noautomute:
+        options.append("--noautomount")
+    if cf.linux_wallpaperengine_no_audio_processing:
+        options.append("--no-audio-processing")
+    if cf.linux_wallpaperengine_no_fullscreen_pause:
+        options.append("--no-full-screen-pause")
+    if cf.linux_wallpaperengine_fullscreen_pause_only_active:
+        options.append("--fullscreen-pause-only-active")
+    if cf.linux_wallpaperengine_disable_particles:
+        options.append("--disable-particles")
+    if cf.linux_wallpaperengine_disable_mouse:
+        options.append("--disable-mouse")
+    if cf.linux_wallpaperengine_clamp != LINUX_WALLPAPERENGINE_CLAMP[0]:
+        options.extend(["--clamp", cf.linux_wallpaperengine_clamp])
+
+    options.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
+    options.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
+
+    if monitor == "All":
+        for monitor in [m.name for m in screeninfo.get_monitors()]:
+            command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
+            command.extend(options)
+    else:
+        command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
+        command.extend(options)
+    command.append("&")
+    print(f"{command=}")
+    subprocess.Popen(" ".join(command), shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
@@ -397,6 +443,8 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_gslapper(image_path, cf, monitor)
         if cf.backend == "macos":
             change_with_finder(image_path, cf, monitor)
+        if cf.backend == "linux-wallpaperengine":
+            change_with_linux_wallpaperengine(image_path, cf, monitor)
         if cf.backend != "none":
             filename = Path(image_path).resolve().name
             print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")
