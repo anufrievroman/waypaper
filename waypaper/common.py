@@ -62,7 +62,7 @@ def get_image_paths(backend: str,
                 image_path_list.append(os.path.join(root, image_name))
     return image_path_list
 
-def get_wallpaperengine_preview(wallpaperengine_folder: Path):
+def get_wallpaperengine_preview(wallpaperengine_folder: Path) -> List[str]:
     image_path_list = []
     for root, directories, files in os.walk(wallpaperengine_folder):
         for file in files:
@@ -70,7 +70,7 @@ def get_wallpaperengine_preview(wallpaperengine_folder: Path):
                 image_path_list.append(os.path.join(root, file))
     return image_path_list
 
-def get_wallpaperegine_image_name(full_path: str):
+def get_wallpaperengine_image_name(full_path: str) -> str:
     full_path = Path(full_path)
     image_dir = full_path.parent
     with open(image_dir / "project.json", "r") as f:
@@ -78,7 +78,7 @@ def get_wallpaperegine_image_name(full_path: str):
     return project["title"]
 
 
-def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
+def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str | None:
     """Get image name that may or may not include parent folders"""
     full_path = Path(os.path.normpath(full_path)).absolute()
 

@@ -7,8 +7,7 @@ from typing import List, Dict
 
 BACKEND_OPTIONS: List[str] = ["none", "swaybg", "swww", "feh", "xwallpaper", "wallutils", "hyprpaper", "mpvpaper", "gslapper", "macos", "awww", "linux-wallpaperengine"]
 FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "center", "tile"]
-FILL_OPTIONS_LINUX_WALLPAPERENGINE = ["fill", "stretch", "fit", "default"]
-CLAMP_LINUX_WALLPAPERENGINE = ["none", "clamp", "fit", "fill"]
+LINUX_WALLPAPERENGINE_FILL_OPTIONS: List[str] = ["fill", "stretch", "fit", "default"]
 SORT_OPTIONS: List[str] = ["name", "namerev", "date", "daterev", "random"]
 SORT_DISPLAYS: Dict[str, str] = {"name": "Name ↓", "namerev": "Name ↑", "date": "Date ↓", "daterev": "Date ↑", "random": "Random"}
 
@@ -37,6 +36,8 @@ SWWW_TRANSITION_TYPES: List[str] = ["any", "none", "simple", "fade", "wipe",  "l
 
 TIMERS: Dict[str, int] = {"30 sec": 30, "1 min": 60, "2 min": 120, "5 min": 300, "10 min": 600, "30 min": 1800, "1 hour": 3600,
           "2 hours": 7200, "6 hours": 21600, "12 hours": 43200, "1 day": 86400, "1 week": 604800}
+
+LINUX_WALLPAPERENGINE_CLAMP: List[str] = ["none", "clamp", "fit", "fill"]
 
 
 def get_monitor_names_with_swww() -> List[str]:

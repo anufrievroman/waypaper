@@ -7,7 +7,7 @@ from pathlib import Path
 import screeninfo
 
 from waypaper.config import Config
-from waypaper.options import get_monitor_names_with_hyprctl, CLAMP_LINUX_WALLPAPERENGINE
+from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -400,7 +400,7 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
         options.append("--disable-particles")
     if cf.linux_wallpaperengine_disable_mouse:
         options.append("--disable-mouse")
-    if cf.linux_wallpaperengine_clamp != CLAMP_LINUX_WALLPAPERENGINE[0]:
+    if cf.linux_wallpaperengine_clamp != LINUX_WALLPAPERENGINE_CLAMP[0]:
         options.extend(["--clamp", cf.linux_wallpaperengine_clamp])
 
     options.extend(["--volume", str(cf.linux_wallpaperengine_volume)])

@@ -11,9 +11,9 @@ from pathlib import Path
 
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperegine_image_name
+from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperengine_image_name
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, \
-    get_monitor_options, FILL_OPTIONS_LINUX_WALLPAPERENGINE, CLAMP_LINUX_WALLPAPERENGINE
+    get_monitor_options, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
 
@@ -279,12 +279,12 @@ class App(Gtk.Window):
 
         self.linux_wallpaperengine_no_audio_processing_checkbox = Gtk.CheckMenuItem(label="no-audio-processing")
         self.linux_wallpaperengine_no_audio_processing_checkbox.set_active(self.cf.linux_wallpaperengine_no_audio_processing)
-        self.linux_wallpaperengine_no_audio_processing_checkbox.connect("toggled", self.on_linux_wallpaperengine_no_audio_prcoessing_toggled)
+        self.linux_wallpaperengine_no_audio_processing_checkbox.connect("toggled", self.on_linux_wallpaperengine_no_audio_processing_toggled)
         self.linux_wallpaperengine_sound_menu.append(self.linux_wallpaperengine_no_audio_processing_checkbox)
 
         self.linux_wallpaperengine_sound_menu.show_all()
         self.linux_wallpaperengine_sound_menu_button = Gtk.Button(label="Sound")
-        self.linux_wallpaperengine_sound_menu_button.connect("clicked", self.on_sound_menu_button_clicked)
+        self.linux_wallpaperengine_sound_menu_button.connect("clicked", self.on_linux_wallpaperengine_sound_menu_button_clicked)
 
         # wallpaper configuration options
         self.linux_wallpaperengine_config_menu = Gtk.Menu()
@@ -306,7 +306,7 @@ class App(Gtk.Window):
 
         self.linux_wallpaperengine_config_menu.show_all()
         self.linux_wallpaperengine_config_menu_button = Gtk.Button(label="Config")
-        self.linux_wallpaperengine_config_menu_button.connect("clicked", self.on_config_menu_button_clicked)
+        self.linux_wallpaperengine_config_menu_button.connect("clicked", self.on_linux_wallpaperengine_config_menu_button_clicked)
 
         # Performance Options
         self.linux_wallpaperengine_performance_menu = Gtk.Menu()
@@ -323,16 +323,16 @@ class App(Gtk.Window):
 
         self.linux_wallpaperengine_performance_menu.show_all()
         self.linux_wallpaperengine_performance_menu_button = Gtk.Button(label="Performance")
-        self.linux_wallpaperengine_performance_menu_button.connect("clicked", self.on_performance_menu_button_clicked)
+        self.linux_wallpaperengine_performance_menu_button.connect("clicked", self.on_linux_wallpaperengine_performance_menu_button_clicked)
 
         # linux-wallpaperengine --clamp
         self.linux_wallpaperengine_clamp_combo = Gtk.ComboBoxText()
-        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[0].capitalize())
-        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[1].capitalize())
-        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[2].capitalize())
-        self.linux_wallpaperengine_clamp_combo.append_text(CLAMP_LINUX_WALLPAPERENGINE[3].capitalize())
-        if self.cf.linux_wallpaperengine_clamp in CLAMP_LINUX_WALLPAPERENGINE:
-            self.linux_wallpaperengine_clamp_combo.set_active(CLAMP_LINUX_WALLPAPERENGINE.index(self.cf.linux_wallpaperengine_clamp))
+        self.linux_wallpaperengine_clamp_combo.append_text(LINUX_WALLPAPERENGINE_CLAMP[0].capitalize())
+        self.linux_wallpaperengine_clamp_combo.append_text(LINUX_WALLPAPERENGINE_CLAMP[1].capitalize())
+        self.linux_wallpaperengine_clamp_combo.append_text(LINUX_WALLPAPERENGINE_CLAMP[2].capitalize())
+        self.linux_wallpaperengine_clamp_combo.append_text(LINUX_WALLPAPERENGINE_CLAMP[3].capitalize())
+        if self.cf.linux_wallpaperengine_clamp in LINUX_WALLPAPERENGINE_CLAMP:
+            self.linux_wallpaperengine_clamp_combo.set_active(LINUX_WALLPAPERENGINE_CLAMP.index(self.cf.linux_wallpaperengine_clamp))
         else:
             self.linux_wallpaperengine_clamp_combo.set_active(0)
         self.linux_wallpaperengine_clamp_combo.connect("changed", self.linux_wallpaperengine_clamp_changed)
@@ -373,11 +373,11 @@ class App(Gtk.Window):
 
         # Create a fill option (linux-wallpaperengine) dropdown menu:
         self.fill_option_combo_linux_wallpaperengine = Gtk.ComboBoxText()
-        for option in FILL_OPTIONS_LINUX_WALLPAPERENGINE:
+        for option in LINUX_WALLPAPERENGINE_FILL_OPTIONS:
             capitalized_option = option[0].upper() + option[1:]
             self.fill_option_combo_linux_wallpaperengine.append_text(capitalized_option)
-        if self.cf.fill_option in FILL_OPTIONS_LINUX_WALLPAPERENGINE:
-            active_fill_option_index = FILL_OPTIONS_LINUX_WALLPAPERENGINE.index(self.cf.fill_option)
+        if self.cf.fill_option in LINUX_WALLPAPERENGINE_FILL_OPTIONS:
+            active_fill_option_index = LINUX_WALLPAPERENGINE_FILL_OPTIONS.index(self.cf.fill_option)
             self.fill_option_combo_linux_wallpaperengine.set_active(active_fill_option_index)
         else:
             self.fill_option_combo_linux_wallpaperengine.set_active(0)
@@ -524,13 +524,13 @@ class App(Gtk.Window):
         elif self.cf.backend == 'linux-wallpaperengine':
             self.options_box.pack_end(self.fill_option_combo_linux_wallpaperengine, False, False, 0)
 
-    def on_sound_menu_button_clicked(self, widget):
+    def on_linux_wallpaperengine_sound_menu_button_clicked(self, widget):
         self.linux_wallpaperengine_sound_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
 
-    def on_config_menu_button_clicked(self, widget):
+    def on_linux_wallpaperengine_config_menu_button_clicked(self, widget):
         self.linux_wallpaperengine_config_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
 
-    def on_performance_menu_button_clicked(self, widget):
+    def on_linux_wallpaperengine_performance_menu_button_clicked(self, widget):
         self.linux_wallpaperengine_performance_menu.popup_at_widget(widget, Gdk.Gravity.NORTH, Gdk.Gravity.SOUTH, None)
 
     def on_linux_wallpaperengine_silent_toggled(self, widget):
@@ -539,7 +539,7 @@ class App(Gtk.Window):
     def on_linux_wallpaperengine_noautomnute_toggled(self, widget):
         self.cf.linux_wallpaperengine_noautomute = not self.cf.linux_wallpaperengine_noautomute
 
-    def on_linux_wallpaperengine_no_audio_prcoessing_toggled(self, widget):
+    def on_linux_wallpaperengine_no_audio_processing_toggled(self, widget):
         self.cf.linux_wallpaperengine_no_audio_processing = not self.cf.linux_wallpaperengine_no_audio_processing
 
     def on_linux_wallpaperengine_disable_particles_toggled(self, widget):
@@ -659,7 +659,7 @@ class App(Gtk.Window):
 
             # Get image name, which may or may not include parent folders:
             if self.cf.backend == 'linux-wallpaperengine':
-                image_name = get_wallpaperegine_image_name(image_path)
+                image_name = get_wallpaperengine_image_name(image_path)
             else:
                 image_name = get_image_name(image_path, self.cf.image_folder_list, self.cf.show_path_in_tooltip)
             self.image_names.append(image_name)

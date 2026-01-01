@@ -7,7 +7,7 @@ from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS, \
-    CLAMP_LINUX_WALLPAPERENGINE
+    LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.common import check_installed_backends
 
 
@@ -56,7 +56,7 @@ class Config:
         self.show_path_in_tooltip = True
 
         # options for linux-wallpaperengine
-        self.linux_wallpaperengine_clamp = CLAMP_LINUX_WALLPAPERENGINE[0]
+        self.linux_wallpaperengine_clamp = LINUX_WALLPAPERENGINE_CLAMP[0]
         self.linux_wallpaperengine_fps = 30
         self.linux_wallpaperengine_volume = 15
         self.linux_wallpaperengine_silent = False
@@ -95,7 +95,7 @@ class Config:
 
 
     def read(self) -> None:
-        """Load data from the config.ini or use default if it does not exists"""
+        """Load data from the config.ini or use default if it does not exist"""
         config = configparser.ConfigParser()
         config.read(self.config_file, 'utf-8')
 
