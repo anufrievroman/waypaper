@@ -948,8 +948,13 @@ class App(Gtk.Window):
 
     def set_random_wallpaper(self) -> None:
         """Choose a random image and set it as the wallpaper"""
-        new_wallpaper =  get_random_file(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
+        if self.cf.backend == "linux-wallpaperengine":
+            new_wallpaper =  get_random_file(self.cf.backend, [self.cf.wallpaperengine_folder], self.cf.include_subfolders,
                                          self.cf.include_all_subfolders, self.cf.cache_dir)
+        else:
+            new_wallpaper =  get_random_file(self.cf.backend, self.cf.image_folder_list, self.cf.include_subfolders,
+                                         self.cf.include_all_subfolders, self.cf.cache_dir)
+
         if new_wallpaper:
             self.cf.select_wallpaper(new_wallpaper)
         else:

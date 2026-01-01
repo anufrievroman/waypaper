@@ -1,6 +1,8 @@
 """Module with some of the common functions, like file and image operations"""
 
 import os
+from os import PathLike
+
 import gi
 import random
 import shutil
@@ -62,7 +64,7 @@ def get_image_paths(backend: str,
                 image_path_list.append(os.path.join(root, image_name))
     return image_path_list
 
-def get_wallpaperengine_preview(wallpaperengine_folder: Path) -> List[str]:
+def get_wallpaperengine_preview(wallpaperengine_folder: Path | str) -> List[str]:
     image_path_list = []
     for root, directories, files in os.walk(wallpaperengine_folder):
         for file in files:
@@ -70,7 +72,7 @@ def get_wallpaperengine_preview(wallpaperengine_folder: Path) -> List[str]:
                 image_path_list.append(os.path.join(root, file))
     return image_path_list
 
-def get_wallpaperengine_image_name(full_path: str) -> str:
+def get_wallpaperengine_image_name(full_path: Path | str) -> str:
     full_path = Path(full_path)
     image_dir = full_path.parent
     with open(image_dir / "project.json", "r") as f:
@@ -103,9 +105,12 @@ def get_random_file(backend: str,
                     include_hidden: bool = False) -> str | None:
     """Pick a random file from the folder and update cache"""
     try:
-        # Get all image paths from the folder:
-        image_paths = get_image_paths(backend, folder_list, include_subfolders, include_all_subfolders,
-                                      include_hidden, only_gifs=False)
+        if backend == "linux-wallpaperengine":
+            image_paths = get_wallpaperengine_preview(folder_list[0])
+        else:
+            # Get all image paths from the folder:
+            image_paths = get_image_paths(backend, folder_list, include_subfolders, include_all_subfolders,
+                                          include_hidden, only_gifs=False)
 
         # Read cache file with already used images:
         cache_file = cache_dir / "used_wallpapers.txt"
