@@ -413,9 +413,9 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     else:
         command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
         command.extend(options)
-
-    print(command)
-    subprocess.Popen(command)
+    command.append("&")
+    print(f"{command=}")
+    subprocess.Popen(" ".join(command), shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
