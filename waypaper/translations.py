@@ -435,6 +435,79 @@ class Belarusian:
         self.tip_start = "Пачаць аўтаматычную змену шпалераў пасля пэўнага інтэрвалу часу"
 
 
+class Ukrainian:
+    def __init__(self):
+        self.msg_desc = "Графічний інтерфейс для встановлення шпалер на Wayland та X11. Працює як фронтенд для feh, swaybg, wallutils, hyprpaper, mpvpaper та awww."
+        self.msg_info = "Для отримання додаткової інформації відвідайте:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "вивести версію программи"
+        self.msg_arg_fill = "вказати як заповнити екран вибраним зображенням"
+        self.msg_arg_rest = "відновити останню шпалеру"
+        self.msg_arg_back = "вказати бекенд для застосування шпалер"
+        self.msg_arg_rand = "застовувати випадкові шпалери"
+        self.msg_arg_list = "вивести деякі параметри в форматі json"
+        self.msg_arg_wall = "вказати шлях до шпалер"
+        self.msg_arg_folder = "вкажіть папку зі шпалерами"
+        self.msg_arg_statefile = "вкажіть файл для зберігання стану программи"
+        self.msg_arg_configfile = "вкажіть файл для зберігання конфігурації программи"
+        self.msg_arg_monitor = "вкажіть бажанний монітор за його назвою"
+        self.msg_arg_post = "запобігає запуску post_command"
+        self.msg_arg_show_path_in_tooltip = "показати відносний шлях у підказці"
+
+        self.msg_select = "Вибрати"
+        self.msg_refresh = "Оновити"
+        self.msg_clear = "Очистити"
+        self.msg_start = "Розпочати авто-зміну"
+        self.msg_stop = "Зупинити все"
+        self.msg_sound = "Звук"
+        self.msg_pause = "Пауза"
+        self.msg_search = "Пошук"
+        self.msg_random = "Випадково"
+        self.msg_exit = "Вихід"
+        self.msg_options = "Параметри"
+        self.msg_subfolders = "Показати підпапки"
+        self.msg_all_subfolders = "Показати всі підпапки"
+        self.msg_hidden = "Показати приховані"
+        self.msg_gifs = "Показати лише GIF-файли"
+        self.msg_transitions = "Показати параметри переходу"
+        self.msg_changefolder = "Папка"
+        self.msg_choosefolder = "Будь ласка виберіть папку"
+        self.msg_caching = "Кешування шпалер..."
+        self.msg_show_path_in_tooltip = "Показати шлях у підказці"
+        self.msg_zen = "Режим дзен"
+        self.msg_zen_enter = "Ви входите в режим дзен.\nНатисніть z, щоб повернутися до звичайного режиму."
+
+
+        self.msg_help = "Стандартні гарячі клавіші Waypaper:\n\nhjkl - Навігація (←↓↑→)\nEnter - Встановити вибрані шпалери\nf - Змінити папку зі шпалерами\n"
+        self.msg_help += "g - Прокрутити до початку\nG - Прокрутити до кінця\nR - Встановити випадкові шпалери\nr - Оновити кеш шпалер\n"
+        self.msg_help += "z - Увімкнути/вимкнути дзен-режим\n"
+        self.msg_help += ". - Показати/приховати приховані зображення\ns - Показати/приховати зображення у підпапках\n/ - Пошук\n? - Довідка\nq - Вийти\n\n"
+        self.msg_help += self.msg_info
+        
+        self.err_cache = "Помилка видалення кешу"
+        self.err_backend = "Схоже, у системі не встановлено жодного бекенду для шпалер.\n"
+        self.err_backend += "Скористайтеся менеджером пакунків, щоб встановити принаймні один із цих бекендів:\n\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
+        self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
+        self.err_backend += "- wallutils (Xorg і Wayland)\n- mpvpaper (Xorg і Wayland)\n\n"
+        self.err_backend += self.msg_info
+
+        self.tip_refresh = "Оновити кеш папки із зображеннями"
+        self.tip_fill = "Вибрати тип заповнення"
+        self.tip_backend = "Вибрати бекенд"
+        self.tip_sorting = "Вибрати тип сортування"
+        self.tip_display = "Вибрати дисплей"
+        self.tip_color = "Вибрати колір тла"
+        self.tip_random = "Встановити випадкові шпалери"
+        self.tip_exit = "Вийти з програми"
+        self.tip_transition = "Вибрати тип переходу"
+        self.tip_mpv_stop = "Зупинити всі процеси mpv"
+        self.tip_mpv_pause = "Відтворення/пауза відеошпалер"
+        self.tip_mpv_sound = "Увімкнути звук відео"
+        self.tip_timer = "Як часто автоматично змінювати шпалери"
+        self.tip_start = "Розпочати авто-зміну шпалер через заданий інтервал"
+
+
 class Chinese:
     def __init__(self):
         self.msg_desc = "Wayland 和 X11 的 GUI 壁纸设置器。它用作 feh、swaybg、hyprpaper、mpvpaper、wallutils 和 awww 的前端。"
@@ -886,6 +959,8 @@ def load_language(lang):
         txt = Belarusian()
     elif lang == "pl":
         txt = Polish()
+    elif lang == "ua":
+        txt = Ukrainian()
     elif lang == "zh":
         txt = Chinese()
     elif lang == "zh_HK":
