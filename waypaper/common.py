@@ -1,6 +1,8 @@
 """Module with some of the common functions, like file and image operations"""
 
 import os
+from os import PathLike
+
 import gi
 import random
 import shutil
@@ -9,6 +11,7 @@ import hashlib
 from pathlib import Path
 from typing import List
 from PIL import Image
+import json
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -61,8 +64,23 @@ def get_image_paths(backend: str,
                 image_path_list.append(os.path.join(root, image_name))
     return image_path_list
 
+def get_wallpaperengine_preview(wallpaperengine_folder: Path | str) -> List[str]:
+    image_path_list = []
+    for root, directories, files in os.walk(wallpaperengine_folder):
+        for file in files:
+            if Path(file).stem == "preview":
+                image_path_list.append(os.path.join(root, file))
+    return image_path_list
 
-def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str:
+def get_wallpaperengine_image_name(full_path: Path | str) -> str:
+    full_path = Path(full_path)
+    image_dir = full_path.parent
+    with open(image_dir / "project.json", "r") as f:
+        project = json.load(f)
+    return project["title"]
+
+
+def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str | None:
     """Get image name that may or may not include parent folders"""
     full_path = Path(os.path.normpath(full_path)).absolute()
 
@@ -87,16 +105,19 @@ def get_random_file(backend: str,
                     include_hidden: bool = False) -> str | None:
     """Pick a random file from the folder and update cache"""
     try:
-        # Get all image paths from the folder:
-        image_paths = get_image_paths(backend, folder_list, include_subfolders, include_all_subfolders,
-                                      include_hidden, only_gifs=False)
+        if backend == "linux-wallpaperengine":
+            image_paths = get_wallpaperengine_preview(folder_list[0])
+        else:
+            # Get all image paths from the folder:
+            image_paths = get_image_paths(backend, folder_list, include_subfolders, include_all_subfolders,
+                                          include_hidden, only_gifs=False)
 
         # Read cache file with already used images:
         cache_file = cache_dir / "used_wallpapers.txt"
         if cache_file.exists():
             with cache_file.open('r') as file:
                 used_images = [line.strip() for line in file.readlines()]
-        # Create it if the file does not exists:
+        # Create it if the file does not exist:
         else:
             cache_file.touch()
             used_images = []
