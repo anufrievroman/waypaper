@@ -345,6 +345,9 @@ class App(Gtk.Window):
             self.monitor_option_combo.set_active(monitor_names.index(self.cf.monitors[-1]))
         else:
             self.monitor_option_combo.set_active(0)
+
+        self.cf.selected_monitor = self.monitor_option_combo.get_active_text()
+
         self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
         self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
 
