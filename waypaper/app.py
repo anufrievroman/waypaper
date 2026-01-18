@@ -745,6 +745,18 @@ class App(Gtk.Window):
         """On clicking refresh button, clear cache"""
         self.clear_cache()
 
+        # As in the new Hyprpaper Update Unloading wallpapers is not possible anymore, Hyprpaper needs to be restarted to free up memory
+        if self.cf.backend == "hyprpaper":
+            hyprpaper_kill_command = ["pkill", "-x", "hyprpaper"]
+            hyprpaper_restart_command = ["hyprctl", "dispatch", "exec", "hyprpaper"]
+
+            try:
+                subprocess.run(hyprpaper_kill_command, encoding="utf-8")
+                subprocess.run(hyprpaper_restart_command, encoding="utf-8")
+                # Problem: Hyprland uses default wallpaper after restart
+            except Exception as e:
+                print(f"Exception: {e}")
+
     def on_mpv_stop_button_clicked(self, widget) -> None:
         """On clicking mpv stop button, kill the mpvpaper or gslapper"""
         if self.cf.backend == "mpvpaper":
