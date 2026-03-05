@@ -45,6 +45,7 @@ class English:
         self.msg_show_path_in_tooltip = "Show path in tooltip"
         self.msg_zen = "Zen mode"
         self.msg_zen_enter = "You are entering Zen mode.\nPress z to return to normal mode."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Waypaper's default hotkeys:\n\nhjkl - Navigation (←↓↑→)\nEnter - Set selected wallpaper\nf - Change wallpaper folder\n"
         self.msg_help += "g - Scroll to top\nG - Scroll to bottom\nR - Set random wallpaper\nr - Recache wallpapers\n"
@@ -74,6 +75,7 @@ class English:
         self.tip_mpv_sound = "Play sound of the video"
         self.tip_timer = "How often to automatically change wallpaper"
         self.tip_start = "Initiate automatic change of wallpaper after a time interval"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
 class German:
@@ -108,7 +110,7 @@ class German:
         self.msg_options = "Optionen"
         self.msg_exit = "Beenden"
         self.msg_subfolders = "Unterordner"
-        self.msg_all_subfolders = "Show all subfolders"
+        self.msg_all_subfolders = "Alle Unterordner anzeigen"
         self.msg_hidden = "Zeige versteckte"
         self.msg_gifs = "Nur GIFs anzeigen"
         self.msg_transitions = "Übergangsoptionen anzeigen"
@@ -118,6 +120,7 @@ class German:
         self.msg_show_path_in_tooltip = "Pfad in Tooltip anzeigen"
         self.msg_zen = "Zen-Modus"
         self.msg_zen_enter = "Du betrittst den Zen-Modus.\nDrücke z, um in den normalen Modus zurückzukehren."
+        self.msg_hyprpaper_restart = "Hyprpaper neustarten"
 
         self.msg_help = "Waypapers Tastenkürzel:\n\nhjkl - Navigation (←↓↑→)\nf - Hintergrundbild-Ordner ändern\n"
         self.msg_help += "g - Zum Anfang scrollen\nG - Zum Ende scrollen\nR - Zufälliges Hintergrundbild\nr - Hintergrundbilder zwischenspeichern\n"
@@ -147,6 +150,7 @@ class German:
         self.tip_mpv_sound = "Ton des Videos abspielen"
         self.tip_timer = "Wie oft das Hintergrundbild automatisch gewechselt wird"
         self.tip_start = "Automatischen Hintergrundbildwechsel nach einem Zeitintervall starten"
+        self.tip_hyprpaper_restart = "Hyprpaper neustarten"
 
 class French:
     def __init__(self):
@@ -189,6 +193,7 @@ class French:
         self.msg_show_path_in_tooltip = "Afficher le chemin dans l'infobulle"
         self.msg_zen = "Mode Zen"
         self.msg_zen_enter = "Vous entrez en mode Zen.\nAppuyez sur z pour revenir au mode normal."
+        self.msg_hyprpaper_restart = ""
 
         self.msg_help = "Raccourcis clavier de Waypaper :\n\nhjkl - Navigation (←↓↑→)\nf - Changer de dossier de papier peint\n"
         self.msg_help += "g - Faire défiler vers le haut\nG - Faire défiler vers le bas\nR - Définir un papier peint aléatoire\nr - Recréer le cache des papiers peints\n"
@@ -218,6 +223,7 @@ class French:
         self.tip_mpv_sound = "Lire le son de la vidéo"
         self.tip_timer = "Fréquence de changement automatique du fond d’écran"
         self.tip_start = "Lancer le changement automatique du fond d’écran après un intervalle de temps"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 class Polish:
     def __init__(self):
@@ -260,6 +266,7 @@ class Polish:
         self.msg_show_path_in_tooltip = "Pokaż ścieżkę w podpowiedzi"
         self.msg_zen = "Tryb Zen"
         self.msg_zen_enter = "Wchodzisz w tryb Zen.\nNaciśnij z, aby wrócić do trybu normalnego."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Skróty klawiszowe Waypaper'a:\n\nhjkl - Nawigacja (←↓↑→)\nEnter - Ustaw wybraną tapetę\nf - Zmień folder tapet\n"
         self.msg_help += "g - Przewiń na górę\nG - Przewiń na dół\nR - Ustaw losową tapetę\nr - Jeszcze raz buferuj tapety\n"
@@ -290,6 +297,7 @@ class Polish:
         self.tip_mpv_sound = "Odtwórz dźwięk z wideo"
         self.tip_timer = "Jak często automatycznie zmieniać tapetę"
         self.tip_start = "Rozpocznij automatyczną zmianę tapety po upływie określonego czasu"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 class Russian:
     def __init__(self):
@@ -311,6 +319,7 @@ class Russian:
         self.msg_arg_show_path_in_tooltip = "показывать относительный путь в подсказке"
         self.msg_zen = "Режим Дзэн"
         self.msg_zen_enter = "Вы входите в режим Дзэн.\nНажмите z, чтобы вернуться в обычный режим."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_select = "Выбрать"
         self.msg_refresh = "Обновить"
@@ -361,6 +370,7 @@ class Russian:
         self.tip_mpv_sound = "Проигрывать звук видео-обоев"
         self.tip_timer = "Как часто автоматически менять обои"
         self.tip_start = "Initiate automatic change of wallpaper after a time interval"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
 class Belarusian:
@@ -404,6 +414,7 @@ class Belarusian:
         self.msg_show_path_in_tooltip = "Show path in tooltip"
         self.msg_zen = "Рэжым Дзен"
         self.msg_zen_enter = "Вы ўваходзіце ў рэжым Дзен.\nНацісніце z, каб вярнуцца ў звычайны рэжым."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
         self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
@@ -433,6 +444,7 @@ class Belarusian:
         self.tip_mpv_sound = "Прайграваць гук відэа"
         self.tip_timer = "Як часта аўтаматычна змяняць шпалеры"
         self.tip_start = "Пачаць аўтаматычную змену шпалераў пасля пэўнага інтэрвалу часу"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
 class Ukrainian:
@@ -476,6 +488,7 @@ class Ukrainian:
         self.msg_show_path_in_tooltip = "Показати шлях у підказці"
         self.msg_zen = "Режим дзен"
         self.msg_zen_enter = "Ви входите в режим дзен.\nНатисніть z, щоб повернутися до звичайного режиму."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
 
         self.msg_help = "Стандартні гарячі клавіші Waypaper:\n\nhjkl - Навігація (←↓↑→)\nEnter - Встановити вибрані шпалери\nf - Змінити папку зі шпалерами\n"
@@ -506,6 +519,7 @@ class Ukrainian:
         self.tip_mpv_sound = "Увімкнути звук відео"
         self.tip_timer = "Як часто автоматично змінювати шпалери"
         self.tip_start = "Розпочати авто-зміну шпалер через заданий інтервал"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
 class Chinese:
@@ -549,6 +563,7 @@ class Chinese:
         self.msg_show_path_in_tooltip = "在工具提示中显示路径"
         self.msg_zen = "禅模式"
         self.msg_zen_enter = "您正在进入禅模式。\n按 z 返回正常模式。"
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Waypaper 的热键：\n\nhjkl -导航 (←↓↑→)\nf -更改壁纸文件夹\n"
         self.msg_help += "g -滚动到顶部\nG -滚动到底部\nR -设置随机壁纸\nr -重新缓存壁纸\n"
@@ -578,6 +593,7 @@ class Chinese:
         self.tip_mpv_sound = "播放视频的声音"
         self.tip_timer = "自动更换壁纸的频率"
         self.tip_start = "在设定的时间间隔后启动自动更换壁纸"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 class TraditionalChinese:
     def __init__(self):
@@ -620,6 +636,7 @@ class TraditionalChinese:
         self.msg_show_path_in_tooltip = "在工具提示中顯示路徑"
         self.msg_zen = "禪模式"
         self.msg_zen_enter = "您正在進入禪模式。\n按 z 返回正常模式。"
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Waypaper 的快捷鍵:\n\nhjkl - 行動 (←↓↑→)\nEnter - 設定選擇壁紙\nf - 選擇壁紙文件夾\n"
         self.msg_help += "g - 滾動到頂部\nG - 滾動到底部\nR - 隨機壁紙\nr - 重新玩全壁紙\n"
@@ -649,6 +666,7 @@ class TraditionalChinese:
         self.tip_mpv_sound = "播放影片聲音"
         self.tip_timer = "自動選擇壁紙的時間"
         self.tip_start = "開始定時更換壁紙"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
 class Spanish:
@@ -692,6 +710,7 @@ class Spanish:
         self.msg_show_path_in_tooltip = "Mostrar la ruta en la información sobre herramientas"
         self.msg_zen = "Modo Zen"
         self.msg_zen_enter = "Estás entrando en el modo Zen.\nPresiona z para volver al modo normal."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = 'Controles para usar "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imágen seleccionada\nf - Cambiar carpeta de imágenes\n'
         self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imágen aleatoria\nr - Recrear caché de imágenes\n"
@@ -721,6 +740,7 @@ class Spanish:
         self.tip_mpv_sound = "Reproducir el sonido del video"
         self.tip_timer = "Frecuencia con la que se cambia automáticamente el fondo de pantalla"
         self.tip_start = "Iniciar el cambio automático del fondo de pantalla después de un intervalo de tiempo"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 class Turkish:
     def __init__(self):
@@ -763,6 +783,7 @@ class Turkish:
         self.msg_show_path_in_tooltip = "İpucunda yolu göster"
         self.msg_zen = "Zen modu"
         self.msg_zen_enter = "Zen moduna giriyorsunuz.\nNormal moda dönmek için z tuşuna basın."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Waypaper kısayolları:\n\nhjkl - Yön tuşları (←↓↑→)\nEnter - Seçili duvar kağıdını ayarla\nf - Duvar kağıdı klasörünü değiştir\n"
         self.msg_help += "g - Başa git\nG - Sona git\nR - Rastgele duvar kağıdı\nr - Duvar kağıtlarını yeniden önbelleğe al\n"
@@ -792,6 +813,7 @@ class Turkish:
         self.tip_mpv_sound = "Videonun sesini oynat"
         self.tip_timer = "Duvar kağıdını ne sıklıkla otomatik değiştirileceğini belirle"
         self.tip_start = "Belirli aralıklarla duvar kağıdını otomatik değiştirmeyi başlat"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 class Japanese:
     def __init__(self):
@@ -834,6 +856,7 @@ class Japanese:
         self.msg_show_path_in_tooltip = "ツールチップにパスを表示"
         self.msg_zen = "禅モード"
         self.msg_zen_enter = "禅モードに入ります。\n通常モードに戻るには z を押してください。"
+        self.msg_hyprpaper_restart = "Hyprpaperを再起動"
 
         self.msg_help = "Waypaper のショートカットキー:\n\n"
         self.msg_help += "hjkl - 移動 (←↓↑→)\n"
@@ -873,6 +896,7 @@ class Japanese:
         self.tip_mpv_sound = "動画の音声を再生"
         self.tip_timer = "自動で壁紙を変更する間隔"
         self.tip_start = "指定した時間ごとに自動的に壁紙変更を開始"
+        self.tip_hyprpaper_restart = "Hyprpaperを再起動"
 
 
 class Finnish:
@@ -916,6 +940,7 @@ class Finnish:
         self.msg_show_path_in_tooltip = "Näytä polku tooltipissä"
         self.msg_zen = "Zen tila"
         self.msg_zen_enter = "Sinä siirryt Zen tilaan.\nPaina z vaihtaaksesi takaisin normi tilaan."
+        self.msg_hyprpaper_restart = "Restart Hyprpaper"
 
         self.msg_help = "Waypaperin oletus pikanäppäimet:\n\nhjkl - Navigaatio (←↓↑→)\nEnter - Aseta valittu taustakuva\nf - Vaihda taustakuva kansio\n"
         self.msg_help += "g -   \nG - Skrollaa pohjaan\nR - Aseta satunnainen taustakuva\nr - Recacheaa taustakuvat\n"
@@ -945,6 +970,7 @@ class Finnish:
         self.tip_mpv_sound = "Soita videon ääni"
         self.tip_timer = "Miten usein vaihtaa satunnainen taustakuva"
         self.tip_start = "Aloita taustakuvan automaattinen vaihto aika intervaalin jälkeen"
+        self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
 def load_language(lang):
