@@ -18,7 +18,7 @@ VIDEO_EXTENSIONS: List[str] = ['.webm', '.mkv', '.flv', '.vob', '.ogv', '.ogg', 
 IMAGE_EXTENSIONS: Dict[str, List[str]] = {
         BACKEND_OPTIONS[0]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
         BACKEND_OPTIONS[1]: ['.gif', '.jpg', '.jpeg', '.png'],
-        BACKEND_OPTIONS[2]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
+        BACKEND_OPTIONS[2]: ['.gif', '.jpg', '.jpeg', '.jxl', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
         BACKEND_OPTIONS[3]: ['.gif', '.jpg', '.jpeg', '.png', '.bmp', '.pnm', '.tiff'],
         BACKEND_OPTIONS[4]: ['.jpeg', '.png'],
         BACKEND_OPTIONS[5]: ['.gif', '.jpg', '.jpeg', '.png'],
@@ -26,7 +26,7 @@ IMAGE_EXTENSIONS: Dict[str, List[str]] = {
         BACKEND_OPTIONS[7]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff', '.avif'] + VIDEO_EXTENSIONS,
         BACKEND_OPTIONS[8]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff', '.avif'] + VIDEO_EXTENSIONS,
         BACKEND_OPTIONS[9]: ['.gif', '.jpg', '.jpeg', '.png'],
-        BACKEND_OPTIONS[10]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
+        BACKEND_OPTIONS[10]: ['.gif', '.jpg', '.jpeg', '.jxl', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
         }
 
 SWWW_TRANSITION_TYPES: List[str] = ["any", "none", "simple", "fade", "wipe",  "left", "right", "top",
