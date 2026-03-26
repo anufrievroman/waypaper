@@ -321,15 +321,16 @@ def change_with_finder(image_path: Path, cf: Config, monitor: str):
     subprocess.Popen(command, shell=True)
 
 def change_with_json(image_path: Path, cf: Config, monitor: str):
-    """Change wallpaper on macOS"""
+    """Output the wallpaper change command to stdout as json"""
+
     structure = {
         "image": str(image_path),
         "monitor": monitor,
         "fill": cf.fill_option.lower(),
+        "color": cf.color,
     }
 
     json_data = json.dumps(structure)
-
 
     p = subprocess.Popen(
         ["jq", "."],
@@ -339,7 +340,6 @@ def change_with_json(image_path: Path, cf: Config, monitor: str):
 
     output, _ = p.communicate(json_data.encode())
     display_info(output.decode(), only_tty=False)
-
 
 
 def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
