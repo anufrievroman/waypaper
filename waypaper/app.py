@@ -13,6 +13,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_image_name, get_random_file, cache_image, get_cached_image_path
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS , SWWW_TRANSITION_TYPES, get_monitor_options
+from waypaper.output import display_error
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
 
@@ -656,7 +657,7 @@ class App(Gtk.Window):
                 try:
                     change_with_gslapper(Path(self.cf.selected_wallpaper), self.cf, self.cf.selected_monitor)
                 except Exception as e:
-                    print(f"Could not restart gSlapper with new audio setting: {e}")
+                    display_error(f"Could not restart gSlapper with new audio setting: {e}")
 
 
     def on_include_subfolders_toggled(self, toggle) -> None:
@@ -734,7 +735,7 @@ class App(Gtk.Window):
         """Update the active transition type based on the selected option"""
         active_index = combo.get_active()
         self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
-        print(f"Transition type changed to: {self.cf.swww_transition_type}")
+        display_info(f"Transition type changed to: {self.cf.swww_transition_type}")
 
 
     def on_color_set(self, color_button):
@@ -769,7 +770,7 @@ class App(Gtk.Window):
                 subprocess.run(waypaper_restore_command, encoding="utf-8")
                 # Problem: Hyprland uses default wallpaper after restart
             except Exception as e:
-                print(f"Exception: {e}")
+                display_error(f"Exception: {e}")
 
     def on_mpv_stop_button_clicked(self, widget) -> None:
         """On clicking mpv stop button, kill the mpvpaper or gslapper"""
@@ -784,7 +785,7 @@ class App(Gtk.Window):
             subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
         elif self.cf.backend == "gslapper":
             # gSlapper doesn't support pause, so do nothing or show message
-            print("Pause not supported for gSlapper")
+            display_error("Pause not supported for gSlapper")
 
     def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""
@@ -815,7 +816,7 @@ class App(Gtk.Window):
             shutil.rmtree(self.cf.cache_dir)
             os.makedirs(self.cf.cache_dir)
         except OSError as e:
-            print(f"{self.txt.err_cache} '{self.cf.cache_dir}': {e}")
+            display_error(f"{self.txt.err_cache} '{self.cf.cache_dir}': {e}")
         threading.Thread(target=self.process_images).start()
 
 
