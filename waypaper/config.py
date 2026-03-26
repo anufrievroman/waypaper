@@ -7,7 +7,8 @@ from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS
-from waypaper.common import check_installed_backends
+from waypaper.common import get_installed_backends
+from waypaper.output import display_error
 
 
 class Config:
@@ -18,7 +19,7 @@ class Config:
         self.home_path = pathlib.Path.home()
         self.image_folder_list: list[pathlib.Path] = []
         self.image_folder_fallback: str = str(user_pictures_path())
-        self.installed_backends = check_installed_backends()
+        self.installed_backends = get_installed_backends()
         self.selected_wallpaper = None
         self.selected_monitor = "All"
         self.fill_option = FILL_OPTIONS[0]
@@ -200,7 +201,7 @@ class Config:
             with open(self.state_file, "w") as statefile:
                 state.write(statefile)
         except PermissionError:
-            print("Could not save state file due to permission error.")
+            display_error("Could not save state file due to permission error.")
 
 
     def write_folder_list_to_config(self, section: str, config):
@@ -257,7 +258,7 @@ class Config:
             with open(self.config_file, "w") as configfile:
                 config.write(configfile)
         except (PermissionError, OSError):
-            print("Could not save config file due to permission error.")
+            display_error("Could not save config file due to permission error.")
 
         # If requested, save the state file:
         if self.use_xdg_state:

@@ -9,6 +9,7 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Vim keys
 - Supports GIF animations (with `awww` or `mpvpaper`)
 - Supports videos (with `mpvpaper`)
+- Supports JSON backend (allows you to use waypaper to become a fancy image picker)
 - Supports multiple monitors (with `awww` or `swaybg` or `hyprpaper` or `mpvpaper`)
 - Works on Wayland (with `awww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
 - Works on Xorg (with `feh`, `xwallpaper` or `wallutils`)
@@ -53,7 +54,7 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 
 ### Dependencies
 
-- `awww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper`
+- `awww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper` or `jq`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-imageio`
 - `python-imageio-ffmpeg`

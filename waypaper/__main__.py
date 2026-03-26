@@ -13,6 +13,7 @@ from waypaper.changer import change_wallpaper
 from waypaper.common import get_random_file
 from waypaper.config import Config
 from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS, get_monitor_options
+from waypaper.output import display_error, display_info
 from waypaper.translations import load_language
 
 
@@ -70,7 +71,7 @@ def run():
             if wallpaper_str:
                 wallpaper = pathlib.Path(wallpaper_str)
             else:
-                print("Could not get random wallpaper.")
+                display_error("Could not get random wallpaper.")
                 sys.exit(0)
 
         # Launch commands to change wallpaper in a separate thread:
@@ -130,12 +131,12 @@ def run():
     # Output some information in json format:
     if args.list:
         info = list(map(lambda x: {"monitor": x[0], "wallpaper": str(x[1]), "backend": cf.backend}, zip(cf.monitors, cf.wallpapers)))
-        print(json.dumps(info))
+        display_info(json.dumps(info))
         sys.exit(0)
 
     # Print the version and quit:
     if args.version:
-        print(f"waypaper v.{__version__}")
+        display_info(f"waypaper v.{__version__}")
         sys.exit(0)
 
     # Start GUI:

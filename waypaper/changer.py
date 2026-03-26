@@ -1,5 +1,5 @@
 """Module that runs the system processes to change the wallpaper"""
-
+import json
 import subprocess
 import time
 from typing import Optional
@@ -7,6 +7,7 @@ from pathlib import Path
 
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl
+from waypaper.output import display_info, display_error
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -32,7 +33,7 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             subprocess.check_output(["pgrep", f"{process}"], encoding='utf-8')
             subprocess.Popen(["killall", f"{process}"])
             time.sleep(0.1)
-            print(f"Killed all previous instances of {process}")
+            display_info(f"Killed all previous instances of {process}")
         except subprocess.CalledProcessError:
             pass
 
@@ -60,7 +61,7 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             return
         try:
             subprocess.run(['kill', '-9', str(pid)], check=True)
-            print(f"Detected {process} on {monitor} and killed it")
+            display_info(f"Detected {process} on {monitor} and killed it")
         except Exception as e:
             pass
 
@@ -105,12 +106,12 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
     try:
         subprocess.check_output(["pgrep", "-f", f"socket-{monitor}"], encoding='utf-8')
         time.sleep(0.2)
-        print(f"Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
+        display_info(f"Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
         subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}", shell=True)
 
     # If mpvpaper is not running, create a new process in a new socket:
     except subprocess.CalledProcessError:
-        print("Detected no running mpvpaper, starting new mpvpaper process")
+        display_info("Detected no running mpvpaper, starting new mpvpaper process")
         command = ["mpvpaper", "--fork"]
         if cf.mpvpaper_sound:
             command.extend(["-o", f"input-ipc-server=/tmp/mpv-socket-{monitor} {cf.mpvpaper_options} loop {fill} --background-color='{cf.color}'"])
@@ -125,7 +126,7 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 
         command.extend([image_path])
 
-        print(f"{command=}")
+        display_info(f"{command=}")
         subprocess.Popen(command)
 
 
@@ -143,7 +144,7 @@ def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
     
     # Get the gSlapper option for current fill setting:
     gslapper_fill = fill_options.get(cf.fill_option.lower(), "panscan=1.0")
-    print(f"gSlapper fill option: {cf.fill_option} -> {gslapper_fill}")
+    display_info(f"gSlapper fill option: {cf.fill_option} -> {gslapper_fill}")
 
     # Kill any existing gSlapper process for this monitor:
     seek_and_destroy("gslapper", monitor)
@@ -176,7 +177,7 @@ def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
     # Add the image/video path:
     command.append(str(image_path))
     
-    print(f"gSlapper command: {command}")
+    display_info(f"gSlapper command: {command}")
     subprocess.Popen(command)
 
 
@@ -203,7 +204,7 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
         subprocess.check_output(["pgrep", "swww-daemon"], encoding='utf-8')
     except subprocess.CalledProcessError:
         subprocess.Popen(["swww-daemon"])
-        print("Launched swww-daemon")
+        display_info("Launched swww-daemon")
 
     # Get rid of this in future when swww updates everywhere:
     version_p = subprocess.run(["swww", "-V"], capture_output=True, text=True)
@@ -247,7 +248,7 @@ def change_with_awww(image_path: Path, cf: Config, monitor: str):
         subprocess.check_output(["pgrep", "awww-daemon"], encoding='utf-8')
     except subprocess.CalledProcessError:
         subprocess.Popen(["awww-daemon"])
-        print("Launched awww-daemon")
+        display_info("Launched awww-daemon")
 
     # Get rid of this in future when swww updates everywhere:
     version_p = subprocess.run(["awww", "-V"], capture_output=True, text=True)
@@ -319,6 +320,27 @@ def change_with_finder(image_path: Path, cf: Config, monitor: str):
     command = f"osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"{image_path}\"'"
     subprocess.Popen(command, shell=True)
 
+def change_with_json(image_path: Path, cf: Config, monitor: str):
+    """Output the wallpaper change command to stdout as json"""
+
+    structure = {
+        "image": str(image_path),
+        "monitor": monitor,
+        "fill": cf.fill_option.lower(),
+        "color": cf.color,
+    }
+
+    json_data = json.dumps(structure)
+
+    p = subprocess.Popen(
+        ["jq", "."],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE
+    )
+
+    output, _ = p.communicate(json_data.encode())
+    display_info(output.decode(), only_tty=False)
+
 
 def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with hyprpaper backend"""
@@ -374,9 +396,11 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
 
-    print(f"Selected file: {image_path}")
+    display_info(f"Selected file: {image_path}")
 
     try:
+
+
         if cf.backend == "swaybg":
             change_with_swaybg(image_path, cf, monitor)
         if cf.backend == "mpvpaper":
@@ -397,9 +421,11 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             change_with_gslapper(image_path, cf, monitor)
         if cf.backend == "macos":
             change_with_finder(image_path, cf, monitor)
+        if cf.backend == "json":
+            change_with_json(image_path, cf, monitor)
         if cf.backend != "none":
             filename = Path(image_path).resolve().name
-            print(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")
+            display_info(f"Sent {cf.backend} command to set {filename} on {monitor} display\n")
 
         # Run a post command:
         if cf.post_command and cf.use_post_command:
@@ -407,7 +433,7 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
             post_command = cf.post_command.replace("$wallpaper", modified_image_path)
             post_command = post_command.replace("$monitor", monitor)
             subprocess.Popen(post_command, shell=True)
-            print(f'Executed "{post_command}" post-command\n')
+            display_info(f'Executed "{post_command}" post-command\n')
 
     except Exception as e:
-        print(f"Error occured while changing wallpaper: \n{e}")
+        display_error(f"Error occured while changing wallpaper: \n{e}")

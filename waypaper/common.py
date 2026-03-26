@@ -3,17 +3,18 @@
 import os
 import gi
 import random
-import shutil
 import imageio
 import hashlib
 from pathlib import Path
 from typing import List
 from PIL import Image
 
+from waypaper.output import display_error
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
-from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, VIDEO_EXTENSIONS
+from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, VIDEO_EXTENSIONS, get_installed_backends
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:
@@ -118,26 +119,8 @@ def get_random_file(backend: str,
         return random_image
 
     except Exception as e:
-        print(f"Error getting random image: {e}")
+        display_error(f"Error getting random image: {e}")
         return None
-
-
-def check_installed_backends() -> List[str]:
-    """Check which backends are installed in the system"""
-    installed_backends = ["none"]
-    for backend in BACKEND_OPTIONS:
-        if backend == "none":
-            continue
-        elif backend == "wallutils":
-            binary_name = "setwallpaper"
-        elif backend == "macos":
-            binary_name = "sw_vers"
-        else:
-            binary_name = backend
-        is_installed = bool(shutil.which(binary_name))
-        if is_installed:
-            installed_backends.append(backend)
-    return installed_backends
 
 
 def get_cached_image_path(image_path: str, cache_dir: Path) -> Path:
@@ -182,8 +165,8 @@ def cache_image(image_path: str, cache_dir: Path) -> None:
 
     # If image processing failed, create a black placeholder:
     except Exception as e:
-        print(f"Could not generate preview for {os.path.basename(image_path)}")
-        print(e)
+        display_error(f"Could not generate preview for {os.path.basename(image_path)}")
+        display_error(e)
         black_pixbuf = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, True, 8, width, width*9/16)
         black_pixbuf.fill(0x0)
         black_pixbuf.savev(str(cache_file), "png", [], [])

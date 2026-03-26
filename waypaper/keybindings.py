@@ -4,6 +4,7 @@ import gi
 import os
 import configparser
 from waypaper.config import Config
+from waypaper.output import display_warning
 
 gi.require_version("Gdk", "3.0")
 from gi.repository import Gdk
@@ -38,7 +39,7 @@ class Keys:
             with open(path, 'r') as file:
                 pass
         except FileNotFoundError:
-            print(f"File '{path}' does not exist")
+            display_warning(f"File '{path}' does not exist")
             return
 
         # Parse the file:
