@@ -197,6 +197,11 @@ class App(Gtk.Window):
         self.mpv_sound_toggle.connect("toggled", self.on_mpv_sound_toggled)
         self.mpv_sound_toggle.set_tooltip_text(self.txt.tip_mpv_sound)
 
+        # Hyprpaper restast button:
+        self.hyprpaper_restart = Gtk.Button(label=self.txt.msg_hyprpaper_restart)
+        self.hyprpaper_restart.connect("clicked", self.on_hyprland_restart)
+        self.hyprpaper_restart.set_tooltip_text(self.txt.tip_hyprpaper_restart)
+
         # Create a box to contain the bottom row of buttons:
         self.bottom_button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=60)
         self.bottom_button_box.set_margin_bottom(15)
@@ -490,11 +495,9 @@ class App(Gtk.Window):
 
     def hyprland_restart_button_display(self) -> None:
         # If hyprpaper is installed, add a button to restart it
+        self.options_box.remove(self.hyprpaper_restart)
         if not self.cf.backend == "hyprpaper":
             return
-        self.hyprpaper_restart = Gtk.Button(label=self.txt.msg_hyprpaper_restart)
-        self.hyprpaper_restart.connect("clicked", self.on_hyprland_restart)
-        self.hyprpaper_restart.set_tooltip_text(self.txt.tip_hyprpaper_restart)
         self.options_box.pack_end(self.hyprpaper_restart, False, False, 0)
 
     def swww_or_awww_options_read(self) -> None:
