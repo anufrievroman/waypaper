@@ -345,6 +345,7 @@ class App(Gtk.Window):
         self.fill_option_display()
         self.color_picker_display()
         self.swww_or_awww_options_display()
+        self.hyprland_restart_button_display()
 
 
         # Connect the key press events to various actions:
@@ -451,6 +452,9 @@ class App(Gtk.Window):
             self.monitor_option_combo.set_active(monitor_names.index(self.cf.monitors[-1]))
         else:
             self.monitor_option_combo.set_active(0)
+
+        self.cf.selected_monitor = self.monitor_option_combo.get_active_text()
+
         self.monitor_option_combo.connect("changed", self.on_monitor_option_changed)
         self.monitor_option_combo.set_tooltip_text(self.txt.tip_display)
 
@@ -483,6 +487,15 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.swww_angle_entry, False, False, 0)
         self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
         self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
+
+    def hyprland_restart_button_display(self) -> None:
+        # If hyprpaper is installed, add a button to restart it
+        if not self.cf.backend == "hyprpaper":
+            return
+        self.hyprpaper_restart = Gtk.Button(label=self.txt.msg_hyprpaper_restart)
+        self.hyprpaper_restart.connect("clicked", self.on_hyprland_restart)
+        self.hyprpaper_restart.set_tooltip_text(self.txt.tip_hyprpaper_restart)
+        self.options_box.pack_end(self.hyprpaper_restart, False, False, 0)
 
     def swww_or_awww_options_read(self) -> None:
         """Read swww transition options from the UI if they are valid"""
@@ -893,6 +906,7 @@ class App(Gtk.Window):
         self.color_picker_display()
         self.swww_or_awww_options_display()
         self.linux_wallpaperengine_options_display()
+        self.hyprland_restart_button_display()
         self.show_all()
 
 
@@ -921,6 +935,21 @@ class App(Gtk.Window):
     def on_refresh_clicked(self, widget) -> None:
         """On clicking refresh button, clear cache"""
         self.clear_cache()
+
+    def on_hyprland_restart(self, widget) -> None:
+        # As in the new Hyprpaper Update Unloading wallpapers is not possible anymore, Hyprpaper needs to be restarted to free up memory
+        if self.cf.backend == "hyprpaper":
+            hyprpaper_kill_command = ["pkill", "-x", "hyprpaper"]
+            hyprpaper_restart_command = ["hyprctl", "dispatch", "exec", "hyprpaper"]
+            waypaper_restore_command = ["waypaper", "--restore"]
+
+            try:
+                subprocess.run(hyprpaper_kill_command, encoding="utf-8")
+                subprocess.run(hyprpaper_restart_command, encoding="utf-8")
+                subprocess.run(waypaper_restore_command, encoding="utf-8")
+                # Problem: Hyprland uses default wallpaper after restart
+            except Exception as e:
+                print(f"Exception: {e}")
 
     def on_mpv_stop_button_clicked(self, widget) -> None:
         """On clicking mpv stop button, kill the mpvpaper or gslapper"""
