@@ -333,7 +333,7 @@ class Russian:
         self.msg_options = "Опции"
         self.msg_exit = "Выход"
         self.msg_subfolders = "Показать подпапки"
-        self.msg_all_subfolders = "Show all subfolders"
+        self.msg_all_subfolders = "Показать все подпапки"
         self.msg_hidden = "Показать скрытые"
         self.msg_gifs = "Показать только gif"
         self.msg_transitions = "Показать опции перехода"

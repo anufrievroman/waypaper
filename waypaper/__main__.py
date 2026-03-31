@@ -16,7 +16,7 @@ from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS, get_monitor_options
 from waypaper.translations import load_language
 
 
-__version__ = "2.7"
+__version__ = "2.8"
 
 # Get application settings and language package:
 cf = Config()
