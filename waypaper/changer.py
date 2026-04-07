@@ -384,35 +384,36 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
         }
     fill = fill_types[cf.fill_option.lower()]
     command = ["linux-wallpaperengine"]
-    options = []
 
     if cf.linux_wallpaperengine_silent:
-        options.append("--silent")
+        command.append("--silent")
     if cf.linux_wallpaperengine_noautomute:
-        options.append("--noautomount")
+        command.append("--noautomute")
     if cf.linux_wallpaperengine_no_audio_processing:
-        options.append("--no-audio-processing")
+        command.append("--no-audio-processing")
     if cf.linux_wallpaperengine_no_fullscreen_pause:
-        options.append("--no-full-screen-pause")
+        command.append("--no-fullscreen-pause")
     if cf.linux_wallpaperengine_fullscreen_pause_only_active:
-        options.append("--fullscreen-pause-only-active")
+        command.append("--fullscreen-pause-only-active")
     if cf.linux_wallpaperengine_disable_particles:
-        options.append("--disable-particles")
+        command.append("--disable-particles")
     if cf.linux_wallpaperengine_disable_mouse:
-        options.append("--disable-mouse")
+        command.append("--disable-mouse")
     if cf.linux_wallpaperengine_clamp != LINUX_WALLPAPERENGINE_CLAMP[0]:
-        options.extend(["--clamp", cf.linux_wallpaperengine_clamp])
+        command.extend(["--clamp", cf.linux_wallpaperengine_clamp])
 
-    options.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
-    options.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
+    command.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
+    command.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
+    command.extend(["--scaling", fill])
 
     if monitor == "All":
         for monitor in [m.name for m in screeninfo.get_monitors()]:
-            command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
-            command.extend(options)
+            if monitor is not None:
+                command.extend(["--screen-root", monitor])
     else:
-        command.extend(["--screen-root", monitor, "--scaling", fill, "-bg", str(image_path.parent)])
-        command.extend(options)
+        command.extend(["--screen-root", monitor])
+
+    command.append(str(image_path.parent))
     command.append("&")
     print(f"{command=}")
     subprocess.Popen(" ".join(command), shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
