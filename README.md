@@ -1,6 +1,6 @@
 # Waypaper
 
-GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `awww`, `wallutils`, `hyprpaper`, `mpvpaper`, `xwallpaper` and `feh`. See [demo](https://www.youtube.com/watch?v=O9OL7iH_KVY) and [documentation](https://anufrievroman.gitbook.io/waypaper).
+GUI wallpaper setter for Wayland and Xorg window managers. It works as a frontend for popular wallpaper backends like `swaybg`, `awww`, `wallutils`, `hyprpaper`, `mpvpaper`, `xwallpaper`, `feh` and `linux-wallpaperengine`. See [demo](https://www.youtube.com/watch?v=O9OL7iH_KVY) and [documentation](https://anufrievroman.gitbook.io/waypaper).
 
 ![screenshot](screen.jpg)
 
@@ -12,6 +12,7 @@ GUI wallpaper setter for Wayland and Xorg window managers. It works as a fronten
 - Supports multiple monitors (with `awww` or `swaybg` or `hyprpaper` or `mpvpaper`)
 - Works on Wayland (with `awww` or `swaybg` or `hyprpaper` or `wallutils` or `mpvpaper`)
 - Works on Xorg (with `feh`, `xwallpaper` or `wallutils`)
+- Supports `linux-wallpaperengine` so you can use your animated wallpapers from Steam's Wallpaper Engine
 - Restores wallpaper after restart (`waypaper --restore`)
 - Fast and minimal (315 kB)
 
@@ -21,7 +22,7 @@ Install at least one of the backends and Waypaper, which works as a frontend.
 
 ### 1. Install a backend
 
-Install a preferred backend from your package manager: [swww (archived)](https://github.com/Horus645/swww) or [awww](https://codeberg.org/LGFae/awww) or [swaybg](https://github.com/swaywm/swaybg) or [hyprpaper](https://github.com/hyprwm/hyprpaper) on Wayland or [xwallpaper](https://github.com/stoeckmann/xwallpaper) or [feh](https://github.com/derf/feh) on Xorg or [mpvpaper](https://github.com/GhostNaN/mpvpaper) or [wallutils](https://github.com/xyproto/wallutils) on both.
+Install a preferred backend from your package manager: [swww (archived)](https://github.com/Horus645/swww) or [awww](https://codeberg.org/LGFae/awww) or [swaybg](https://github.com/swaywm/swaybg) or [hyprpaper](https://github.com/hyprwm/hyprpaper) on Wayland or [xwallpaper](https://github.com/stoeckmann/xwallpaper) or [feh](https://github.com/derf/feh) on Xorg or [mpvpaper](https://github.com/GhostNaN/mpvpaper) or [wallutils](https://github.com/xyproto/wallutils) on both. Install [linux-wallpaperengine](https://github.com/Almamu/linux-wallpaperengine) if you want to use Steam's Wallpaper Engine animated wallpapers.
 
 ### 2. Install Waypaper
 
@@ -53,7 +54,7 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 
 ### Dependencies
 
-- `awww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper`
+- `awww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper` or `linux-wallpaperengine`
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-imageio`
 - `python-imageio-ffmpeg`
