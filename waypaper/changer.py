@@ -7,7 +7,8 @@ from pathlib import Path
 import screeninfo
 
 from waypaper.config import Config
-from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP
+from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
+    LINUX_WALLPAPERENGINE_FILL_OPTIONS
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -376,13 +377,11 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
     seek_and_destroy("linux-wallpaperengine", monitor)
 
-    fill_types = {
-        "fill": "fill",
-        "fit": "fit",
-        "stretch": "stretch",
-        "default": "default"
-        }
-    fill = fill_types[cf.fill_option.lower()]
+    if cf.fill_option.lower() in LINUX_WALLPAPERENGINE_FILL_OPTIONS:
+        fill = cf.fill_option.lower()
+    else:
+        fill = LINUX_WALLPAPERENGINE_FILL_OPTIONS[3]
+
     command = ["linux-wallpaperengine"]
 
     if cf.linux_wallpaperengine_silent:
