@@ -219,11 +219,18 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
         command.extend(["--fill-color", cf.color.lstrip("#")])
     else:
         command.extend(["--fill-color", cf.color])
-    command.extend(["--transition-type", cf.swww_transition_type])
-    command.extend(["--transition-step", str(cf.swww_transition_step)])
-    command.extend(["--transition-angle", str(cf.swww_transition_angle)])
-    command.extend(["--transition-duration", str(cf.swww_transition_duration)])
-    command.extend(["--transition-fps", str(cf.swww_transition_fps)])
+    # command.extend(["--transition-type", cf.swww_transition_type])
+    # command.extend(["--transition-step", str(cf.swww_transition_step)])
+    # command.extend(["--transition-angle", str(cf.swww_transition_angle)])
+    # command.extend(["--transition-duration", str(cf.swww_transition_duration)])
+    # command.extend(["--transition-fps", str(cf.swww_transition_fps)])
+    # 动态映射所有 swww_* 配置项, 自动支持所有 swww 功能
+    for key, value in cf.__dict__.items():
+        if key.startswith("swww_") and value not in (None, "0", "", 0):
+            # 把 swww_transiton_pos -> --transition-pos
+            arg_name = key.removeprefix("swww_").replace("_", "-")
+            command.extend([f"--{arg_name}", str(value)])
+    print(f"test: {command=}")
     if monitor != "All":
         command.extend(["--outputs", monitor])
     subprocess.run(command)
