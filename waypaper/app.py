@@ -33,6 +33,10 @@ class App(Gtk.Window):
         self.set_default_size(820, 600)
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
+        self.caching_images_lock: threading.RLock = threading.RLock()
+        self.loading_label: Gtk.Label | None = None
+        self.thumbnails: list[GdkPixbuf.Pixbuf] = []
+        self.image_names: list[str] = []
         self.highlighted_image_row = 0
         self.is_enering_text = False
         self.number_of_resize = 0
@@ -626,11 +630,44 @@ class App(Gtk.Window):
         )
         dialog.run()
         dialog.destroy()
-
+        
+    def show_caching_label(self) -> None:
+        if self.loading_label:
+            return
+        
+        self.loading_label = Gtk.Label(label=self.txt.msg_caching)
+        self.bottom_loading_box.add(self.loading_label)
+        self.bottom_loading_box.show_all()
+        
+    def remove_caching_label(self) -> None:
+        if not self.loading_label:
+            return
+        
+        # If this is still locked, then another process job started, just leave the label alone to prevent flashing
+        if self.caching_images_lock.locked():
+            return
+        
+        self.bottom_loading_box.remove(self.loading_label)
+        self.loading_label = None
 
     def process_images(self) -> None:
         """Load images from the selected folder, resize them, and arrange into a grid"""
-
+        
+        # Only allow one process operation at a time, but let the others run afterwards
+        with self.caching_images_lock:
+            GLib.idle_add(self.refresh_button.set_sensitive, False)
+            # Show caching label:
+            GLib.idle_add(self.show_caching_label)
+            
+            try:
+                self.process_images_inner()
+            finally:
+                GLib.idle_add(self.refresh_button.set_sensitive, True)
+                # When image processing is done, remove caching label and display the images:
+                GLib.idle_add(self.remove_caching_label)
+                GLib.idle_add(self.load_image_grid)
+        
+    def process_images_inner(self) -> None:
         if self.cf.backend == "linux-wallpaperengine":
             self.image_paths = get_wallpaperengine_preview(self.cf.wallpaperengine_folder)
         else:
@@ -644,11 +681,6 @@ class App(Gtk.Window):
             self.image_paths.sort(key=lambda x: os.path.getmtime(x), reverse=(self.cf.sort_option == "daterev"))
         if self.cf.sort_option == "random":
             random.shuffle(self.image_paths)
-
-        # Show caching label:
-        self.loading_label = Gtk.Label(label=self.txt.msg_caching)
-        self.bottom_loading_box.add(self.loading_label)
-        self.bottom_loading_box.show_all()
 
         self.thumbnails = []
         self.image_names = []
@@ -668,24 +700,35 @@ class App(Gtk.Window):
             cached_image_path = get_cached_image_path(image_path, self.cf.cache_dir)
             if not cached_image_path.exists():
                 cache_image(image_path, self.cf.cache_dir)
+                
+            thumbnail: GdkPixbuf.Pixbuf | None = None
 
-            # Load cached thumbnail:
-            thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
-            self.thumbnails.append(thumbnail)
+            try:
+                # Load cached thumbnail:
+                thumbnail = GdkPixbuf.Pixbuf.new_from_file(str(cached_image_path))
+                
+                if thumbnail:
+                    self.thumbnails.append(thumbnail)
+                else:
+                    print("Failed to load cached thumbnail, None returned")
+                    continue
+            except GLib.GError:
+                # This could happen before because of a race-condition, probably can't happen now, but it's not bad to check
+                print(f"Failed to load cached thumbnail at path {cached_image_path}")
+                continue
 
             # Get image name, which may or may not include parent folders:
             if self.cf.backend == 'linux-wallpaperengine':
                 image_name = get_wallpaperengine_image_name(image_path)
             else:
                 image_name = get_image_name(image_path, self.cf.image_folder_list, self.cf.show_path_in_tooltip)
+            if not image_name:
+                self.thumbnails.remove(thumbnail)
+                print("Failed to get image name")
+                continue
             self.image_names.append(image_name)
 
-        # When image processing is done, remove caching label and display the images:
-        self.bottom_loading_box.remove(self.loading_label)
-        GLib.idle_add(self.load_image_grid)
-
-
-    def get_filtered_images(self) -> list:
+    def get_filtered_images(self) -> tuple[list[GdkPixbuf.Pixbuf], list[str], list[str]]:
         """Filter image paths, names, and thumbnails based on the search query, if any"""
         # Read what is written in the search bar, and if nothing, return all images:
         search_query = self.search_entry.get_text().lower()
@@ -937,6 +980,12 @@ class App(Gtk.Window):
 
     def on_refresh_clicked(self, widget) -> None:
         """On clicking refresh button, clear cache"""
+        
+        # Manual refreshes should just be cancelled if wallpapers are being cached
+        # The button is also disabled during this operation, but it doesn't hurt to check
+        if self.caching_images_lock.locked():
+            return
+        
         self.clear_cache()
 
     def on_hyprland_restart(self, widget) -> None:
@@ -1014,7 +1063,7 @@ class App(Gtk.Window):
         if self.is_enering_text:
             if event.keyval in self.keys.clear_input_fields:
                 self.reset_input_fields()
-            return
+            return False
 
         # Processing rest of the keys:
         elif event.keyval in self.keys.quit:
