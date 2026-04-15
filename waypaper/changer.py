@@ -398,6 +398,8 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
         command.append("--disable-particles")
     if cf.linux_wallpaperengine_disable_mouse:
         command.append("--disable-mouse")
+    if cf.linux_wallpaperengine_disable_parallax:
+        command.append("--disable-parallax")
     if cf.linux_wallpaperengine_clamp != LINUX_WALLPAPERENGINE_CLAMP[0]:
         command.extend(["--clamp", cf.linux_wallpaperengine_clamp])
 
