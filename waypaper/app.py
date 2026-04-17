@@ -16,6 +16,7 @@ from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EX
     get_monitor_options, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
+from waypaper.command_parsing import parse_swww_help
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -466,32 +467,104 @@ class App(Gtk.Window):
         # Add it to the row of buttons:
         self.options_box.pack_start(self.monitor_option_combo, False, False, 0)
 
+    # def swww_or_awww_options_display(self) -> None:
+    #     """Show swww transition options if backend is swww or awww"""
+    #     self.options_box.remove(self.swww_transitions_options)
+    #     self.options_box.remove(self.swww_angle_entry)
+    #     self.options_box.remove(self.swww_steps_entry)
+    #     self.options_box.remove(self.swww_fps_entry)
+    #     self.options_box.remove(self.swww_duration_entry)
+
+    #     if self.cf.backend != "swww" and self.cf.backend != "awww" :
+    #         return
+
+    #     self.swww_transitions_options = Gtk.ComboBoxText()
+    #     for transitions in SWWW_TRANSITION_TYPES:
+    #         self.swww_transitions_options.append_text(transitions)
+    #     active_transition = 0
+    #     if self.cf.swww_transition_type in SWWW_TRANSITION_TYPES:
+    #         active_transition = SWWW_TRANSITION_TYPES.index(self.cf.swww_transition_type)
+    #         self.swww_transitions_options.set_active(active_transition)
+    #         self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
+    #         self.swww_transitions_options.set_tooltip_text(self.txt.tip_transition)
+
+    #     self.options_box.pack_end(self.swww_steps_entry, False, False, 0)
+    #     self.options_box.pack_end(self.swww_fps_entry, False, False, 0)
+    #     self.options_box.pack_end(self.swww_angle_entry, False, False, 0)
+    #     self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
+    #     self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
+
     def swww_or_awww_options_display(self) -> None:
         """Show swww transition options if backend is swww or awww"""
-        self.options_box.remove(self.swww_transitions_options)
-        self.options_box.remove(self.swww_angle_entry)
-        self.options_box.remove(self.swww_steps_entry)
-        self.options_box.remove(self.swww_fps_entry)
-        self.options_box.remove(self.swww_duration_entry)
+        # 清空旧控件（保留原逻辑，兼容原有代码）
+        for widget_name in ["swww_transitions_options", "swww_angle_entry", 
+                        "swww_steps_entry", "swww_fps_entry", "swww_duration_entry"]:
+            if hasattr(self, widget_name):
+                try:
+                    self.options_box.remove(getattr(self, widget_name))
+                except Exception:
+                    pass
 
-        if self.cf.backend != "swww" and self.cf.backend != "awww" :
+        if self.cf.backend != "swww" and self.cf.backend != "awww":
             return
 
-        self.swww_transitions_options = Gtk.ComboBoxText()
-        for transitions in SWWW_TRANSITION_TYPES:
-            self.swww_transitions_options.append_text(transitions)
-        active_transition = 0
-        if self.cf.swww_transition_type in SWWW_TRANSITION_TYPES:
-            active_transition = SWWW_TRANSITION_TYPES.index(self.cf.swww_transition_type)
-            self.swww_transitions_options.set_active(active_transition)
-            self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
-            self.swww_transitions_options.set_tooltip_text(self.txt.tip_transition)
+        # 从 command_parsing 动态获取参数（修复后可正确解析）
+        swww_params = parse_swww_help()
+        # [print("test:", k, v) for k, v in swww_params.items()]  # 测试用，可删除
 
-        self.options_box.pack_end(self.swww_steps_entry, False, False, 0)
-        self.options_box.pack_end(self.swww_fps_entry, False, False, 0)
-        self.options_box.pack_end(self.swww_angle_entry, False, False, 0)
-        self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
-        self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
+        # 1. 过渡类型下拉框（自动从 help 提取）
+        self.swww_transitions_options = Gtk.ComboBoxText()
+        transition_type_key = "swww_transition_type"
+        if transition_type_key in swww_params and swww_params[transition_type_key]["choices"]:
+            transition_choices = swww_params[transition_type_key]["choices"]
+            for choice in transition_choices:
+                self.swww_transitions_options.append_text(choice)
+            # 设置当前值
+            current_type = getattr(self.cf, transition_type_key, swww_params[transition_type_key]["default"])
+            if current_type in transition_choices:
+                self.swww_transitions_options.set_active(transition_choices.index(current_type))
+        else:
+            # 降级兼容：如果解析失败，用原硬编码列表
+            from waypaper.options import SWWW_TRANSITION_TYPES
+            for t in SWWW_TRANSITION_TYPES:
+                self.swww_transitions_options.append_text(t)
+            self.swww_transitions_options.set_active(SWWW_TRANSITION_TYPES.index(self.cf.swww_transition_type))
+
+        self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
+        self.swww_transitions_options.set_tooltip_text(swww_params.get(transition_type_key, {}).get("desc", ""))
+        self.options_box.pack_end(self.swww_transitions_options, False, False, 5)
+
+        # 2. 动态生成其他所有参数的输入框
+        for key, param in swww_params.items():
+            if key == transition_type_key:  # 跳过已处理的 type
+                continue
+
+            # 根据参数类型创建输入框
+            if param["type"] == "int":
+                entry = Gtk.Entry()
+                entry.set_width_chars(6)
+                current_val = getattr(self.cf, key, param["default"] or 0)
+                entry.set_text(str(current_val))
+            elif param["type"] == "float":
+                entry = Gtk.Entry()
+                entry.set_width_chars(6)
+                current_val = getattr(self.cf, key, param["default"] or 0.0)
+                entry.set_text(str(current_val))
+            else:  # string/choice（除type外的choice极少，用输入框兼容）
+                entry = Gtk.Entry()
+                entry.set_width_chars(12)
+                current_val = getattr(self.cf, key, param["default"] or "")
+                entry.set_text(str(current_val))
+
+            # 通用设置
+            entry.set_placeholder_text(param["display"])
+            entry.set_tooltip_text(param["desc"])
+            entry.connect("focus-in-event", self.on_focus_in)
+            entry.connect("focus-out-event", self.on_focus_out)
+
+            # 保存控件引用
+            setattr(self, f"{key}_entry", entry)
+            self.options_box.pack_end(entry, False, False, 5)
 
     def hyprland_restart_button_display(self) -> None:
         # If hyprpaper is installed, add a button to restart it
@@ -500,22 +573,63 @@ class App(Gtk.Window):
             return
         self.options_box.pack_end(self.hyprpaper_restart, False, False, 0)
 
+    # def swww_or_awww_options_read(self) -> None:
+    #     """Read swww transition options from the UI if they are valid"""
+    #     if self.cf.backend != "swww" and self.cf.backend != "awww":
+    #         return
+    #     angle = self.swww_angle_entry.get_text()
+    #     steps = self.swww_steps_entry.get_text()
+    #     fps = self.swww_fps_entry.get_text()
+    #     duration = self.swww_duration_entry.get_text()
+    #     if angle.isdigit():
+    #         self.cf.swww_transition_angle = angle
+    #     if steps.isdigit():
+    #         self.cf.swww_transition_step = steps
+    #     if fps.isdigit():
+    #         self.cf.swww_transition_fps = fps
+    #     if duration.isdigit():
+    #         self.cf.swww_transition_duration = duration
+
     def swww_or_awww_options_read(self) -> None:
         """Read swww transition options from the UI if they are valid"""
         if self.cf.backend != "swww" and self.cf.backend != "awww":
             return
-        angle = self.swww_angle_entry.get_text()
-        steps = self.swww_steps_entry.get_text()
-        fps = self.swww_fps_entry.get_text()
-        duration = self.swww_duration_entry.get_text()
-        if angle.isdigit():
-            self.cf.swww_transition_angle = angle
-        if steps.isdigit():
-            self.cf.swww_transition_step = steps
-        if fps.isdigit():
-            self.cf.swww_transition_fps = fps
-        if duration.isdigit():
-            self.cf.swww_transition_duration = duration
+
+        swww_params = parse_swww_help()
+
+        # 1. 读取过渡类型
+        transition_type_key = "swww_transition_type"
+        if transition_type_key in swww_params:
+            self.cf.swww_transition_type = self.swww_transitions_options.get_active_text()
+
+        # 2. 动态读取其他所有参数
+        for key, param in swww_params.items():
+            if key == transition_type_key:
+                continue
+
+            widget = getattr(self, f"{key}_entry", None)
+            if not widget:
+                continue
+
+            value = widget.get_text().strip()
+            if not value:
+                continue
+
+            # 自动类型转换
+            if param["type"] == "int":
+                try:
+                    value = int(value)
+                except ValueError:
+                    value = int(param["default"]) if param["default"] and param["default"].isdigit() else 0
+            elif param["type"] == "float":
+                try:
+                    value = float(value)
+                except ValueError:
+                    value = float(param["default"]) if param["default"] and param["default"].replace(".", "", 1).isdigit() else 0.0
+
+            # 写入配置
+            setattr(self.cf, key, value)
+
 
     def mpv_options_display(self) -> None:
         """Show mpv options if backend is mpvpaper or gslapper, and remove them for other backends"""
