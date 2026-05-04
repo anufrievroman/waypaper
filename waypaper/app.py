@@ -68,7 +68,7 @@ class App(Gtk.Window):
         # Apply CSS to the default screen
         screen = Gdk.Screen.get_default()
         context = Gtk.StyleContext()
-        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
 
         # TOP MENU
 
