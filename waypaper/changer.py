@@ -384,6 +384,13 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
 
     command = ["linux-wallpaperengine"]
 
+    if monitor == "All":
+        for monitor in [m.name for m in screeninfo.get_monitors()]:
+            if monitor is not None:
+                command.extend(["--screen-root", monitor])
+    else:
+        command.extend(["--screen-root", monitor])
+
     if cf.linux_wallpaperengine_silent:
         command.append("--silent")
     if cf.linux_wallpaperengine_noautomute:
@@ -406,13 +413,6 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     command.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
     command.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
     command.extend(["--scaling", fill])
-
-    if monitor == "All":
-        for monitor in [m.name for m in screeninfo.get_monitors()]:
-            if monitor is not None:
-                command.extend(["--screen-root", monitor])
-    else:
-        command.extend(["--screen-root", monitor])
 
     command.append(str(image_path.parent))
     command.append("&")
