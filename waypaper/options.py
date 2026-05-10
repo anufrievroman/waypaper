@@ -37,7 +37,7 @@ SWWW_TRANSITION_TYPES: List[str] = ["any", "none", "simple", "fade", "wipe",  "l
 TIMERS: Dict[str, int] = {"30 sec": 30, "1 min": 60, "2 min": 120, "5 min": 300, "10 min": 600, "30 min": 1800, "1 hour": 3600,
           "2 hours": 7200, "6 hours": 21600, "12 hours": 43200, "1 day": 86400, "1 week": 604800}
 
-LINUX_WALLPAPERENGINE_CLAMP: List[str] = ["none", "clamp", "fit", "fill"]
+LINUX_WALLPAPERENGINE_CLAMP: List[str] = ["none", "clamp", "border", "repeat"]
 
 
 def get_monitor_names_with_swww() -> List[str]:
