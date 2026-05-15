@@ -1,3 +1,4 @@
+import argparse
 import sys
 import unittest
 from unittest.mock import patch
@@ -15,7 +16,7 @@ class WaypaperdTests(unittest.TestCase):
         self.assertEqual(args.interval, 600)
 
     def test_positive_interval_rejects_non_positive_values(self):
-        with self.assertRaises(Exception):
+        with self.assertRaises(argparse.ArgumentTypeError):
             waypaperd.positive_interval("0")
 
     def test_build_waypaper_command_uses_current_python(self):
