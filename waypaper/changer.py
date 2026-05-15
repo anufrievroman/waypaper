@@ -148,6 +148,14 @@ def get_linux_wallpaperengine_log_path(cf: Config, monitor: str) -> Path:
     return log_dir / f"{timestamp}-{safe_monitor}.log"
 
 
+def describe_linux_wallpaperengine_pause_policy(cf: Config) -> str:
+    if cf.linux_wallpaperengine_no_fullscreen_pause:
+        return "disabled via --no-fullscreen-pause"
+    if cf.linux_wallpaperengine_fullscreen_pause_only_active:
+        return "limited to the active fullscreen output via --fullscreen-pause-only-active"
+    return "renderer default"
+
+
 def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with swaybg backend"""
 
@@ -558,6 +566,7 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
                 log_handle.write(f"Wallpaper entry file: {project_metadata['file']}\n")
         for note in compatibility_notes:
             log_handle.write(f"Note: {note}\n")
+        log_handle.write(f"Fullscreen pause policy: {describe_linux_wallpaperengine_pause_policy(cf)}\n")
         log_handle.write(f"Assets dir: {assets_dir if assets_dir else 'not resolved'}\n")
         log_handle.write(f"Command: {shlex.join(command)}\n\n")
         log_handle.flush()
@@ -569,8 +578,17 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
             stderr=log_handle,
             start_new_session=True,
         )
+        log_handle.write(f"Launch PID: {process.pid}\n")
         time.sleep(0.5)
         exit_code = process.poll()
+        if exit_code is None:
+            log_handle.write(
+                "Process status after initial check: still running after 0.5s. "
+                "If the wallpaper appears blank or static, the issue is likely in linux-wallpaperengine runtime behavior or wallpaper content rather than an immediate Waypaper launch failure.\n"
+            )
+        else:
+            log_handle.write(f"Process status after initial check: exited with code {exit_code}\n")
+        log_handle.flush()
 
     print(f"linux-wallpaperengine log file: {log_path}")
     if exit_code is not None:
