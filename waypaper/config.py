@@ -73,6 +73,11 @@ class Config:
         self.linux_wallpaperengine_no_fullscreen_pause = False
         self.linux_wallpaperengine_fullscreen_pause_only_active = False
 
+        # Informational advisory when WE detects a video project under
+        # linux-wallpaperengine. Pure print, never overrides the user's
+        # selected backend.
+        self.we_video_advisory = True
+
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
