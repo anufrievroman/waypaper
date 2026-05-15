@@ -718,14 +718,23 @@ class App(Gtk.Window):
 
             # Calculate current y coordinate in the scroll window:
             aspect_ratio = thumbnail.get_width() / thumbnail.get_height()
-            current_row_heights[column] = int(240 / aspect_ratio)
+            current_row_heights[column] = int(240 / aspect_ratio) + 34
             if column == 0:
                 current_y += max(current_row_heights) + 10
                 current_row_heights = [0]*self.cf.number_of_columns
 
-            # Create a button with an image and add tooltip:
+            # Create a button with an image and a visible label.
             image = Gtk.Image.new_from_pixbuf(thumbnail)
             image.set_tooltip_text(name)
+            label = Gtk.Label(label=name)
+            label.set_max_width_chars(28)
+            label.set_line_wrap(True)
+            label.set_justify(Gtk.Justification.CENTER)
+
+            content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            content_box.pack_start(image, False, False, 0)
+            content_box.pack_start(label, False, False, 0)
+
             button = Gtk.Button()
             if index == self.selected_index:
                 button.set_relief(Gtk.ReliefStyle.NORMAL)
@@ -733,7 +742,7 @@ class App(Gtk.Window):
                 self.highlighted_image_y = current_y
             else:
                 button.set_relief(Gtk.ReliefStyle.NONE)
-            button.add(image)
+            button.add(content_box)
 
             # Add button to the grid and connect clicked event:
             self.grid.attach(button, column, row, 1, 1)
