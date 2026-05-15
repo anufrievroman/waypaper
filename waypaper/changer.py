@@ -65,6 +65,8 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
         else:
             return
+        if pid is None:
+            return
         try:
             subprocess.run(['kill', '-9', str(pid)], check=True)
             print(f"Detected {process} on {monitor} and killed it")
