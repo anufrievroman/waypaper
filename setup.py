@@ -20,6 +20,9 @@ setuptools.setup(
     entry_points={
         "gui_scripts": [
             "waypaper = waypaper.__main__:run"
+        ],
+        "console_scripts": [
+            "waypaperd = waypaper.waypaperd:main"
         ]
     },
     install_requires=["PyGObject", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
@@ -50,6 +53,9 @@ setuptools.setup(
          ),
         ('share/man/man1',
          ['data/waypaper.1.gz']
+         ),
+        ('share/systemd/user',
+         ['data/waypaperd.service']
          ),
     ],
 )

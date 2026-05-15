@@ -1,0 +1,15 @@
+[Unit]
+Description=Waypaper slideshow daemon
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=WAYPAPERD_INTERVAL=1800
+ExecStart=/usr/bin/env waypaperd ${WAYPAPERD_INTERVAL}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
