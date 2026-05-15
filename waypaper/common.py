@@ -72,6 +72,17 @@ def get_wallpaperengine_preview(wallpaperengine_folder: Path | str) -> List[str]
                 image_path_list.append(os.path.join(root, file))
     return image_path_list
 
+
+def get_wallpaperengine_project(full_path: Path | str) -> dict:
+    full_path = Path(full_path)
+    image_dir = full_path.parent
+    with open(image_dir / "project.json", "r") as f:
+        project = json.load(f)
+    wallpaper_type = str(project.get("type", "unknown")).strip().lower() or "unknown"
+    project["type"] = wallpaper_type
+    project["title"] = str(project.get("title") or image_dir.name)
+    return project
+
 def get_wallpaperengine_image_name(full_path: Path | str) -> str:
     full_path = Path(full_path)
     image_dir = full_path.parent
