@@ -67,6 +67,8 @@ class Config:
         self.linux_wallpaperengine_disable_parallax = False
         self.linux_wallpaperengine_no_fullscreen_pause = False
         self.linux_wallpaperengine_fullscreen_pause_only_active = False
+        self.linux_wallpaperengine_binary = ""
+        self.linux_wallpaperengine_assets_dir = ""
 
         # Create config and cache folders:
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -124,10 +126,13 @@ class Config:
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
         self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
+        legacy_linux_wallpaperengine_binary = config.get("Settings", "wallpaper_engine_script", fallback=self.linux_wallpaperengine_binary)
+        self.linux_wallpaperengine_binary = config.get("Settings", "linux_wallpaperengine_binary", fallback=legacy_linux_wallpaperengine_binary)
+        self.linux_wallpaperengine_assets_dir = config.get("Settings", "linux_wallpaperengine_assets_dir", fallback=self.linux_wallpaperengine_assets_dir)
         self.linux_wallpaperengine_clamp = config.get("Settings", "linux_wallpaperengine_clamp", fallback=self.linux_wallpaperengine_clamp)
         self.linux_wallpaperengine_volume = int(config.get("Settings", "linux_wallpaperengine_volume", fallback=self.linux_wallpaperengine_volume))
         self.linux_wallpaperengine_silent = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
-        self.linux_wallpaperengine_noautomute  = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_noautomute = config.getboolean("Settings", "linux_wallpaperengine_noautomute", fallback=self.linux_wallpaperengine_noautomute)
         self.linux_wallpaperengine_no_audio_processing  = config.getboolean("Settings", "linux_wallpaperengine_no_audio_processing", fallback=self.linux_wallpaperengine_no_audio_processing)
         self.linux_wallpaperengine_fps = int(config.get("Settings", "linux_wallpaperengine_fps", fallback=self.linux_wallpaperengine_fps))
         self.linux_wallpaperengine_disable_particles  = config.getboolean("Settings", "linux_wallpaperengine_disable_particles", fallback=self.linux_wallpaperengine_disable_particles)
@@ -283,6 +288,9 @@ class Config:
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
         config.set("Settings", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
+        config.set("Settings", "linux_wallpaperengine_binary", str(self.linux_wallpaperengine_binary))
+        config.set("Settings", "wallpaper_engine_script", str(self.linux_wallpaperengine_binary))
+        config.set("Settings", "linux_wallpaperengine_assets_dir", str(self.linux_wallpaperengine_assets_dir))
         config.set("Settings", "linux_wallpaperengine_clamp", self.linux_wallpaperengine_clamp)
         config.set("Settings", "linux_wallpaperengine_volume", str(self.linux_wallpaperengine_volume))
         config.set("Settings", "linux_wallpaperengine_silent", str(self.linux_wallpaperengine_silent))
@@ -293,6 +301,7 @@ class Config:
         config.set("Settings", "linux_wallpaperengine_disable_mouse", str(self.linux_wallpaperengine_disable_mouse))
         config.set("Settings", "linux_wallpaperengine_disable_parallax", str(self.linux_wallpaperengine_disable_parallax))
         config.set("Settings", "linux_wallpaperengine_no_fullscreen_pause", str(self.linux_wallpaperengine_no_fullscreen_pause))
+        config.set("Settings", "linux_wallpaperengine_fullscreen_pause_only_active", str(self.linux_wallpaperengine_fullscreen_pause_only_active))
         try:
             with open(self.config_file, "w") as configfile:
                 config.write(configfile)
