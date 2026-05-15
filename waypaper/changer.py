@@ -14,15 +14,16 @@ from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGI
     LINUX_WALLPAPERENGINE_FILL_OPTIONS
 
 
-def find_process_pid(command: str) -> Optional[int]:
-    """Find the PID of the process matching the exact command"""
+def find_process_pid(command: str | tuple[str, ...]) -> Optional[int]:
+    """Find the PID of the first process containing all required command fragments."""
     try:
-        result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
+        required_fragments = (command,) if isinstance(command, str) else command
+        result = subprocess.run(['ps', '-eo', 'pid=,args='], stdout=subprocess.PIPE, text=True, check=True)
         processes = result.stdout.splitlines()
         for process in processes:
-            if command in process:
-                # Extract PID (second column after splitting):
-                return int(process.split()[1])
+            pid_text, _, command_line = process.strip().partition(' ')
+            if command_line and all(fragment in command_line for fragment in required_fragments):
+                return int(pid_text)
         return None
     except Exception:
         return None
@@ -56,13 +57,14 @@ def seek_and_destroy(process: str, monitor: str = "All"):
     # Otherwise, find PID of the process for certain monitor and kill it:
     else:
         if process == "mpvpaper":
-            pid = find_process_pid(f"mpvpaper -f socket-{monitor}")
+            pid = find_process_pid(("mpvpaper", f"socket-{monitor}"))
         elif process == "swaybg":
-            pid = find_process_pid(f"swaybg -o {monitor}")
+            pid = find_process_pid(("swaybg", f"-o {monitor}"))
         elif process == "gslapper":
-            pid = find_process_pid(f"gslapper.*{monitor}")
+            pid = find_process_pid(("gslapper", monitor))
         elif process == "linux-wallpaperengine":
-            pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
+            # Keep monitor-specific cleanup resilient to future flag reordering.
+            pid = find_process_pid(("linux-wallpaperengine", f"--screen-root {monitor}"))
         else:
             return
         if pid is None:
