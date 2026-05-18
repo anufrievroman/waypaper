@@ -64,6 +64,12 @@ pipx install waypaper
 
 If `pipx` is not installed: `brew install pipx && pipx ensurepath`.
 
+To make Waypaper accessible from Spotlight and Launchpad, copy the provided app bundle to your Applications folder:
+
+```bash
+cp -r data/macos/Waypaper.app ~/Applications/
+```
+
 ### Dependencies
 
 - `awww` or `swww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper` or `gslapper` or `linux-wallpaperengine` or `macos`

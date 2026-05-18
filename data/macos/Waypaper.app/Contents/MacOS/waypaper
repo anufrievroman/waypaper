@@ -1,0 +1,4 @@
+#!/bin/bash
+# .app bundles don't inherit the shell PATH, so we add common install locations manually.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
+exec waypaper
