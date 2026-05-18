@@ -2,7 +2,6 @@
 
 import argparse
 import os.path
-import subprocess
 import sys
 import time
 import json
@@ -15,6 +14,7 @@ from waypaper.common import get_random_file
 from waypaper.config import Config
 from waypaper.options import BACKEND_OPTIONS, FILL_OPTIONS, get_monitor_options
 from waypaper.translations import load_language
+from waypaper.waypaperd_manager import WaypaperdManager
 
 
 __version__ = "2.8"
@@ -113,10 +113,8 @@ def run():
 
         # On restore, restart the daemon if slideshow was enabled:
         if args.restore and cf.slideshow_enabled:
-            try:
-                subprocess.Popen(["waypaperd", str(cf.slideshow_interval * 60)])
-            except FileNotFoundError:
-                print("Couldn't launch the daemon for automatic wallpaper change. See documentation on how to enable it.")
+            if not WaypaperdManager().restart():
+                print("Couldn't control the waypaperd user service. See documentation on how to enable it.")
 
         sys.exit(0)
 

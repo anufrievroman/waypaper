@@ -17,6 +17,7 @@ from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EX
     get_monitor_options, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
+from waypaper.waypaperd_manager import WaypaperdManager
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
@@ -30,6 +31,7 @@ class App(Gtk.Window):
         self.cf = cf
         self.txt = txt
         self.keys = Keys(cf)
+        self.waypaperd_manager = WaypaperdManager()
         self.check_backends()
         self.set_default_size(820, 600)
         self.connect("delete-event", Gtk.main_quit)
@@ -1084,11 +1086,14 @@ class App(Gtk.Window):
             print("Pause not supported for gSlapper")
 
     def is_waypaperd_running(self) -> bool:
-        result = subprocess.run(["pgrep", "-f", "waypaperd"], capture_output=True)
-        return result.returncode == 0
+        return self.waypaperd_manager.check()
 
     def update_slideshow_button(self) -> None:
-        if self.is_waypaperd_running():
+        is_supported = self.waypaperd_manager.is_supported()
+        is_running = self.is_waypaperd_running()
+        self.slideshow_start_button.set_sensitive(is_supported)
+        self.slideshow_stop_button.set_sensitive(is_supported and is_running)
+        if is_running:
             self.slideshow_start_button.set_label(self.txt.msg_daemon_restart)
         else:
             self.slideshow_start_button.set_label(self.txt.msg_daemon_start)
@@ -1101,21 +1106,34 @@ class App(Gtk.Window):
                 interval_minutes = 60
         except ValueError:
             interval_minutes = 60
-        subprocess.run(["pkill", "-f", "waypaperd"], capture_output=True)
-        try:
-            subprocess.Popen(["waypaperd", str(interval_minutes * 60)])
-            self.cf.slideshow_interval = interval_minutes
-            self.cf.slideshow_enabled = True
-            self.cf.save()
-            self.slideshow_start_button.set_label(self.txt.msg_daemon_restart)
-        except FileNotFoundError:
-            print("Couldn't launch the daemon for automatic wallpaper change. See documentation on how to enable it.")
+
+        self.cf.slideshow_interval = interval_minutes
+        self.cf.slideshow_enabled = True
+        self.cf.save()
+
+        if self.is_waypaperd_running():
+            success = self.waypaperd_manager.restart()
+        else:
+            success = self.waypaperd_manager.launch()
+
+        if success:
+            self.update_slideshow_button()
+            return
+
+        self.cf.slideshow_enabled = self.is_waypaperd_running()
+        self.cf.save()
+        self.update_slideshow_button()
+        print("Couldn't control the waypaperd user service. See documentation on how to enable it.")
 
     def on_daemon_stop_clicked(self, widget) -> None:
-        subprocess.run(["pkill", "-f", "waypaperd"], capture_output=True)
-        self.cf.slideshow_enabled = False
-        self.cf.save()
-        self.slideshow_start_button.set_label(self.txt.msg_daemon_start)
+        success = self.waypaperd_manager.stop()
+        if success or not self.is_waypaperd_running():
+            self.cf.slideshow_enabled = False
+            self.cf.save()
+            self.update_slideshow_button()
+            return
+
+        print("Couldn't stop the waypaperd user service. See documentation on how to enable it.")
 
     def on_slideshow_panel_toggled(self, toggle) -> None:
         self.cf.show_slideshow_panel = toggle.get_active()
