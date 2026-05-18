@@ -20,7 +20,7 @@ IMAGE_EXTENSIONS: Dict[str, List[str]] = {
         BACKEND_OPTIONS[0]: ['.gif', '.jpg', '.jpeg', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
         BACKEND_OPTIONS[1]: ['.gif', '.jpg', '.jpeg', '.png'],
         BACKEND_OPTIONS[2]: ['.gif', '.jpg', '.jpeg', '.jxl', '.png', '.webp', '.bmp', '.pnm', '.tiff'],
-        BACKEND_OPTIONS[3]: ['.gif', '.jpg', '.jpeg', '.png', '.bmp', '.pnm', '.tiff'],
+        BACKEND_OPTIONS[3]: ['.gif', '.jpg', '.jpeg', '.png', '.bmp', '.pnm', '.tiff', '.webp'],
         BACKEND_OPTIONS[4]: ['.jpeg', '.png'],
         BACKEND_OPTIONS[5]: ['.gif', '.jpg', '.jpeg', '.png'],
         BACKEND_OPTIONS[6]: ['.jpg', '.jpeg', '.png', '.webp', '.jxl'],
