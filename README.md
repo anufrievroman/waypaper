@@ -53,6 +53,17 @@ Users of OpenSUSE [reported issue with installation](https://github.com/anufriev
 
 Waypaper is available in an external repository owned by Solopasha. You can add this repository as `sudo dnf copr enable lionheartp/Hyprland` and install as `sudo dnf install waypaper`.
 
+#### On macOS
+
+First install GTK3 and PyGObject via Homebrew, then install Waypaper:
+
+```bash
+brew install gtk+3 pygobject3
+pipx install waypaper
+```
+
+If `pipx` is not installed: `brew install pipx && pipx ensurepath`.
+
 ### Dependencies
 
 - `awww` or `swww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper` or `gslapper` or `linux-wallpaperengine` or `macos`
