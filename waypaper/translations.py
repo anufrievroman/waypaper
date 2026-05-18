@@ -70,6 +70,7 @@ class English:
         self.tip_random = "Set random wallpaper"
         self.tip_exit = "Exit the application"
         self.tip_transition = "Choose transition type"
+        self.tip_filter = "Choose scaling filter"
         self.tip_mpv_stop = "Stop all all mpv processes"
         self.tip_mpv_pause = "Play/Pause video wallpaper"
         self.tip_mpv_sound = "Play sound of the video"
