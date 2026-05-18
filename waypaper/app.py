@@ -33,7 +33,7 @@ class App(Gtk.Window):
         self.set_default_size(820, 600)
         self.connect("delete-event", Gtk.main_quit)
         self.selected_index = 0
-        self.caching_images_lock: threading.RLock = threading.RLock()
+        self.caching_images_lock: threading.Lock = threading.Lock()
         self.loading_label: Gtk.Label | None = None
         self.thumbnails: list[GdkPixbuf.Pixbuf] = []
         self.image_names: list[str] = []
