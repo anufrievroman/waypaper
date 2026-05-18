@@ -33,12 +33,10 @@ class Keys:
     def fill_keys_from_file(self, path):
         """Loading user-defined keybindings from the provided file"""
 
-        # Show an error is the path is not correct:
         try:
             with open(path, 'r') as file:
                 pass
         except FileNotFoundError:
-            print(f"File '{path}' does not exist")
             return
 
         # Parse the file:
