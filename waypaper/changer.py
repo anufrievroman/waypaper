@@ -34,19 +34,40 @@ def format_post_command(
     return post_command
 
 
-def find_process_pid(command: str | tuple[str, ...]) -> Optional[int]:
-    """Find the PID of the first process containing all required command fragments."""
+def find_process_pids(command: str | tuple[str, ...]) -> list[int]:
+    """Find all PIDs whose command lines contain all required command fragments."""
     try:
         required_fragments = (command,) if isinstance(command, str) else command
         result = subprocess.run(['ps', '-eo', 'pid=,args='], stdout=subprocess.PIPE, text=True, check=True)
         processes = result.stdout.splitlines()
+        matching_pids: list[int] = []
         for process in processes:
             pid_text, _, command_line = process.strip().partition(' ')
             if command_line and all(fragment in command_line for fragment in required_fragments):
-                return int(pid_text)
-        return None
+                matching_pids.append(int(pid_text))
+        return matching_pids
     except Exception:
-        return None
+        return []
+
+
+def find_process_pid(command: str | tuple[str, ...]) -> Optional[int]:
+    """Find the PID of the first process containing all required command fragments."""
+    matching_pids = find_process_pids(command)
+    return matching_pids[0] if matching_pids else None
+
+
+def find_replacement_linux_wallpaperengine_pid(monitor: str, current_pid: int) -> Optional[int]:
+    """Find a newer linux-wallpaperengine PID after the current one was replaced."""
+    command: str | tuple[str, ...]
+    if monitor == "All":
+        command = "linux-wallpaperengine"
+    else:
+        command = ("linux-wallpaperengine", f"--screen-root {monitor}")
+
+    for pid in find_process_pids(command):
+        if pid > current_pid:
+            return pid
+    return None
 
 
 def seek_and_destroy(process: str, monitor: str = "All"):
@@ -577,6 +598,8 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     command.append(str(background_path))
     print(f"linux-wallpaperengine command: {shlex.join(command)}")
 
+    replacement_pid = None
+
     with log_path.open("w", encoding="utf-8") as log_handle:
         log_handle.write("Waypaper linux-wallpaperengine launch\n")
         log_handle.write(f"Monitor: {monitor}\n")
@@ -609,11 +632,29 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
                 "If the wallpaper appears blank or static, the issue is likely in linux-wallpaperengine runtime behavior or wallpaper content rather than an immediate Waypaper launch failure.\n"
             )
         else:
-            log_handle.write(f"Process status after initial check: exited with code {exit_code}\n")
+            if exit_code == -9:
+                replacement_pid = find_replacement_linux_wallpaperengine_pid(monitor, process.pid)
+            if replacement_pid is not None:
+                log_handle.write(
+                    "Process status after initial check: exited with code "
+                    f"{exit_code}, but a newer linux-wallpaperengine process "
+                    f"(PID {replacement_pid}) is already running for {monitor}; "
+                    "suppressing launch-failed notification.\n"
+                )
+            else:
+                log_handle.write(f"Process status after initial check: exited with code {exit_code}\n")
         log_handle.flush()
 
     print(f"linux-wallpaperengine log file: {log_path}")
     if exit_code is not None:
+        if replacement_pid is not None:
+            print(
+                "linux-wallpaperengine exited with code "
+                f"{exit_code}, but a newer process for {monitor} is already running "
+                f"(PID {replacement_pid}); suppressing failure notification"
+            )
+            return
+
         fallback_backend = None
         if not image_path.is_dir() and image_path.exists():
             fallback_backend = change_with_static_fallback(image_path, cf, monitor)
