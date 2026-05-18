@@ -251,3 +251,4 @@ tags
 # End of https://www.toptal.com/developers/gitignore/api/emacs,vim
 
 CLAUDE.md
+.DS_Store
