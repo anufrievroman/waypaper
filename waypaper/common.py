@@ -1,6 +1,7 @@
 """Module with some of the common functions, like file and image operations"""
 
 import os
+import sys
 from os import PathLike
 
 import gi
@@ -152,7 +153,9 @@ def check_installed_backends() -> List[str]:
         elif backend == "wallutils":
             binary_name = "setwallpaper"
         elif backend == "macos":
-            binary_name = "sw_vers"
+            if sys.platform == "darwin":
+                installed_backends.append(backend)
+            continue
         else:
             binary_name = backend
         is_installed = bool(shutil.which(binary_name))
