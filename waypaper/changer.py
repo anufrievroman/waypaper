@@ -219,6 +219,7 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
         command.extend(["--fill-color", cf.color.lstrip("#")])
     else:
         command.extend(["--fill-color", cf.color])
+    command.extend(["--filter", cf.swww_filter])
     command.extend(["--transition-type", cf.swww_transition_type])
     command.extend(["--transition-step", str(cf.swww_transition_step)])
     command.extend(["--transition-angle", str(cf.swww_transition_angle)])
@@ -263,6 +264,7 @@ def change_with_awww(image_path: Path, cf: Config, monitor: str):
         command.extend(["--fill-color", cf.color.lstrip("#")])
     else:
         command.extend(["--fill-color", cf.color])
+    command.extend(["--filter", cf.swww_filter])
     command.extend(["--transition-type", cf.swww_transition_type])
     command.extend(["--transition-step", str(cf.swww_transition_step)])
     command.extend(["--transition-angle", str(cf.swww_transition_angle)])

@@ -6,7 +6,7 @@ from argparse import Namespace
 from typing import List
 from platformdirs import user_config_path, user_pictures_path, user_cache_path, user_state_path
 
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, BACKEND_OPTIONS, \
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SWWW_TRANSITION_TYPES, SWWW_FILTER_TYPES, BACKEND_OPTIONS, \
     LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.common import check_installed_backends
 
@@ -29,6 +29,7 @@ class Config:
         self.color = "#ffffff"
         self.number_of_columns = 3
         self.swww_transition_type = SWWW_TRANSITION_TYPES[0]
+        self.swww_filter = SWWW_FILTER_TYPES[-1]
         self.swww_transition_step = 63
         self.swww_transition_angle = 0
         self.swww_transition_duration = 2
@@ -106,6 +107,7 @@ class Config:
         self.color = config.get("Settings", "color", fallback=self.color)
         self.post_command = config.get("Settings", "post_command", fallback=self.post_command)
         self.swww_transition_type = config.get("Settings", "swww_transition_type", fallback=self.swww_transition_type)
+        self.swww_filter = config.get("Settings", "swww_filter", fallback=self.swww_filter)
         self.swww_transition_step = config.get("Settings", "swww_transition_step", fallback=self.swww_transition_step)
         self.swww_transition_angle = config.get("Settings", "swww_transition_angle", fallback=self.swww_transition_angle)
         self.swww_transition_duration = config.get("Settings", "swww_transition_duration", fallback=self.swww_transition_duration)
@@ -181,6 +183,14 @@ class Config:
             self.fill_option = FILL_OPTIONS[0]
         if self.swww_transition_type not in SWWW_TRANSITION_TYPES:
             self.swww_transition_type = "any"
+        if self.swww_filter not in SWWW_FILTER_TYPES:
+            self.swww_filter = next(
+                (
+                    filter_type for filter_type in SWWW_FILTER_TYPES
+                    if str(self.swww_filter).lower() == filter_type.lower()
+                ),
+                SWWW_FILTER_TYPES[-1]
+            )
         if self.number_of_columns <= 0:
             self.number_of_columns = 1
 
@@ -273,6 +283,7 @@ class Config:
         config.set("Settings", "post_command", self.post_command)
         config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
+        config.set("Settings", "swww_filter", str(self.swww_filter))
         config.set("Settings", "swww_transition_step", str(self.swww_transition_step))
         config.set("Settings", "swww_transition_angle", str(self.swww_transition_angle))
         config.set("Settings", "swww_transition_duration", str(self.swww_transition_duration))

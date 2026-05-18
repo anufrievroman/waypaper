@@ -13,7 +13,7 @@ from pathlib import Path
 from waypaper.changer import change_wallpaper
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperengine_image_name
-from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, \
+from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, SWWW_FILTER_TYPES, \
     get_monitor_options, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
@@ -231,6 +231,7 @@ class App(Gtk.Window):
 
         # Create a transition type dropdown menu for swww
         self.swww_transitions_options = Gtk.ComboBoxText()
+        self.swww_filter_options = Gtk.ComboBoxText()
 
         #  Get angle for animation
         self.swww_angle_entry = Gtk.Entry()
@@ -474,6 +475,7 @@ class App(Gtk.Window):
     def swww_or_awww_options_display(self) -> None:
         """Show swww transition options if backend is swww or awww"""
         self.options_box.remove(self.swww_transitions_options)
+        self.options_box.remove(self.swww_filter_options)
         self.options_box.remove(self.swww_angle_entry)
         self.options_box.remove(self.swww_steps_entry)
         self.options_box.remove(self.swww_fps_entry)
@@ -492,10 +494,21 @@ class App(Gtk.Window):
             self.swww_transitions_options.connect("changed", self.on_transition_option_changed)
             self.swww_transitions_options.set_tooltip_text(self.txt.tip_transition)
 
+        self.swww_filter_options = Gtk.ComboBoxText()
+        for filter_type in SWWW_FILTER_TYPES:
+            self.swww_filter_options.append_text(filter_type)
+        active_filter = 0
+        if self.cf.swww_filter in SWWW_FILTER_TYPES:
+            active_filter = SWWW_FILTER_TYPES.index(self.cf.swww_filter)
+        self.swww_filter_options.set_active(active_filter)
+        self.swww_filter_options.connect("changed", self.on_filter_option_changed)
+        self.swww_filter_options.set_tooltip_text(getattr(self.txt, "tip_filter", "Choose scaling filter"))
+
         self.options_box.pack_end(self.swww_steps_entry, False, False, 0)
         self.options_box.pack_end(self.swww_fps_entry, False, False, 0)
         self.options_box.pack_end(self.swww_angle_entry, False, False, 0)
         self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
+        self.options_box.pack_end(self.swww_filter_options, False, False, 0)
         self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
 
     def hyprland_restart_button_display(self) -> None:
@@ -962,6 +975,13 @@ class App(Gtk.Window):
         active_index = combo.get_active()
         self.cf.swww_transition_type = SWWW_TRANSITION_TYPES[active_index]
         print(f"Transition type changed to: {self.cf.swww_transition_type}")
+
+
+    def on_filter_option_changed(self, combo) -> None:
+        """Update the scaling filter based on the selected option"""
+        active_index = combo.get_active()
+        self.cf.swww_filter = SWWW_FILTER_TYPES[active_index]
+        print(f"Filter changed to: {self.cf.swww_filter}")
 
 
     def on_color_set(self, color_button):
