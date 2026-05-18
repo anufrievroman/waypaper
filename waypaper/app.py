@@ -2,6 +2,7 @@
 
 import threading
 import subprocess
+import sys
 import os
 import gi
 import random
@@ -1184,4 +1185,7 @@ class App(Gtk.Window):
         """Run GUI application"""
         self.connect("destroy", self.on_exit_clicked)
         self.show_all()
+        if sys.platform == "darwin":
+            subprocess.Popen(["osascript", "-e",
+                f"tell application \"System Events\" to set frontmost of first process whose unix id is {os.getpid()} to true"])
         Gtk.main()
