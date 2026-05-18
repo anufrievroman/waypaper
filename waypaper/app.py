@@ -1184,6 +1184,18 @@ class App(Gtk.Window):
     def run(self) -> None:
         """Run GUI application"""
         self.connect("destroy", self.on_exit_clicked)
+
+        # GTK doesn't read macOS system preferences, so we detect dark mode manually
+        # and apply GTK's prefer-dark flag to match the system appearance.
+        if sys.platform == "darwin":
+            try:
+                result = subprocess.run(["defaults", "read", "-g", "AppleInterfaceStyle"],
+                                        capture_output=True, text=True)
+                if result.stdout.strip() == "Dark":
+                    Gtk.Settings.get_default().set_property("gtk-application-prefer-dark-theme", True)
+            except Exception:
+                pass
+
         self.show_all()
         if sys.platform == "darwin":
             subprocess.Popen(["osascript", "-e",
