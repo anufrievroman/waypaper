@@ -320,8 +320,8 @@ def change_with_wallutils(image_path: Path, cf: Config, monitor: str):
 
 def change_with_finder(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper on macOS"""
-    command = f"osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"{image_path}\"'"
-    subprocess.Popen(command, shell=True)
+    script = f'tell application "System Events" to set picture of every desktop to "{image_path}"'
+    subprocess.Popen(["osascript", "-e", script])
 
 
 def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):

@@ -539,7 +539,7 @@ class App(Gtk.Window):
         """Display fill option if backend are not linux-wallpaperengine or hyprpaper"""
         self.options_box.remove(self.fill_option_combo)
         self.options_box.remove(self.fill_option_combo_linux_wallpaperengine)
-        if self.cf.backend not in ['linux-wallpaperengine', 'hyprpaper', 'none']:
+        if self.cf.backend not in ['linux-wallpaperengine', 'hyprpaper', 'none', 'macos']:
             self.options_box.pack_end(self.fill_option_combo, False, False, 0)
         elif self.cf.backend == 'linux-wallpaperengine':
             self.options_box.pack_end(self.fill_option_combo_linux_wallpaperengine, False, False, 0)
@@ -610,7 +610,7 @@ class App(Gtk.Window):
     def color_picker_display(self):
         """Display color option if backend is not hyprpaper"""
         self.options_box.remove(self.color_picker_button)
-        if self.cf.backend not in ['linux-wallpaperengine', 'hyprpaper', 'none']:
+        if self.cf.backend not in ['linux-wallpaperengine', 'hyprpaper', 'none', 'macos']:
             self.options_box.pack_end(self.color_picker_button, False, False, 0)
 
     def check_backends(self) -> None:
