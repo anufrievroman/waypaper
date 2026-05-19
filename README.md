@@ -66,7 +66,7 @@ Waypaper is available in an external repository owned by Solopasha. You can add 
 
 `waypaper` command will run GUI application.
 
-`waypaperd` runs a simple slideshow daemon that periodically triggers `waypaper --random`.
+`waypaperd` runs a simple slideshow daemon that periodically triggers `waypaper --random`. If no interval argument is passed, it reads `waypaperd_cycle_length` from Waypaper's configuration and falls back to 30 minutes.
 
 To restore your wallpaper after restart, add `waypaper --restore` to [your WM startup config](https://anufrievroman.gitbook.io/waypaper/usage).
 
@@ -76,16 +76,7 @@ Packaged installations also ship a `waypaperd.service` user unit. You can enable
 
 `systemctl --user daemon-reload && systemctl --user enable --now waypaperd.service`
 
-The unit defaults to a 30-minute interval. To override that without editing the installed unit directly, create a drop-in:
-
-```ini
-systemctl --user edit waypaperd.service
-
-[Service]
-Environment=WAYPAPERD_INTERVAL=600
-```
-
-Then restart the service with `systemctl --user restart waypaperd.service`.
+The unit starts `waypaperd` without systemd-specific interval overrides, so the daemon follows Waypaper's normal configuration path.
 
 ## Documentation
 

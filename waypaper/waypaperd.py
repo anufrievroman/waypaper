@@ -7,6 +7,8 @@ import sys
 import time
 from typing import Sequence
 
+from waypaper.config import Config
+
 
 DEFAULT_INTERVAL_SECONDS = 1800
 LOG = logging.getLogger(__name__)
@@ -26,11 +28,24 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "interval",
         nargs="?",
-        default=DEFAULT_INTERVAL_SECONDS,
+        default=None,
         type=positive_interval,
-        help="Time interval in seconds between random wallpaper changes.",
+        help="Time interval in seconds between random wallpaper changes. Defaults to the Waypaper config value.",
     )
     return parser.parse_args(list(argv) if argv is not None else None)
+
+
+def read_config_interval() -> int:
+    config = Config()
+    config.read()
+    config.check_validity()
+    return int(config.waypaperd_cycle_length)
+
+
+def resolve_interval(interval: int | None) -> int:
+    if interval is not None:
+        return interval
+    return read_config_interval()
 
 
 def build_waypaper_command() -> list[str]:
@@ -52,14 +67,15 @@ def trigger_random_wallpaper(command: Sequence[str] | None = None) -> int:
 def main(argv: Sequence[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     args = parse_args(argv)
+    interval = resolve_interval(args.interval)
     command = build_waypaper_command()
 
-    LOG.info("Starting waypaperd with interval=%s seconds.", args.interval)
+    LOG.info("Starting waypaperd with interval=%s seconds.", interval)
     try:
         while True:
             trigger_random_wallpaper(command)
-            LOG.info("Sleeping for %s seconds.", args.interval)
-            time.sleep(args.interval)
+            LOG.info("Sleeping for %s seconds.", interval)
+            time.sleep(interval)
     except KeyboardInterrupt:
         LOG.info("waypaperd interrupted, exiting cleanly.")
         return 0
