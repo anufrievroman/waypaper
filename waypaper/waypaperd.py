@@ -9,8 +9,6 @@ from typing import Sequence
 
 from waypaper.config import Config
 
-
-DEFAULT_INTERVAL_SECONDS = 1800
 LOG = logging.getLogger(__name__)
 
 
