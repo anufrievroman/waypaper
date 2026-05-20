@@ -2,6 +2,7 @@
 
 import argparse
 import os.path
+import subprocess
 import sys
 import time
 import json
@@ -109,6 +110,14 @@ def run():
             cf.save_state_file()
         else:
             cf.save()
+
+        # On restore, restart the daemon if slideshow was enabled:
+        if args.restore and cf.slideshow_enabled:
+            try:
+                subprocess.Popen(["waypaperd", str(cf.slideshow_interval * 60)])
+            except FileNotFoundError:
+                print("Couldn't launch the daemon for automatic wallpaper change. See documentation on how to enable it.")
+
         sys.exit(0)
 
     # Set wallpaper from user arguments:

@@ -77,6 +77,11 @@ class English:
         self.tip_timer = "How often to automatically change wallpaper"
         self.tip_start = "Initiate automatic change of wallpaper after a time interval"
         self.tip_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Slideshow panel"
+        self.msg_change_wallpaper_every = "Change wallpaper every:"
+        self.msg_daemon_start = "Start"
+        self.msg_daemon_restart = "Restart"
+        self.msg_daemon_stop = "Stop"
 
 
 class German:
@@ -122,6 +127,7 @@ class German:
         self.msg_zen = "Zen-Modus"
         self.msg_zen_enter = "Du betrittst den Zen-Modus.\nDrücke z, um in den normalen Modus zurückzukehren."
         self.msg_hyprpaper_restart = "Hyprpaper neustarten"
+        self.msg_slideshow_panel = "Diashow-Panel"
 
         self.msg_help = "Waypapers Tastenkürzel:\n\nhjkl - Navigation (←↓↑→)\nf - Hintergrundbild-Ordner ändern\n"
         self.msg_help += "g - Zum Anfang scrollen\nG - Zum Ende scrollen\nR - Zufälliges Hintergrundbild\nr - Hintergrundbilder zwischenspeichern\n"
@@ -195,6 +201,7 @@ class French:
         self.msg_zen = "Mode Zen"
         self.msg_zen_enter = "Vous entrez en mode Zen.\nAppuyez sur z pour revenir au mode normal."
         self.msg_hyprpaper_restart = ""
+        self.msg_slideshow_panel = "Panneau diaporama"
 
         self.msg_help = "Raccourcis clavier de Waypaper :\n\nhjkl - Navigation (←↓↑→)\nf - Changer de dossier de papier peint\n"
         self.msg_help += "g - Faire défiler vers le haut\nG - Faire défiler vers le bas\nR - Définir un papier peint aléatoire\nr - Recréer le cache des papiers peints\n"
@@ -268,6 +275,7 @@ class Polish:
         self.msg_zen = "Tryb Zen"
         self.msg_zen_enter = "Wchodzisz w tryb Zen.\nNaciśnij z, aby wrócić do trybu normalnego."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Panel pokazu slajdów"
 
         self.msg_help = "Skróty klawiszowe Waypaper'a:\n\nhjkl - Nawigacja (←↓↑→)\nEnter - Ustaw wybraną tapetę\nf - Zmień folder tapet\n"
         self.msg_help += "g - Przewiń na górę\nG - Przewiń na dół\nR - Ustaw losową tapetę\nr - Jeszcze raz buferuj tapety\n"
@@ -321,6 +329,7 @@ class Russian:
         self.msg_zen = "Режим Дзэн"
         self.msg_zen_enter = "Вы входите в режим Дзэн.\nНажмите z, чтобы вернуться в обычный режим."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Панель слайдшоу"
 
         self.msg_select = "Выбрать"
         self.msg_refresh = "Обновить"
@@ -416,6 +425,7 @@ class Belarusian:
         self.msg_zen = "Рэжым Дзен"
         self.msg_zen_enter = "Вы ўваходзіце ў рэжым Дзен.\nНацісніце z, каб вярнуцца ў звычайны рэжым."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Панэль слайдшоу"
 
         self.msg_help = "Гарачыя клавішы Waypaper:\n\nhjkl - Навігацыя (←↓↑→)\nf - Змяніць тэчку са шпалерамі\n"
         self.msg_help += "g - Пракрутка ў пачатак\nG - Пракрутка ў канец\nR - Усталяваць выпадковыя шпалеры\nr - Абнавіць кэш шпалер\n"
@@ -490,6 +500,7 @@ class Ukrainian:
         self.msg_zen = "Режим дзен"
         self.msg_zen_enter = "Ви входите в режим дзен.\nНатисніть z, щоб повернутися до звичайного режиму."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Панель слайдшоу"
 
 
         self.msg_help = "Стандартні гарячі клавіші Waypaper:\n\nhjkl - Навігація (←↓↑→)\nEnter - Встановити вибрані шпалери\nf - Змінити папку зі шпалерами\n"
@@ -565,6 +576,7 @@ class Chinese:
         self.msg_zen = "禅模式"
         self.msg_zen_enter = "您正在进入禅模式。\n按 z 返回正常模式。"
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "幻灯片面板"
 
         self.msg_help = "Waypaper 的热键：\n\nhjkl -导航 (←↓↑→)\nf -更改壁纸文件夹\n"
         self.msg_help += "g -滚动到顶部\nG -滚动到底部\nR -设置随机壁纸\nr -重新缓存壁纸\n"
@@ -638,6 +650,7 @@ class TraditionalChinese:
         self.msg_zen = "禪模式"
         self.msg_zen_enter = "您正在進入禪模式。\n按 z 返回正常模式。"
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "幻燈片面板"
 
         self.msg_help = "Waypaper 的快捷鍵:\n\nhjkl - 行動 (←↓↑→)\nEnter - 設定選擇壁紙\nf - 選擇壁紙文件夾\n"
         self.msg_help += "g - 滾動到頂部\nG - 滾動到底部\nR - 隨機壁紙\nr - 重新玩全壁紙\n"
@@ -712,6 +725,7 @@ class Spanish:
         self.msg_zen = "Modo Zen"
         self.msg_zen_enter = "Estás entrando en el modo Zen.\nPresiona z para volver al modo normal."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Panel de diapositivas"
 
         self.msg_help = 'Controles para usar "Waypaper":\n\nhjkl - Navegación (←↓↑→)\n"Enter" (⏎) - Actualizar imagen de fondo a la imágen seleccionada\nf - Cambiar carpeta de imágenes\n'
         self.msg_help += "g - Ir a la parte de arriba\nG - Ir a la parte de abajo\nR - Cambiar imagen de fondo a una imágen aleatoria\nr - Recrear caché de imágenes\n"
@@ -785,6 +799,7 @@ class Turkish:
         self.msg_zen = "Zen modu"
         self.msg_zen_enter = "Zen moduna giriyorsunuz.\nNormal moda dönmek için z tuşuna basın."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Slayt gösterisi paneli"
 
         self.msg_help = "Waypaper kısayolları:\n\nhjkl - Yön tuşları (←↓↑→)\nEnter - Seçili duvar kağıdını ayarla\nf - Duvar kağıdı klasörünü değiştir\n"
         self.msg_help += "g - Başa git\nG - Sona git\nR - Rastgele duvar kağıdı\nr - Duvar kağıtlarını yeniden önbelleğe al\n"
@@ -858,6 +873,7 @@ class Japanese:
         self.msg_zen = "禅モード"
         self.msg_zen_enter = "禅モードに入ります。\n通常モードに戻るには z を押してください。"
         self.msg_hyprpaper_restart = "Hyprpaperを再起動"
+        self.msg_slideshow_panel = "スライドショーパネル"
 
         self.msg_help = "Waypaper のショートカットキー:\n\n"
         self.msg_help += "hjkl - 移動 (←↓↑→)\n"
@@ -942,6 +958,7 @@ class Finnish:
         self.msg_zen = "Zen tila"
         self.msg_zen_enter = "Sinä siirryt Zen tilaan.\nPaina z vaihtaaksesi takaisin normi tilaan."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
+        self.msg_slideshow_panel = "Diaesityspaneeli"
 
         self.msg_help = "Waypaperin oletus pikanäppäimet:\n\nhjkl - Navigaatio (←↓↑→)\nEnter - Aseta valittu taustakuva\nf - Vaihda taustakuva kansio\n"
         self.msg_help += "g -   \nG - Skrollaa pohjaan\nR - Aseta satunnainen taustakuva\nr - Recacheaa taustakuvat\n"

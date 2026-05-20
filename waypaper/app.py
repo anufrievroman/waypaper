@@ -212,6 +212,41 @@ class App(Gtk.Window):
         self.bottom_button_box.set_margin_bottom(15)
         self.main_box.pack_end(self.bottom_button_box, False, False, 0)
 
+        # SLIDESHOW PANEL (above backend buttons)
+        self.slideshow_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        self.slideshow_box.set_margin_bottom(5)
+
+        self.slideshow_row_alignment = Gtk.Alignment(xalign=0.5, yalign=0.0, xscale=0.0, yscale=0.0)
+        self.slideshow_box.pack_start(self.slideshow_row_alignment, True, False, 0)
+
+        self.slideshow_inner_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        self.slideshow_row_alignment.add(self.slideshow_inner_box)
+
+        self.slideshow_label = Gtk.Label(label=self.txt.msg_change_wallpaper_every)
+        self.slideshow_inner_box.pack_start(self.slideshow_label, False, False, 0)
+
+        self.slideshow_interval_entry = Gtk.Entry()
+        self.slideshow_interval_entry.set_width_chars(5)
+        self.slideshow_interval_entry.set_text(str(self.cf.slideshow_interval))
+        self.slideshow_interval_entry.set_tooltip_text(self.txt.tip_timer)
+        self.slideshow_interval_entry.connect("focus-in-event", self.on_focus_in)
+        self.slideshow_interval_entry.connect("focus-out-event", self.on_focus_out)
+        self.slideshow_inner_box.pack_start(self.slideshow_interval_entry, False, False, 0)
+
+        self.slideshow_minutes_label = Gtk.Label(label="min")
+        self.slideshow_inner_box.pack_start(self.slideshow_minutes_label, False, False, 0)
+
+        self.slideshow_start_button = Gtk.Button(label=self.txt.msg_daemon_start)
+        self.slideshow_start_button.set_tooltip_text(self.txt.tip_start)
+        self.slideshow_start_button.connect("clicked", self.on_daemon_start_clicked)
+        self.slideshow_inner_box.pack_start(self.slideshow_start_button, False, False, 0)
+
+        self.slideshow_stop_button = Gtk.Button(label=self.txt.msg_daemon_stop)
+        self.slideshow_stop_button.connect("clicked", self.on_daemon_stop_clicked)
+        self.slideshow_inner_box.pack_start(self.slideshow_stop_button, False, False, 0)
+
+        self.main_box.pack_end(self.slideshow_box, False, False, 0)
+
         # Create a box to contain the loading label:
         self.bottom_loading_box = Gtk.HBox(spacing=0)
         self.bottom_loading_box.set_margin_bottom(0)
@@ -368,6 +403,9 @@ class App(Gtk.Window):
         # self.connect("size-allocate", self.on_window_resize)
 
         self.show_all()
+        self.slideshow_box.set_no_show_all(True)
+        self.slideshow_box.set_visible(self.cf.show_slideshow_panel)
+        self.update_slideshow_button()
 
     def create_fill_option_combo(self):
         # Create a fill option dropdown menu:
@@ -435,6 +473,12 @@ class App(Gtk.Window):
         self.zen_mode_checkbox.set_active(self.cf.zen_mode)
         self.zen_mode_checkbox.connect("toggled", self.on_zen_mode_toggled)
         self.menu.append(self.zen_mode_checkbox)
+
+        # Create slideshow panel toggle:
+        self.show_slideshow_panel_checkbox = Gtk.CheckMenuItem(label=self.txt.msg_slideshow_panel)
+        self.show_slideshow_panel_checkbox.set_active(self.cf.show_slideshow_panel)
+        self.show_slideshow_panel_checkbox.connect("toggled", self.on_slideshow_panel_toggled)
+        self.menu.append(self.show_slideshow_panel_checkbox)
 
         self.menu.show_all()
 
@@ -1039,6 +1083,45 @@ class App(Gtk.Window):
             # gSlapper doesn't support pause, so do nothing or show message
             print("Pause not supported for gSlapper")
 
+    def is_waypaperd_running(self) -> bool:
+        result = subprocess.run(["pgrep", "-f", "waypaperd"], capture_output=True)
+        return result.returncode == 0
+
+    def update_slideshow_button(self) -> None:
+        if self.is_waypaperd_running():
+            self.slideshow_start_button.set_label(self.txt.msg_daemon_restart)
+        else:
+            self.slideshow_start_button.set_label(self.txt.msg_daemon_start)
+
+    def on_daemon_start_clicked(self, widget) -> None:
+        interval_text = self.slideshow_interval_entry.get_text()
+        try:
+            interval_minutes = int(interval_text)
+            if interval_minutes <= 0:
+                interval_minutes = 60
+        except ValueError:
+            interval_minutes = 60
+        subprocess.run(["pkill", "-f", "waypaperd"], capture_output=True)
+        try:
+            subprocess.Popen(["waypaperd", str(interval_minutes * 60)])
+            self.cf.slideshow_interval = interval_minutes
+            self.cf.slideshow_enabled = True
+            self.cf.save()
+            self.slideshow_start_button.set_label(self.txt.msg_daemon_restart)
+        except FileNotFoundError:
+            print("Couldn't launch the daemon for automatic wallpaper change. See documentation on how to enable it.")
+
+    def on_daemon_stop_clicked(self, widget) -> None:
+        subprocess.run(["pkill", "-f", "waypaperd"], capture_output=True)
+        self.cf.slideshow_enabled = False
+        self.cf.save()
+        self.slideshow_start_button.set_label(self.txt.msg_daemon_start)
+
+    def on_slideshow_panel_toggled(self, toggle) -> None:
+        self.cf.show_slideshow_panel = toggle.get_active()
+        self.slideshow_box.set_visible(self.cf.show_slideshow_panel)
+        self.cf.save()
+
     def on_random_clicked(self, widget) -> None:
         """On clicking random button, set random wallpaper"""
         self.set_random_wallpaper()
@@ -1181,6 +1264,8 @@ class App(Gtk.Window):
         self.swww_duration_entry.set_visible(True)
         self.swww_fps_entry.set_visible(False)
         self.swww_fps_entry.set_visible(True)
+        self.slideshow_interval_entry.set_visible(False)
+        self.slideshow_interval_entry.set_visible(True)
         self.main_box.grab_focus()
         self.is_enering_text = False
 
