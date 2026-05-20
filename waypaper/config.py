@@ -55,6 +55,7 @@ class Config:
         self.use_xdg_state = False
         self.use_post_command = True
         self.show_path_in_tooltip = True
+        self.waypaperd_cycle_length = 1800
 
         # options for linux-wallpaperengine
         self.linux_wallpaperengine_clamp = LINUX_WALLPAPERENGINE_CLAMP[0]
@@ -123,6 +124,7 @@ class Config:
         self.zen_mode = config.getboolean("Settings", "zen_mode", fallback=self.zen_mode)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
+        self.waypaperd_cycle_length = int(config.get("Settings", "waypaperd_cycle_length", fallback=self.waypaperd_cycle_length))
         self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
         self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
@@ -203,6 +205,8 @@ class Config:
             self.swww_transition_duration = 2
         if 0 > int(self.swww_transition_fps):
             self.swww_transition_fps = 60
+        if int(self.waypaperd_cycle_length) <= 0:
+            self.waypaperd_cycle_length = 1800
 
 
     def attribute_selected_wallpaper(self) -> None:
@@ -281,6 +285,7 @@ class Config:
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "zen_mode", str(self.zen_mode))
         config.set("Settings", "post_command", self.post_command)
+        config.set("Settings", "waypaperd_cycle_length", str(self.waypaperd_cycle_length))
         config.set("Settings", "number_of_columns", str(self.number_of_columns))
         config.set("Settings", "swww_transition_type", str(self.swww_transition_type))
         config.set("Settings", "swww_filter", str(self.swww_filter))

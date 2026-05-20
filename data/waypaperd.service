@@ -1,0 +1,17 @@
+[Unit]
+Description=Waypaper slideshow daemon
+Documentation=https://anufrievroman.gitbook.io/waypaper/
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=waypaperd
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+KillMode=control-group
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

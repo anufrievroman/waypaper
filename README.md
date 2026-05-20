@@ -83,7 +83,17 @@ cp -r data/macos/Waypaper.app ~/Applications/
 
 `waypaper` command will run GUI application.
 
+`waypaperd` runs a simple slideshow daemon that periodically triggers `waypaper --random`. If no interval argument is passed, it reads `waypaperd_cycle_length` from Waypaper's configuration and falls back to 30 minutes.
+
 To restore your wallpaper after restart, add `waypaper --restore` to [your WM startup config](https://anufrievroman.gitbook.io/waypaper/usage).
+
+### Slideshow daemon service
+
+Packaged installations also ship a `waypaperd.service` user unit. You can enable it with:
+
+`systemctl --user daemon-reload && systemctl --user enable --now waypaperd.service`
+
+The unit starts `waypaperd` without systemd-specific interval overrides, so the daemon follows Waypaper's normal configuration path.
 
 ## Documentation
 
