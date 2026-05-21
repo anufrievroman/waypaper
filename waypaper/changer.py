@@ -1,5 +1,6 @@
 """Module that runs the system processes to change the wallpaper"""
 
+import shlex
 import subprocess
 import time
 from typing import Optional
@@ -9,6 +10,26 @@ import screeninfo
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
     LINUX_WALLPAPERENGINE_FILL_OPTIONS
+
+
+def format_post_command(
+        post_command: str,
+        image_path: Path,
+        monitor: str,
+        fill_option: str,
+        color: str) -> str:
+    """Replace post_command tokens while treating dynamic values as shell literals."""
+    replacements = {
+        "$wallpaper": shlex.quote(str(image_path)),
+        "$monitor": shlex.quote(monitor),
+        "$fill": shlex.quote(fill_option),
+        "$color": shlex.quote(color),
+    }
+
+    for token, value in replacements.items():
+        post_command = post_command.replace(token, value)
+
+    return post_command
 
 
 def find_process_pid(command: str) -> Optional[int]:
@@ -455,11 +476,13 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
 
         # Run a post command:
         if cf.post_command and cf.use_post_command:
-            modified_image_path = str(image_path).replace(" ", "\\ ")
-            post_command = cf.post_command.replace("$wallpaper", modified_image_path)
-            post_command = post_command.replace("$monitor", monitor)
-            post_command = post_command.replace("$fill", cf.fill_option)
-            post_command = post_command.replace("$color", cf.color)
+            post_command = format_post_command(
+                cf.post_command,
+                image_path,
+                monitor,
+                cf.fill_option,
+                cf.color,
+            )
             subprocess.Popen(post_command, shell=True)
             print(f'Executed "{post_command}" post-command\n')
 
