@@ -4,7 +4,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-from waypaper.changer import change_with_linux_wallpaperengine, describe_linux_wallpaperengine_pause_policy
+from waypaper.changer import change_with_linux_wallpaperengine
+from waypaper.wallpaperengine import describe_linux_wallpaperengine_pause_policy
 
 
 class LinuxWallpaperengineLoggingTests(unittest.TestCase):
@@ -52,24 +53,24 @@ class LinuxWallpaperengineLoggingTests(unittest.TestCase):
             process.poll.return_value = None
 
             with patch("waypaper.changer.seek_and_destroy"), patch(
-                "waypaper.changer.get_wallpaperengine_project",
+                "waypaper.wallpaperengine.get_wallpaperengine_project",
                 return_value={"title": "Test Scene", "type": "scene", "file": "scene.json"},
             ), patch(
-                "waypaper.changer.resolve_linux_wallpaperengine_binary",
+                "waypaper.wallpaperengine.resolve_linux_wallpaperengine_binary",
                 return_value="/usr/bin/linux-wallpaperengine",
             ), patch(
-                "waypaper.changer.resolve_linux_wallpaperengine_assets_dir",
+                "waypaper.wallpaperengine.resolve_linux_wallpaperengine_assets_dir",
                 return_value=Path("/assets"),
             ), patch(
-                "waypaper.changer.get_linux_wallpaperengine_log_path",
+                "waypaper.wallpaperengine.get_linux_wallpaperengine_log_path",
                 return_value=log_path,
             ), patch(
-                "waypaper.changer.subprocess.Popen",
+                "waypaper.wallpaperengine.subprocess.Popen",
                 return_value=process,
             ) as popen_mock, patch(
-                "waypaper.changer.time.sleep"
+                "waypaper.wallpaperengine.time.sleep"
             ), patch(
-                "waypaper.changer.notify_waypaper_issue"
+                "waypaper.wallpaperengine.notify_waypaper_issue"
             ) as notify_mock:
                 change_with_linux_wallpaperengine(image_path, config, "DP-1")
 
@@ -96,27 +97,27 @@ class LinuxWallpaperengineLoggingTests(unittest.TestCase):
             process.poll.return_value = 7
 
             with patch("waypaper.changer.seek_and_destroy"), patch(
-                "waypaper.changer.get_wallpaperengine_project",
+                "waypaper.wallpaperengine.get_wallpaperengine_project",
                 return_value={"title": "Test Video", "type": "video", "file": "video.mp4"},
             ), patch(
-                "waypaper.changer.resolve_linux_wallpaperengine_binary",
+                "waypaper.wallpaperengine.resolve_linux_wallpaperengine_binary",
                 return_value="/usr/bin/linux-wallpaperengine",
             ), patch(
-                "waypaper.changer.resolve_linux_wallpaperengine_assets_dir",
+                "waypaper.wallpaperengine.resolve_linux_wallpaperengine_assets_dir",
                 return_value=Path("/assets"),
             ), patch(
-                "waypaper.changer.get_linux_wallpaperengine_log_path",
+                "waypaper.wallpaperengine.get_linux_wallpaperengine_log_path",
                 return_value=log_path,
             ), patch(
-                "waypaper.changer.subprocess.Popen",
+                "waypaper.wallpaperengine.subprocess.Popen",
                 return_value=process,
             ), patch(
-                "waypaper.changer.time.sleep"
+                "waypaper.wallpaperengine.time.sleep"
             ), patch(
                 "waypaper.changer.change_with_static_fallback",
                 return_value="swaybg",
             ), patch(
-                "waypaper.changer.notify_waypaper_issue"
+                "waypaper.wallpaperengine.notify_waypaper_issue"
             ) as notify_mock:
                 change_with_linux_wallpaperengine(image_path, config, "DP-1")
 
@@ -138,29 +139,29 @@ class LinuxWallpaperengineLoggingTests(unittest.TestCase):
             process.poll.return_value = -9
 
             with patch("waypaper.changer.seek_and_destroy"), patch(
-                "waypaper.changer.get_wallpaperengine_project",
+                "waypaper.wallpaperengine.get_wallpaperengine_project",
                 return_value={"title": "Test Scene", "type": "scene", "file": "scene.json"},
             ), patch(
-                "waypaper.changer.resolve_linux_wallpaperengine_binary",
+                "waypaper.wallpaperengine.resolve_linux_wallpaperengine_binary",
                 return_value="/usr/bin/linux-wallpaperengine",
             ), patch(
-                "waypaper.changer.resolve_linux_wallpaperengine_assets_dir",
+                "waypaper.wallpaperengine.resolve_linux_wallpaperengine_assets_dir",
                 return_value=Path("/assets"),
             ), patch(
-                "waypaper.changer.get_linux_wallpaperengine_log_path",
+                "waypaper.wallpaperengine.get_linux_wallpaperengine_log_path",
                 return_value=log_path,
             ), patch(
-                "waypaper.changer.subprocess.Popen",
+                "waypaper.wallpaperengine.subprocess.Popen",
                 return_value=process,
             ), patch(
-                "waypaper.changer.time.sleep"
+                "waypaper.wallpaperengine.time.sleep"
             ), patch(
-                "waypaper.changer.find_replacement_linux_wallpaperengine_pid",
+                "waypaper.wallpaperengine.find_replacement_linux_wallpaperengine_pid",
                 return_value=777,
             ), patch(
                 "waypaper.changer.change_with_static_fallback"
             ) as fallback_mock, patch(
-                "waypaper.changer.notify_waypaper_issue"
+                "waypaper.wallpaperengine.notify_waypaper_issue"
             ) as notify_mock:
                 change_with_linux_wallpaperengine(image_path, config, "eDP-1")
 
