@@ -85,55 +85,16 @@ def notify_waypaper_issue(summary: str, body: str) -> None:
 def resolve_linux_wallpaperengine_binary(cf: Any) -> str:
     configured_binary = getattr(cf, "linux_wallpaperengine_binary", "").strip()
     if configured_binary:
-        expanded_binary = Path(configured_binary).expanduser()
-        if expanded_binary.exists():
-            return str(expanded_binary)
-        resolved_binary = shutil.which(configured_binary)
-        if resolved_binary:
-            return resolved_binary
-        raise FileNotFoundError(f"Configured linux-wallpaperengine executable was not found: {expanded_binary}")
+        return str(Path(configured_binary).expanduser())
 
-    resolved_binary = shutil.which("linux-wallpaperengine")
-    if resolved_binary:
-        return resolved_binary
-    raise FileNotFoundError("linux-wallpaperengine executable was not found in PATH")
+    return "linux-wallpaperengine"
 
 
-def resolve_linux_wallpaperengine_assets_dir(cf: Any, binary_path: str) -> Optional[Path]:
+def resolve_linux_wallpaperengine_assets_dir(cf: Any) -> Optional[Path]:
     configured_assets = getattr(cf, "linux_wallpaperengine_assets_dir", "").strip()
-    candidates: list[Path] = []
-
     if configured_assets:
-        candidates.append(Path(configured_assets).expanduser())
+        return Path(configured_assets).expanduser()
 
-    binary_dir = Path(binary_path).expanduser().resolve().parent
-    candidates.append(binary_dir / "assets")
-
-    workshop_dir = getattr(cf, "wallpaperengine_folder", None)
-    if workshop_dir:
-        workshop_path = Path(workshop_dir).expanduser()
-        try:
-            steamapps_dir = workshop_path.parents[2]
-            candidates.append(steamapps_dir / "common" / "wallpaper_engine" / "assets")
-        except IndexError:
-            pass
-
-    candidates.extend([
-        Path("~/.steam/steam/steamapps/common/wallpaper_engine/assets").expanduser(),
-        Path("~/.steam/root/steamapps/common/wallpaper_engine/assets").expanduser(),
-        Path("~/.local/share/Steam/steamapps/common/wallpaper_engine/assets").expanduser(),
-        Path("~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/wallpaper_engine/assets").expanduser(),
-        Path("~/snap/steam/common/.local/share/Steam/steamapps/common/wallpaper_engine/assets").expanduser(),
-    ])
-
-    seen_paths: set[str] = set()
-    for candidate in candidates:
-        candidate_key = str(candidate)
-        if candidate_key in seen_paths:
-            continue
-        seen_paths.add(candidate_key)
-        if candidate.is_dir():
-            return candidate
     return None
 
 
@@ -179,7 +140,7 @@ def change_with_linux_wallpaperengine(
             project_metadata = None
 
     binary_path = resolve_linux_wallpaperengine_binary(cf)
-    assets_dir = resolve_linux_wallpaperengine_assets_dir(cf, binary_path)
+    assets_dir = resolve_linux_wallpaperengine_assets_dir(cf)
     log_path = get_linux_wallpaperengine_log_path(cf, monitor)
     command = [binary_path]
 
