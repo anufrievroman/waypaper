@@ -137,7 +137,7 @@ class Config:
         self.linux_wallpaperengine_clamp = config.get("Settings", "linux_wallpaperengine_clamp", fallback=self.linux_wallpaperengine_clamp)
         self.linux_wallpaperengine_volume = int(config.get("Settings", "linux_wallpaperengine_volume", fallback=self.linux_wallpaperengine_volume))
         self.linux_wallpaperengine_silent = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
-        self.linux_wallpaperengine_noautomute  = config.getboolean("Settings", "linux_wallpaperengine_silent", fallback=self.linux_wallpaperengine_silent)
+        self.linux_wallpaperengine_noautomute  = config.getboolean("Settings", "linux_wallpaperengine_noautomute", fallback=self.linux_wallpaperengine_noautomute)
         self.linux_wallpaperengine_no_audio_processing  = config.getboolean("Settings", "linux_wallpaperengine_no_audio_processing", fallback=self.linux_wallpaperengine_no_audio_processing)
         self.linux_wallpaperengine_fps = int(config.get("Settings", "linux_wallpaperengine_fps", fallback=self.linux_wallpaperengine_fps))
         self.linux_wallpaperengine_disable_particles  = config.getboolean("Settings", "linux_wallpaperengine_disable_particles", fallback=self.linux_wallpaperengine_disable_particles)
