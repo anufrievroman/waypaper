@@ -5,11 +5,10 @@ import subprocess
 import time
 from typing import Optional
 from pathlib import Path
-import screeninfo
 
 from waypaper.config import Config
-from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
-    LINUX_WALLPAPERENGINE_FILL_OPTIONS
+from waypaper.options import get_monitor_names_with_hyprctl
+from waypaper.wallpaperengine import change_with_linux_wallpaperengine as run_linux_wallpaperengine
 
 
 def format_post_command(
@@ -32,18 +31,26 @@ def format_post_command(
     return post_command
 
 
-def find_process_pid(command: str) -> Optional[int]:
-    """Find the PID of the process matching the exact command"""
+def find_process_pids(command: str | tuple[str, ...]) -> list[int]:
+    """Find all PIDs whose command lines contain all required command fragments."""
     try:
-        result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
+        required_fragments = (command,) if isinstance(command, str) else command
+        result = subprocess.run(['ps', '-eo', 'pid=,args='], stdout=subprocess.PIPE, text=True, check=True)
         processes = result.stdout.splitlines()
+        matching_pids: list[int] = []
         for process in processes:
-            if command in process:
-                # Extract PID (second column after splitting):
-                return int(process.split()[1])
-        return None
+            pid_text, _, command_line = process.strip().partition(' ')
+            if command_line and all(fragment in command_line for fragment in required_fragments):
+                matching_pids.append(int(pid_text))
+        return matching_pids
     except Exception:
-        return None
+        return []
+
+
+def find_process_pid(command: str | tuple[str, ...]) -> Optional[int]:
+    """Find the PID of the first process containing all required command fragments."""
+    matching_pids = find_process_pids(command)
+    return matching_pids[0] if matching_pids else None
 
 
 def seek_and_destroy(process: str, monitor: str = "All"):
@@ -74,19 +81,22 @@ def seek_and_destroy(process: str, monitor: str = "All"):
     # Otherwise, find PID of the process for certain monitor and kill it:
     else:
         if process == "mpvpaper":
-            pid = find_process_pid(f"mpvpaper -f socket-{monitor}")
+            pid = find_process_pid(("mpvpaper", f"socket-{monitor}"))
         elif process == "swaybg":
-            pid = find_process_pid(f"swaybg -o {monitor}")
+            pid = find_process_pid(("swaybg", f"-o {monitor}"))
         elif process == "gslapper":
-            pid = find_process_pid(f"gslapper.*{monitor}")
+            pid = find_process_pid(("gslapper", monitor))
         elif process == "linux-wallpaperengine":
-            pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
+            # Keep monitor-specific cleanup resilient to future flag reordering.
+            pid = find_process_pid(("linux-wallpaperengine", f"--screen-root {monitor}"))
         else:
+            return
+        if pid is None:
             return
         try:
             subprocess.run(['kill', '-9', str(pid)], check=True)
             print(f"Detected {process} on {monitor} and killed it")
-        except Exception as e:
+        except Exception:
             pass
 
 
@@ -347,6 +357,35 @@ def change_with_finder(image_path: Path, cf: Config, monitor: str):
     subprocess.Popen(["osascript", "-e", script])
 
 
+def change_with_static_fallback(image_path: Path, cf: Config, monitor: str) -> Optional[str]:
+    fallback_order = ["swww", "awww", "swaybg", "wallutils", "feh", "xwallpaper", "hyprpaper"]
+
+    for backend in fallback_order:
+        if backend not in cf.installed_backends:
+            continue
+        try:
+            if backend == "swww":
+                change_with_swww(image_path, cf, monitor)
+            elif backend == "awww":
+                change_with_awww(image_path, cf, monitor)
+            elif backend == "swaybg":
+                change_with_swaybg(image_path, cf, monitor)
+            elif backend == "wallutils":
+                change_with_wallutils(image_path, cf, monitor)
+            elif backend == "feh":
+                change_with_feh(image_path, cf, monitor)
+            elif backend == "xwallpaper":
+                change_with_xwallpaper(image_path, cf, monitor)
+            elif backend == "hyprpaper":
+                change_with_hyprpaper(image_path, cf, monitor)
+            else:
+                continue
+            return backend
+        except Exception:
+            continue
+    return None
+
+
 def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with hyprpaper backend"""
 
@@ -398,49 +437,7 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 retry_counter += 1
 
 def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
-    seek_and_destroy("linux-wallpaperengine", monitor)
-
-    if cf.fill_option.lower() in LINUX_WALLPAPERENGINE_FILL_OPTIONS:
-        fill = cf.fill_option.lower()
-    else:
-        fill = LINUX_WALLPAPERENGINE_FILL_OPTIONS[3]
-
-    command = ["linux-wallpaperengine"]
-
-    if monitor == "All":
-        for monitor in [m.name for m in screeninfo.get_monitors()]:
-            if monitor is not None:
-                command.extend(["--screen-root", monitor])
-    else:
-        command.extend(["--screen-root", monitor])
-
-    if cf.linux_wallpaperengine_silent:
-        command.append("--silent")
-    if cf.linux_wallpaperengine_noautomute:
-        command.append("--noautomute")
-    if cf.linux_wallpaperengine_no_audio_processing:
-        command.append("--no-audio-processing")
-    if cf.linux_wallpaperengine_no_fullscreen_pause:
-        command.append("--no-fullscreen-pause")
-    if cf.linux_wallpaperengine_fullscreen_pause_only_active:
-        command.append("--fullscreen-pause-only-active")
-    if cf.linux_wallpaperengine_disable_particles:
-        command.append("--disable-particles")
-    if cf.linux_wallpaperengine_disable_mouse:
-        command.append("--disable-mouse")
-    if cf.linux_wallpaperengine_disable_parallax:
-        command.append("--disable-parallax")
-    if cf.linux_wallpaperengine_clamp != LINUX_WALLPAPERENGINE_CLAMP[0]:
-        command.extend(["--clamp", cf.linux_wallpaperengine_clamp])
-
-    command.extend(["--volume", str(cf.linux_wallpaperengine_volume)])
-    command.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
-    command.extend(["--scaling", fill])
-
-    command.append(str(image_path.parent))
-    command.append("&")
-    print(f"{command=}")
-    subprocess.Popen(" ".join(command), shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    run_linux_wallpaperengine(image_path, cf, monitor, seek_and_destroy, change_with_static_fallback)
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
