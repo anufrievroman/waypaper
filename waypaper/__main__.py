@@ -2,6 +2,7 @@
 
 import argparse
 import os.path
+import signal
 import subprocess
 import sys
 import time
@@ -149,6 +150,10 @@ def run():
 
     # Start GUI:
     app = App(txt, cf)
+    # Reload the stylesheet when SIGUSR1 is received (e.g. after a theme change):
+    if hasattr(signal, 'SIGUSR1'):
+        from gi.repository import GLib
+        signal.signal(signal.SIGUSR1, lambda s, f: GLib.idle_add(app.reload_css))
     app.run()
 
 

@@ -49,6 +49,21 @@ class App(Gtk.Window):
         threading.Thread(target=self.process_images).start()
 
 
+    def reload_css(self) -> bool:
+        """Load and apply the stylesheet, including any user-provided style.css."""
+        css_provider = Gtk.CssProvider()
+        css = b".highlighted-button { border: 1px solid @theme_selected_bg_color; }"
+        try:
+            with open(self.cf.style_file, 'rb') as stylesheet:
+                css = css + stylesheet.read()
+        except OSError:
+            pass
+        css_provider.load_from_data(css)
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
+        )
+        return False
+
     def init_ui(self) -> None:
         """Initialize the UI elements of the application"""
 
@@ -56,24 +71,7 @@ class App(Gtk.Window):
         self.main_box = Gtk.VBox(spacing=10)
         self.add(self.main_box)
 
-        # Load and apply CSS
-        css_provider = Gtk.CssProvider()
-        css = b"""
-        .highlighted-button {
-            border: 1px solid @theme_selected_bg_color;
-        }
-        """
-        try:
-            with open(self.cf.style_file, 'rb') as stylesheet:
-                css = css + stylesheet.read()
-        except OSError:
-            pass
-        css_provider.load_from_data(css)
-
-        # Apply CSS to the default screen
-        screen = Gdk.Screen.get_default()
-        context = Gtk.StyleContext()
-        context.add_provider_for_screen(screen, css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER)
+        self.reload_css()
 
         # TOP MENU
 
