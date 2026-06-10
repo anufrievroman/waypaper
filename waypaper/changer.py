@@ -90,6 +90,19 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             pass
 
 
+def notify_waypaper_issue(summary: str, body: str) -> None:
+    """Show a desktop notification when a wallpaper backend fails."""
+    try:
+        subprocess.Popen(
+            ["notify-send", summary, body],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except OSError:
+        pass
+
+
 def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with swaybg backend"""
 
@@ -438,9 +451,20 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     command.extend(["--scaling", fill])
 
     command.append(str(image_path.parent))
-    command.append("&")
     print(f"{command=}")
-    subprocess.Popen(" ".join(command), shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    process = subprocess.Popen(
+        command,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    time.sleep(0.5)
+    exit_code = process.poll()
+    if exit_code is not None:
+        message = f"linux-wallpaperengine exited immediately with code {exit_code}."
+        print(message)
+        notify_waypaper_issue("Waypaper launch failed", message)
 
 def change_wallpaper(image_path: Path, cf: Config, monitor: str):
     """Run system commands to change the wallpaper depending on the backend"""
