@@ -1039,6 +1039,80 @@ class Finnish:
         self.tip_hyprpaper_restart = "Restart Hyprpaper"
 
 
+class PortugueseBrazilian:
+    def __init__(self):
+        self.msg_desc = "Interface GUI de seleção para papel de parede, focado em Wayland e X11. Funciona como um frontend para feh, swaybg, wallutils, hyprpaper, mpvpaper e awww."
+
+        self.msg_info = "Para mais informações, visite:\nhttps://github.com/anufrievroman/waypaper"
+
+        self.msg_arg_help = "Imprime a versão do programa"
+        self.msg_arg_fill = "Especifica como preencher a tela com a imagem escolhida"
+        self.msg_arg_rest = "Restaura o último papel de parede"
+        self.msg_arg_back = "Especifica qual backend usar para definir o papel de parede"
+        self.msg_arg_rand = "Seleciona um papel de parede aleatório"
+        self.msg_arg_list = "Lista alguns parâmetros em formato json para o stdout"
+        self.msg_arg_wall = "Seleciona o papel de parede especificado"
+        self.msg_arg_folder = "Especifica a pasta para pesquisar por papel de parede"
+        self.msg_arg_statefile = "Especifica um arquivo personalizado para armazenar o estado do aplicativo"
+        self.msg_arg_configfile = "Especifica um arquivo personalizado para armazenar a configuração do aplicativo"
+        self.msg_arg_monitor = "Especifica o monitor desejado usando seu nome"
+        self.msg_arg_post = "Previne a execução do post_command definido no arquivo de configuração"
+        self.msg_arg_show_path_in_tooltip = "Mostra o caminho relativo no tooltip"
+
+        self.msg_select = "Selecionar"
+        self.msg_refresh = "Reiniciar"
+        self.msg_clear = "Limpar"
+        self.msg_start = "Iniciar mudança automática"
+        self.msg_stop = "Pausar tudo"
+        self.msg_sound = "Som"
+        self.msg_pause = "Pause"
+        self.msg_search = "Procure"
+        self.msg_random = "Aleatório"
+        self.msg_exit = "Sair"
+        self.msg_options = "Opções"
+        self.msg_subfolders = "Mostrar subpastas"
+        self.msg_all_subfolders = "Mostrar todas as subpastas"
+        self.msg_hidden = "Mostrar ocultos"
+        self.msg_gifs = "Mostrar apenas GIFs"
+        self.msg_transitions = "Mostrar opções de transições"
+        self.msg_changefolder = "Pasta"
+        self.msg_choosefolder = "Por favor escolha uma pasta"
+        self.msg_caching = "Cacheando papéis de parede..."
+        self.msg_show_path_in_tooltip = "Mostra o caminho no tooltip"
+        self.msg_zen = "Modo Zen"
+        self.msg_zen_enter = "Você está entrando no Modo Zen.\nPressione Z para retornar ao modo normal."
+        self.msg_hyprpaper_restart = "Reiniciar o Hyprpaper"
+
+        self.msg_help = "Keybinds padrão do waypaper:\n\nhjkl - Navegação (←↓↑→)\nEnter - Inicia o papel de parede selecionado\nf - Altera a pasta dos papéis de parede\n"
+        self.msg_help += "g - Move até o topo\nG - Navega para o fim\nR - Seleciona um papel de parede aleatório\nr - Recache nos papéis de parede\n"
+        self.msg_help += "z - Ativa/Desativa o modo Zen\n"
+        self.msg_help += ". - Ativa/Desativa imagens ocultas\ns - Ativa/Desativa imagens em subspatas\n/ - Pesquisar\n? - Ajuda\nq - Sair\n\n"
+        self.msg_help += self.msg_info
+
+        self.err_cache = "Erro ao deletar o cache"
+        self.err_backend = "Parece que nenhum dos backends de papel de parede está instalado no sistema.\n"
+        self.err_backend += "Utilize seu gerenciador de pacotes para instalar pelo menos um desses backends:\n\n"
+        self.err_backend += "- swaybg (Wayland)\n- awww (Wayland)\n"
+        self.err_backend += "- hyprpaper (Wayland)\n- feh (Xorg)\n"
+        self.err_backend += "- wallutils (Xorg & Wayland)\n- mpvpaper (Xorg & Wayland)\n\n"
+        self.err_backend += self.msg_info
+
+        self.tip_refresh = "Recache a pasta de imagens"
+        self.tip_fill = "Escolha o tipo de preenchimento"
+        self.tip_backend = "Escolha o backend"
+        self.tip_sorting = "Escolha o tipo de ordenação"
+        self.tip_display = "Escolha o monitor"
+        self.tip_color = "Escolha a cor de fundo"
+        self.tip_random = "Seleciona um papel de parede aleatório"
+        self.tip_exit = "Sai da aplicação"
+        self.tip_transition = "Escolha o tipo de transição"
+        self.tip_filter = "Escolha o filtro de escala"
+        self.tip_mpv_stop = "Para todos os processos mpv"
+        self.tip_mpv_pause = "Reproduzir/Pausar o papel de parede de vídeo"
+        self.tip_mpv_sound = "Reproduzir o som do vídeo"
+        self.tip_timer = "Quantas vezes mudar automaticamente o papel de parede"
+        self.tip_start = "Iniciar mudança automática do papel de parede após um intervalo de tempo"
+
 def load_language(lang):
     """Load the language package according to selected language"""
     if lang == "de":
@@ -1065,6 +1139,8 @@ def load_language(lang):
         txt = Japanese()
     elif lang == "fi":
         txt = Finnish()
+    elif lang == "pt-BR":
+        txt = PortugueseBrazilian()
     else:
         txt = English()
     return txt
