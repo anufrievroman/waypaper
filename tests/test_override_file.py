@@ -114,11 +114,11 @@ class OverrideFileTests(unittest.TestCase):
         self.assertNotIn("Z", data["overrides"])
 
     def test_set_override_uses_xdg_state_home_when_set(self):
-        """If $LZT_WALLPAPER_OVERRIDE_PATH is set, it overrides the default."""
+        """If $WAYPAPER_OVERRIDE_PATH is set, it overrides the default."""
         import tempfile
         with tempfile.TemporaryDirectory() as custom:
             custom_path = Path(custom) / "custom.json"
-            with patch.dict(os.environ, {"LZT_WALLPAPER_OVERRIDE_PATH": str(custom_path)}):
+            with patch.dict(os.environ, {"WAYPAPER_OVERRIDE_PATH": str(custom_path)}):
                 set_override("HDMI-A-1", "swww", 1)
             self.assertTrue(custom_path.exists())
 

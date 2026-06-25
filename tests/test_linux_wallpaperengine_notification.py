@@ -22,6 +22,7 @@ class LinuxWallpaperengineNotificationTests(unittest.TestCase):
             linux_wallpaperengine_clamp="none",
             linux_wallpaperengine_volume=15,
             linux_wallpaperengine_fps=30,
+            write_override_file=True,
         )
 
     def make_preview_path(self, tmp_dir: str) -> Path:

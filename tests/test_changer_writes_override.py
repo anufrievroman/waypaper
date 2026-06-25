@@ -34,6 +34,7 @@ def _lwe_config() -> SimpleNamespace:
         linux_wallpaperengine_fps=30,
         post_command="",
         use_post_command=False,
+        write_override_file=True,
     )
 
 
@@ -55,7 +56,7 @@ class ChangeWithLinuxWallpaperengineWritesOverrideTests(unittest.TestCase):
 
     def test_writes_override_after_popen(self):
         """The override is recorded with backend=linux-wallpaperengine and the new PID."""
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
         with patch.dict(__import__("os").environ, env, clear=False):
             with patch("waypaper.changer.seek_and_destroy"), patch(
                 "waypaper.changer.subprocess.Popen", return_value=_make_process(99999)
@@ -91,7 +92,7 @@ class ChangeWallpaperClearsStaleOverrideTests(unittest.TestCase):
         override_file.set_override("HDMI-A-1", "swww", 100, self.path)
         self.assertIn("HDMI-A-1", override_file.read_overrides(self.path))
 
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.path)}
         with patch.dict(__import__("os").environ, env, clear=False):
             with patch("waypaper.changer.seek_and_destroy"), patch(
                 "waypaper.changer.subprocess.Popen", return_value=_make_process(555)
@@ -117,8 +118,12 @@ class ChangeWithSwaybgWritesOverrideTests(unittest.TestCase):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def test_writes_override_with_swaybg_backend(self):
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
-        cfg = SimpleNamespace(fill_option="fill", color="#000000", post_command="", use_post_command=False)
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
+        cfg = SimpleNamespace(
+            fill_option="fill", color="#000000",
+            post_command="", use_post_command=False,
+            write_override_file=True,
+        )
         with patch.dict(__import__("os").environ, env, clear=False):
             with patch("waypaper.changer.find_process_pid", return_value=None), patch(
                 "waypaper.changer.subprocess.Popen", return_value=_make_process(7777)
@@ -146,8 +151,9 @@ class ChangeWithSwwwWritesDaemonPidTests(unittest.TestCase):
             swww_filter="lanczos3", swww_transition_type="fade",
             swww_transition_step=1, swww_transition_angle=0,
             swww_transition_duration=1, swww_transition_fps=30,
+            write_override_file=True,
         )
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
 
         with patch.dict(__import__("os").environ, env, clear=False):
             with patch("waypaper.changer.seek_and_destroy"), patch(
@@ -162,49 +168,73 @@ class ChangeWithSwwwWritesDaemonPidTests(unittest.TestCase):
         self.assertEqual(data["overrides"]["HDMI-A-1"]["pid"], 42424)
 
 
-class AtexitLivenessCheckTests(unittest.TestCase):
-    """The atexit hook must keep entries whose backing process is still alive.
+class WriteOverrideFileFlagGateTests(unittest.TestCase):
+    """When cf.write_override_file is False (the default), no override is recorded.
 
-    Critical for CLI mode: `waypaper --wallpaper foo` exits while lwe keeps
-    running. The override must remain so DMS can detect ownership.
+    The flag is opt-in to keep the surface area minimal for the 95% of users
+    who don't coordinate with external compositors.
     """
 
     def setUp(self):
-        self.tmp = Path(tempfile.mkdtemp(prefix="wp-ov-atexit-"))
+        self.tmp = Path(tempfile.mkdtemp(prefix="wp-ov-flag-"))
         self.path = self.tmp / "ov.json"
-        # Pretend there's a real process running (this very test process).
-        self.alive_pid = __import__("os").getpid()
-        # Use an obviously-dead pid (max int → no process).
-        self.dead_pid = 2**30
 
     def tearDown(self):
         import shutil
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def test_atexit_keeps_live_entries(self):
-        override_file.set_override("HDMI-A-1", "linux-wallpaperengine", self.alive_pid, self.path)
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
-        with patch.dict(__import__("os").environ, env, clear=False):
-            changer._atexit_cleanup_overrides()
-        result = override_file.read_overrides(self.path)
-        self.assertIn("HDMI-A-1", result, "live entries must survive atexit")
+    def _disabled_cfg(self) -> SimpleNamespace:
+        return SimpleNamespace(
+            fill_option="fill", color="#000000",
+            post_command="", use_post_command=False,
+            write_override_file=False,
+        )
 
-    def test_atexit_clears_dead_entries(self):
-        override_file.set_override("HDMI-A-1", "linux-wallpaperengine", self.dead_pid, self.path)
-        override_file.set_override("DP-1", "swww", self.alive_pid, self.path)
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
+    def test_swaybg_skips_override_when_flag_disabled(self):
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.path)}
         with patch.dict(__import__("os").environ, env, clear=False):
-            changer._atexit_cleanup_overrides()
-        result = override_file.read_overrides(self.path)
-        self.assertNotIn("HDMI-A-1", result, "dead entries must be cleared")
-        self.assertIn("DP-1", result, "live entries must be preserved")
+            with patch("waypaper.changer.find_process_pid", return_value=None), patch(
+                "waypaper.changer.subprocess.Popen", return_value=_make_process(7777)
+            ), patch("waypaper.changer.subprocess.run"):
+                changer.change_with_swaybg(self.tmp / "image.jpg", self._disabled_cfg(), "DP-1")
 
-    def test_atexit_handles_missing_file_gracefully(self):
-        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
+        self.assertFalse(self.path.exists(), "no file should be written when flag is False")
+
+    def test_lwe_skips_override_when_flag_disabled(self):
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.path)}
         with patch.dict(__import__("os").environ, env, clear=False):
-            # Should not raise even if file doesn't exist
-            changer._atexit_cleanup_overrides()
-        self.assertFalse(self.path.exists())
+            with patch("waypaper.changer.seek_and_destroy"), patch(
+                "waypaper.changer.subprocess.Popen", return_value=_make_process(99999)
+            ), patch("waypaper.changer.time.sleep"), patch(
+                "waypaper.changer.notify_waypaper_issue"
+            ):
+                cfg = _lwe_config()
+                cfg.write_override_file = False
+                changer.change_with_linux_wallpaperengine(
+                    self.tmp / "preview.jpg", cfg, "HDMI-A-1"
+                )
+
+        self.assertFalse(self.path.exists(), "no file should be written when flag is False")
+
+    def test_change_wallpaper_skips_clear_when_flag_disabled(self):
+        # Seed an existing entry as if a prior session had the flag enabled.
+        override_file.set_override("HDMI-A-1", "swww", 100, self.path)
+        env = {**__import__("os").environ, "WAYPAPER_OVERRIDE_PATH": str(self.path)}
+        with patch.dict(__import__("os").environ, env, clear=False):
+            with patch("waypaper.changer.seek_and_destroy"), patch(
+                "waypaper.changer.subprocess.Popen", return_value=_make_process(555)
+            ), patch("waypaper.changer.time.sleep"), patch(
+                "waypaper.changer.notify_waypaper_issue"
+            ):
+                cfg = _lwe_config()
+                cfg.write_override_file = False
+                change_wallpaper(self.tmp / "wp", cfg, "HDMI-A-1")
+
+        # Pre-existing entry is untouched because the flag is off — waypaper
+        # neither writes nor clears while the feature is disabled.
+        result = override_file.read_overrides(self.path)
+        self.assertEqual(result["HDMI-A-1"]["backend"], "swww")
+        self.assertEqual(result["HDMI-A-1"]["pid"], 100)
 
 
 if __name__ == "__main__":

@@ -7,8 +7,8 @@ DankMaterialShell) can poll the file to know which monitors are currently owned
 by an external backend and skip rendering their own wallpaper on those monitors.
 When the recorded PID dies, the entry is stale; readers fall back automatically.
 
-File path: ``$XDG_STATE_HOME/lzt/wallpaper-override.json``
-(default: ``~/.local/state/lzt/wallpaper-override.json``)
+File path: ``$XDG_STATE_HOME/waypaper/wallpaper-override.json``
+(default: ``~/.local/state/waypaper/wallpaper-override.json``)
 
 Schema (versioned):
     {
@@ -40,8 +40,8 @@ def _default_path() -> Path:
     """Resolve the default path each call so env-var overrides take effect at runtime."""
     return Path(
         os.environ.get(
-            "LZT_WALLPAPER_OVERRIDE_PATH",
-            str(Path.home() / ".local" / "state" / "lzt" / "wallpaper-override.json"),
+            "WAYPAPER_OVERRIDE_PATH",
+            str(Path.home() / ".local" / "state" / "waypaper" / "wallpaper-override.json"),
         )
     )
 
