@@ -59,10 +59,8 @@ def seek_and_destroy(process: str, monitor: str = "All"):
         except subprocess.CalledProcessError:
             pass
 
-    # swww-daemon and awww-daemon: clear background instead of killing the daemon so other
-    # monitors keep their wallpapers. Without this, switching to linux-wallpaperengine leaves
-    # a stale swww/awww image in the Wayland background layer behind the new dynamic scene
-    # (visible as two stacked wallpapers on the same monitor).
+    # swww-daemon and awww-daemon: clear the background layer instead of killing
+    # the daemon, so other monitors keep their wallpapers.
     elif process == "swww-daemon":
         try:
             subprocess.run(
@@ -71,7 +69,7 @@ def seek_and_destroy(process: str, monitor: str = "All"):
                 check=True,
             )
         except subprocess.CalledProcessError:
-            pass  # daemon not running, nothing to clear
+            pass
         else:
             try:
                 subprocess.Popen(
@@ -83,7 +81,10 @@ def seek_and_destroy(process: str, monitor: str = "All"):
                 print(f"Cleared swww background on {monitor}")
             except Exception:
                 pass
-    elif process == "awww-daemon":
+    elif process == "awww-daemon" and monitor == "All":
+        # awww has no per-output clear command, so we can only kill the daemon
+        # when the request covers every monitor. For a per-monitor request, leave
+        # the daemon alone to preserve the other monitors' backgrounds.
         try:
             subprocess.run(
                 ["pgrep", "awww-daemon"],
@@ -93,8 +94,6 @@ def seek_and_destroy(process: str, monitor: str = "All"):
         except subprocess.CalledProcessError:
             pass
         else:
-            # awww has no per-output clear command; kill the daemon (other monitors lose
-            # their awww background until the user re-selects a wallpaper for them).
             try:
                 subprocess.Popen(
                     ["awww", "kill"],

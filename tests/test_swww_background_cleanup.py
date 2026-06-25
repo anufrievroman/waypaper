@@ -1,11 +1,9 @@
 """Regression tests for the swww/awww background-cleanup path.
 
-When waypaper switches to linux-wallpaperengine (or any dynamic renderer), the
-swww-daemon and awww-daemon background layers must be cleared for the affected
-monitor. Otherwise the previous static wallpaper stays visible in the Wayland
-background layer behind the new dynamic scene (two stacked wallpapers on the
-same monitor — the bug reported on 2026-06-25 with HDMI-A-1 showing the
-ultrakill preview.gif behind the new spiderman scene).
+When waypaper switches to linux-wallpaperengine (or any dynamic renderer),
+the swww-daemon and awww-daemon background layers must be cleared for the
+affected monitor. Otherwise the previous static wallpaper stays visible in
+the Wayland background layer behind the new dynamic scene.
 """
 
 import tempfile
@@ -80,8 +78,8 @@ class SeekAndDestroySwwwPerMonitorTests(unittest.TestCase):
     """Verify seek_and_destroy clears swww background per-monitor, not the whole daemon."""
 
     def test_swww_daemon_per_monitor_clear(self):
-        """When swww-daemon is running and monitor != 'All', run `swww clear --output <monitor>` (not `swww kill`)."""
-        # pgrep returns 0 (swww-daemon running), then we expect swww clear with --output
+        """When swww-daemon is running and monitor != 'All', run `swww clear --outputs <monitor>` (not `swww kill`)."""
+        # pgrep returns 0 (swww-daemon running), then we expect swww clear with --outputs
         with patch("waypaper.changer.subprocess.run") as run_mock, patch(
             "waypaper.changer.subprocess.Popen"
         ) as popen_mock:
@@ -130,6 +128,49 @@ class SeekAndDestroySwwwPerMonitorTests(unittest.TestCase):
             if c.args and c.args[0] and c.args[0][0] == "killall"
         ]
         self.assertTrue(killall_calls, "All-mode should use killall")
+
+    def test_awww_daemon_preserves_other_monitors_when_specific(self):
+        """When monitor != 'All', do NOT kill awww-daemon (preserves other monitors)."""
+        with patch("waypaper.changer.subprocess.run") as run_mock, patch(
+            "waypaper.changer.subprocess.Popen"
+        ) as popen_mock:
+            run_mock.return_value = MagicMock(returncode=0, stdout=b"", stderr=b"")
+
+            seek_and_destroy("awww-daemon", "HDMI-A-1")
+
+        popen_calls = popen_mock.call_args_list
+        awww_calls = [
+            c for c in popen_calls
+            if c.args and c.args[0] and c.args[0][0] == "awww"
+        ]
+        self.assertEqual(
+            awww_calls, [],
+            "should not kill awww-daemon when targeting a single monitor"
+        )
+
+    def test_awww_daemon_kills_when_all_mode(self):
+        """When monitor == 'All' and awww-daemon is running, kill it."""
+        with patch("waypaper.changer.subprocess.run") as run_mock, patch(
+            "waypaper.changer.subprocess.Popen"
+        ) as popen_mock:
+            run_mock.return_value = MagicMock(returncode=0, stdout=b"", stderr=b"")
+
+            seek_and_destroy("awww-daemon", "All")
+
+        # The if-monitor-All branch uses killall; the awww-specific guard is
+        # subsumed by the All branch. Either killall or `awww kill` is acceptable.
+        awww_kill_calls = [
+            c for c in popen_mock.call_args_list
+            if c.args and c.args[0] and c.args[0][0] == "awww"
+        ]
+        killall_calls = [
+            c for c in popen_mock.call_args_list
+            if c.args and c.args[0] and c.args[0][0] == "killall"
+        ]
+        self.assertTrue(
+            awww_kill_calls or killall_calls,
+            "All-mode should clear awww via killall or awww kill"
+        )
 
 
 if __name__ == "__main__":
