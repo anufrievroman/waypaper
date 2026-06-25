@@ -33,26 +33,12 @@ def format_post_command(
 
 
 def find_process_pid(command: str) -> Optional[int]:
-    """Find the PID of the process matching the exact command.
+    """Find the PID of the first process matching the command fragments.
 
-    Implementation: `pgrep -f <command>` matches against full process
-    command line (read from /proc/<pid>/cmdline), which is faster and more
-    accurate than `ps aux | grep` because:
+    Uses 'pgrep -f' to match against the full command line in /proc.
 
-    - `ps aux` returns ~50-100 KB of text per call (every process on the
-      system) that we then re-parse in Python.
-    - `pgrep -f` returns just the matching PIDs, one per line.
-    - `ps aux` truncates very long command lines; `pgrep -f` matches the
-      full /proc/<pid>/cmdline, avoiding false negatives on long args.
-
-    Empirical: on this user's laptop (3 lwe processes + ~800 other processes),
-    `ps aux` + Python parse = ~145 ms, `pgrep -f` = ~80 ms. ~2x faster.
-
-    Behavior contract:
-    - Returns the smallest PID when multiple processes match (matches the
-      old `ps aux` first-line behavior; both are sorted by PID ascending).
-    - Returns None when no match (pgrep exit 1) or on any subprocess error.
-    - Has a 5-second timeout to defend against pathological /proc states.
+    Returns the lowest matching PID as an int, or None if no match is found
+    or if the subprocess encounters an error.
     """
     try:
         result = subprocess.run(
@@ -63,14 +49,11 @@ def find_process_pid(command: str) -> Optional[int]:
             check=False,
         )
     except (subprocess.SubprocessError, FileNotFoundError, OSError):
-        # pgrep not found, /proc hung, timeout, etc. — treat as no match.
         return None
 
     if result.returncode != 0:
-        # 1 = no match (common case), 2 = syntax error, 3 = fatal
         return None
 
-    # pgrep prints one PID per line; pick the first non-empty after strip.
     for line in result.stdout.splitlines():
         stripped = line.strip()
         if stripped:
