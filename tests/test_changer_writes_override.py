@@ -131,7 +131,7 @@ class ChangeWithSwaybgWritesOverrideTests(unittest.TestCase):
 
 
 class ChangeWithSwwwWritesDaemonPidTests(unittest.TestCase):
-    """For swww/awww, the override records the long-running daemon's PID, not the short-lived `swww img` PID."""
+    """For swww, the override records the long-running daemon's PID, not the short-lived `swww img` PID."""
 
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="wp-ov-swww-"))
@@ -149,14 +149,10 @@ class ChangeWithSwwwWritesDaemonPidTests(unittest.TestCase):
         )
         env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.tmp / "ov.json")}
 
-        # Mock pgrep to return a specific daemon PID
-        pgrep_result = MagicMock(returncode=0, stdout="42424\n")
-        run_result = MagicMock(stdout="swww 0.11.0")
-
         with patch.dict(__import__("os").environ, env, clear=False):
             with patch("waypaper.changer.seek_and_destroy"), patch(
                 "waypaper.changer.subprocess.check_output", return_value="42424"
-            ), patch("waypaper.changer.subprocess.run", return_value=run_result), patch(
+            ), patch("waypaper.changer.subprocess.run", return_value=MagicMock(stdout="swww 0.11.0")), patch(
                 "waypaper.changer.subprocess.Popen"
             ):
                 changer.change_with_swww(self.tmp / "image.jpg", cfg, "HDMI-A-1")
@@ -164,6 +160,51 @@ class ChangeWithSwwwWritesDaemonPidTests(unittest.TestCase):
         data = json.loads((self.tmp / "ov.json").read_text(encoding="utf-8"))
         self.assertEqual(data["overrides"]["HDMI-A-1"]["backend"], "swww")
         self.assertEqual(data["overrides"]["HDMI-A-1"]["pid"], 42424)
+
+
+class AtexitLivenessCheckTests(unittest.TestCase):
+    """The atexit hook must keep entries whose backing process is still alive.
+
+    Critical for CLI mode: `waypaper --wallpaper foo` exits while lwe keeps
+    running. The override must remain so DMS can detect ownership.
+    """
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="wp-ov-atexit-"))
+        self.path = self.tmp / "ov.json"
+        # Pretend there's a real process running (this very test process).
+        self.alive_pid = __import__("os").getpid()
+        # Use an obviously-dead pid (max int → no process).
+        self.dead_pid = 2**30
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_atexit_keeps_live_entries(self):
+        override_file.set_override("HDMI-A-1", "linux-wallpaperengine", self.alive_pid, self.path)
+        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
+        with patch.dict(__import__("os").environ, env, clear=False):
+            changer._atexit_cleanup_overrides()
+        result = override_file.read_overrides(self.path)
+        self.assertIn("HDMI-A-1", result, "live entries must survive atexit")
+
+    def test_atexit_clears_dead_entries(self):
+        override_file.set_override("HDMI-A-1", "linux-wallpaperengine", self.dead_pid, self.path)
+        override_file.set_override("DP-1", "swww", self.alive_pid, self.path)
+        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
+        with patch.dict(__import__("os").environ, env, clear=False):
+            changer._atexit_cleanup_overrides()
+        result = override_file.read_overrides(self.path)
+        self.assertNotIn("HDMI-A-1", result, "dead entries must be cleared")
+        self.assertIn("DP-1", result, "live entries must be preserved")
+
+    def test_atexit_handles_missing_file_gracefully(self):
+        env = {**__import__("os").environ, "LZT_WALLPAPER_OVERRIDE_PATH": str(self.path)}
+        with patch.dict(__import__("os").environ, env, clear=False):
+            # Should not raise even if file doesn't exist
+            changer._atexit_cleanup_overrides()
+        self.assertFalse(self.path.exists())
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 """Module that runs the system processes to change the wallpaper"""
 
 import atexit
+import os
 import shlex
 import subprocess
 import time
@@ -14,17 +15,52 @@ from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGI
     LINUX_WALLPAPERENGINE_FILL_OPTIONS
 
 
-# Register a single atexit hook (idempotent across reimports) that drops every
-# override entry when waypaper exits cleanly. If waypaper crashes, the file
-# may carry stale entries — readers (DMS, etc.) detect a dead PID and fall back.
+# Register a single atexit hook (idempotent across reimports) that drops
+# override entries whose backing process has died. Live entries (e.g. a
+# long-running linux-wallpaperengine launched from CLI mode where waypaper
+# itself exits with `sys.exit(0)`) are left alone so the reader can keep
+# the monitor marked as externally owned.
 _OVERRIDE_CLEANUP_REGISTERED = False
+
+
+def _is_pid_alive(pid: int) -> bool:
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except (OSError, ProcessLookupError, ValueError):
+        return False
+
+
+def _atexit_cleanup_overrides() -> None:
+    """Remove override entries whose backing process has died.
+
+    In CLI mode (``waypaper --wallpaper foo``), waypaper exits while the
+    wallpaper backend (e.g. linux-wallpaperengine) keeps running. The
+    override entry must stay so the reader knows the monitor is owned.
+    In GUI mode, when the user closes waypaper, the child backend may or
+    may not still be alive (depends on the backend); we let the liveness
+    check decide per-entry.
+    """
+    try:
+        overrides = override_file.read_overrides()
+    except Exception:
+        return
+    if not overrides:
+        return
+    for monitor, entry in list(overrides.items()):
+        pid = entry.get("pid") if isinstance(entry, dict) else None
+        if not pid or not _is_pid_alive(pid):
+            try:
+                override_file.clear_override(monitor)
+            except Exception:
+                pass
 
 
 def _ensure_override_cleanup_registered() -> None:
     global _OVERRIDE_CLEANUP_REGISTERED
     if _OVERRIDE_CLEANUP_REGISTERED:
         return
-    atexit.register(override_file.clear_all_overrides)
+    atexit.register(_atexit_cleanup_overrides)
     _OVERRIDE_CLEANUP_REGISTERED = True
 
 
