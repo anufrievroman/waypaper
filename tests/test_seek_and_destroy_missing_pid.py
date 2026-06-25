@@ -1,9 +1,8 @@
-"""Regression test for Bug C: seek_and_destroy must NOT crash when find_process_pid returns None.
+"""Regression tests for seek_and_destroy missing-PID edge cases.
 
-Reproduction: when the user clicks a wallpaper for the FIRST time after a fresh boot,
-no linux-wallpaperengine/swww-daemon is running for that monitor, so find_process_pid
-returns None. The old code did `str(None) = "None"` and ran `kill -9 None` which
-prints the noisy error `kill: fallo al analizar el argumento: 'None'`.
+Ensures seek_and_destroy exits silently and skips the subprocess execution
+when find_process_pid returns None or invalid identifiers, preventing noisy
+'failed to parse argument' syntax errors from the system kill binary.
 """
 import unittest
 from unittest.mock import patch, MagicMock
