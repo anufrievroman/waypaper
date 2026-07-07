@@ -59,13 +59,14 @@ class App(Gtk.Window):
         )
 
         user_provider = Gtk.CssProvider()
-        try:
-            user_provider.load_from_path(str(self.cf.style_file))
-            Gtk.StyleContext.add_provider_for_screen(
-                Gdk.Screen.get_default(), user_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
-            )
-        except Exception:
-            pass
+        if os.path.isfile(self.cf.style_file):
+            try:
+                user_provider.load_from_path(str(self.cf.style_file))
+                Gtk.StyleContext.add_provider_for_screen(
+                    Gdk.Screen.get_default(), user_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
+                )
+            except GLib.Error as e:
+                print(f"Failed to load custom CSS: {e.message}")
         return False
 
     def init_ui(self) -> None:
