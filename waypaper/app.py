@@ -51,17 +51,21 @@ class App(Gtk.Window):
 
     def reload_css(self) -> bool:
         """Load and apply the stylesheet, including any user-provided style.css."""
-        css_provider = Gtk.CssProvider()
-        css = b".highlighted-button { border: 1px solid @theme_selected_bg_color; }"
-        try:
-            with open(self.cf.style_file, 'rb') as stylesheet:
-                css = css + stylesheet.read()
-        except OSError:
-            pass
-        css_provider.load_from_data(css)
+        internal_provider = Gtk.CssProvider()
+        internal_css = b".highlighted-button { border: 1px solid @theme_selected_bg_color; }"
+        internal_provider.load_from_data(internal_css)
         Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(), css_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
+            Gdk.Screen.get_default(), internal_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
         )
+
+        user_provider = Gtk.CssProvider()
+        try:
+            user_provider.load_from_path(str(self.cf.style_file))
+            Gtk.StyleContext.add_provider_for_screen(
+                Gdk.Screen.get_default(), user_provider, Gtk.STYLE_PROVIDER_PRIORITY_USER
+            )
+        except Exception:
+            pass
         return False
 
     def init_ui(self) -> None:
