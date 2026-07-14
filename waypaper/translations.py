@@ -22,6 +22,7 @@ class English:
         self.msg_arg_monitor = "specify desired monitor using its name"
         self.msg_arg_post = "prevents running post_command set in config"
         self.msg_arg_show_path_in_tooltip = "show the relative path in the tooltip"
+        self.msg_arg_zen = "launch in Zen mode"
 
         self.msg_select = "Select"
         self.msg_refresh = "Refresh"
@@ -338,6 +339,7 @@ class Russian:
         self.msg_arg_monitor = "указать имя монитора для которого устанавливаются обои"
         self.msg_arg_post = "предотвратить выполнение post_command"
         self.msg_arg_show_path_in_tooltip = "показывать относительный путь в подсказке"
+        self.msg_arg_zen = "запустить в режиме Дзэн"
         self.msg_zen = "Режим Дзэн"
         self.msg_zen_enter = "Вы входите в режим Дзэн.\nНажмите z, чтобы вернуться в обычный режим."
         self.msg_hyprpaper_restart = "Restart Hyprpaper"
