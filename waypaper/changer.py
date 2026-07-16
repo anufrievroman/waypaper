@@ -5,6 +5,7 @@ import os
 import shlex
 import socket
 import subprocess
+import threading
 import time
 from typing import Optional
 from pathlib import Path
@@ -16,6 +17,13 @@ from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGI
 
 
 GSLAPPER_IPC_TIMEOUT = 2.0
+GSLAPPER_STARTUP_TIMEOUT = 3.0
+GSLAPPER_POLL_INTERVAL = 0.05
+GSLAPPER_VIDEO_CHANGE_ERROR = "cannot update path (use --auto-stop for video changes)"
+
+# ponytail: wallpaper changes are infrequent, so one global lock is enough;
+# replace it with per-output locks if real workloads show contention.
+_GSLAPPER_LIFECYCLE = threading.Lock()
 
 
 class GSlapperIPCError(RuntimeError):
@@ -65,6 +73,105 @@ def _gslapper_query(socket_path: Path) -> tuple[str, str, Path]:
     ):
         raise GSlapperIPCError("gSlapper returned an invalid status response")
     return fields[1], fields[2], Path(fields[3])
+
+
+def _gslapper_managed_sockets() -> list[Path]:
+    return sorted(_gslapper_runtime_dir().glob("gslapper-*.sock"))
+
+
+def _gslapper_overlapping_sockets(monitor: str, target: Path) -> list[Path]:
+    if monitor == "All":
+        return [path for path in _gslapper_managed_sockets() if path != target]
+    all_socket = gslapper_socket_path("All")
+    return [all_socket] if all_socket != target and all_socket.exists() else []
+
+
+def _gslapper_media_path(image_path: Path) -> str:
+    path = str(image_path)
+    if "\n" in path or "\r" in path:
+        raise ValueError("gSlapper media paths cannot contain newlines")
+    path.encode("utf-8")
+    return path
+
+
+def _gslapper_command(
+        socket_path: Path,
+        image_path: Path,
+        cf: Config,
+        monitor: str) -> list[str]:
+    fill_options = {
+        "fill": "fill",
+        "stretch": "stretch",
+        "fit": "panscan=1.0",
+        "center": "original",
+        "tile": "fill",
+    }
+    options = ["loop", fill_options[cf.fill_option.lower()]]
+    if not cf.mpvpaper_sound:
+        options.append("no-audio")
+    if cf.mpvpaper_options.strip():
+        options.append(cf.mpvpaper_options.strip())
+
+    return [
+        "gslapper",
+        "--fork",
+        "--ipc-socket",
+        str(socket_path),
+        "-o",
+        " ".join(options),
+        "*" if monitor == "All" else monitor,
+        _gslapper_media_path(image_path),
+    ]
+
+
+def _stop_gslapper_at(socket_path: Path) -> None:
+    if not socket_path.exists():
+        return
+    try:
+        _gslapper_ipc(socket_path, "stop")
+    except (FileNotFoundError, ConnectionRefusedError):
+        socket_path.unlink(missing_ok=True)
+        return
+
+    deadline = time.monotonic() + GSLAPPER_STARTUP_TIMEOUT
+    while socket_path.exists():
+        try:
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+                connection.settimeout(GSLAPPER_POLL_INTERVAL)
+                connection.connect(str(socket_path))
+        except (FileNotFoundError, ConnectionRefusedError):
+            socket_path.unlink(missing_ok=True)
+            return
+        if time.monotonic() >= deadline:
+            raise TimeoutError("gSlapper did not release its IPC socket after stop")
+        time.sleep(GSLAPPER_POLL_INTERVAL)
+
+
+def _launch_gslapper(
+        socket_path: Path,
+        image_path: Path,
+        cf: Config,
+        monitor: str) -> None:
+    process = subprocess.Popen(
+        _gslapper_command(socket_path, image_path, cf, monitor),
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    deadline = time.monotonic() + GSLAPPER_STARTUP_TIMEOUT
+    last_error = None
+    while time.monotonic() < deadline:
+        exit_code = process.poll()
+        if exit_code not in (None, 0):
+            raise RuntimeError(f"gSlapper exited during startup with code {exit_code}")
+        try:
+            _gslapper_query(socket_path)
+            return
+        except (OSError, GSlapperIPCError) as error:
+            last_error = error
+            time.sleep(GSLAPPER_POLL_INTERVAL)
+    raise TimeoutError(f"gSlapper IPC socket did not become ready: {last_error}")
 
 
 def format_post_command(
@@ -132,8 +239,6 @@ def seek_and_destroy(process: str, monitor: str = "All"):
             pid = find_process_pid(f"mpvpaper -f socket-{monitor}")
         elif process == "swaybg":
             pid = find_process_pid(f"swaybg -o {monitor}")
-        elif process == "gslapper":
-            pid = find_process_pid(f"gslapper.*{monitor}")
         elif process == "linux-wallpaperengine":
             pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
         else:
@@ -223,54 +328,55 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 
 
 def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
-    """Change wallpaper with gslapper backend"""
+    """Change a Waypaper-managed gSlapper instance through IPC."""
+    with _GSLAPPER_LIFECYCLE:
+        target = gslapper_socket_path(monitor)
+        for overlapping in _gslapper_overlapping_sockets(monitor, target):
+            _stop_gslapper_at(overlapping)
 
-    # Map waypaper fill options to gSlapper options (using updated gSlapper capabilities):
-    fill_options = {
-        "fill": "panscan=1.0",      # Full screen coverage
-        "fit": "panscan=1.0",       # As you specified for proper video fitting  
-        "center": "original",       # Native resolution
-        "stretch": "stretch",       # New gSlapper stretch support
-        "tile": "panscan=1.0"       # Tiled behavior (using full coverage)
-    }
-    
-    # Get the gSlapper option for current fill setting:
-    gslapper_fill = fill_options.get(cf.fill_option.lower(), "panscan=1.0")
-    print(f"gSlapper fill option: {cf.fill_option} -> {gslapper_fill}")
+        if target.exists():
+            try:
+                _gslapper_ipc(target, f"change {_gslapper_media_path(image_path)}")
+                return
+            except (FileNotFoundError, ConnectionRefusedError):
+                target.unlink(missing_ok=True)
+            except GSlapperIPCError as error:
+                if GSLAPPER_VIDEO_CHANGE_ERROR not in str(error):
+                    raise
+                _stop_gslapper_at(target)
 
-    # Kill any existing gSlapper process for this monitor:
-    seek_and_destroy("gslapper", monitor)
+        _launch_gslapper(target, image_path, cf, monitor)
 
-    # Build gSlapper command with proper options:
-    command = ["gslapper", "--fork"]
-    
-    # Build options list:
-    options = []
-    options.append("loop")  # Always loop videos
-    options.append(gslapper_fill)  # Add the fill/scaling option
-    
-    if not cf.mpvpaper_sound:  # If sound is OFF in UI
-        options.append("no-audio")
-    
-    # Add user's custom options if any:
-    if cf.mpvpaper_options.strip():
-        options.append(cf.mpvpaper_options.strip())
-    
-    # Build options string:
-    if options:
-        command.extend(["-o", " ".join(options)])
-    
-    # Specify the monitor:
-    if monitor == "All":
-        command.append('*')
-    else:
-        command.append(monitor)
-    
-    # Add the image/video path:
-    command.append(str(image_path))
-    
-    print(f"gSlapper command: {command}")
-    subprocess.Popen(command)
+
+def restart_gslapper(image_path: Path, cf: Config, monitor: str) -> None:
+    """Restart the selected managed instance to apply launch-only options."""
+    with _GSLAPPER_LIFECYCLE:
+        target = gslapper_socket_path(monitor)
+        if not target.exists():
+            return
+        _stop_gslapper_at(target)
+        _launch_gslapper(target, image_path, cf, monitor)
+
+
+def toggle_gslapper_pause(monitor: str) -> None:
+    """Toggle playback on the selected managed instance."""
+    with _GSLAPPER_LIFECYCLE:
+        target = gslapper_socket_path(monitor)
+        state, _, _ = _gslapper_query(target)
+        _gslapper_ipc(target, "resume" if state == "paused" else "pause")
+
+
+def stop_all_gslappers() -> None:
+    """Stop all gSlapper instances owned by Waypaper."""
+    with _GSLAPPER_LIFECYCLE:
+        failures = []
+        for socket_path in _gslapper_managed_sockets():
+            try:
+                _stop_gslapper_at(socket_path)
+            except Exception as error:
+                failures.append(f"{socket_path.name}: {error}")
+        if failures:
+            raise RuntimeError("; ".join(failures))
 
 
 def change_with_swww(image_path: Path, cf: Config, monitor: str):

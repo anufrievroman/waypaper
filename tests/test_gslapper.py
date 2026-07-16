@@ -4,7 +4,8 @@ import tempfile
 import threading
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import MagicMock, call, patch
 
 from waypaper import changer
 
@@ -29,7 +30,7 @@ class GSlapperIPCTests(unittest.TestCase):
         self.assertLess(len(str(first).encode()), 108)
 
     def test_missing_runtime_directory_is_reported(self):
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, {"XDG_RUNTIME_DIR": ""}):
             with self.assertRaisesRegex(RuntimeError, "XDG_RUNTIME_DIR"):
                 changer.gslapper_socket_path("DP-1")
 
@@ -87,6 +88,209 @@ class GSlapperIPCTests(unittest.TestCase):
             changer._gslapper_ipc(
                 Path("/tmp/not-used.sock"), "change bad\npath"
             )
+
+    def make_config(self, **changes):
+        values = {
+            "fill_option": "fill",
+            "mpvpaper_sound": False,
+            "mpvpaper_options": "",
+        }
+        values.update(changes)
+        return SimpleNamespace(**values)
+
+    def test_launch_command_uses_current_gslapper_options(self):
+        command = changer._gslapper_command(
+            Path("/tmp/ipc.sock"),
+            Path("/wallpapers/a b.mp4"),
+            self.make_config(mpvpaper_options="queue-size=4"),
+            "DP-1",
+        )
+
+        self.assertEqual(
+            command,
+            [
+                "gslapper",
+                "--fork",
+                "--ipc-socket",
+                "/tmp/ipc.sock",
+                "-o",
+                "loop fill no-audio queue-size=4",
+                "DP-1",
+                "/wallpapers/a b.mp4",
+            ],
+        )
+
+    def test_all_and_specific_outputs_only_overlap_when_required(self):
+        all_socket = changer.gslapper_socket_path("All")
+        dp_socket = changer.gslapper_socket_path("DP-1")
+        hdmi_socket = changer.gslapper_socket_path("HDMI-A-1")
+        for path in (all_socket, dp_socket, hdmi_socket):
+            path.touch()
+
+        self.assertCountEqual(
+            changer._gslapper_overlapping_sockets("All", all_socket),
+            [dp_socket, hdmi_socket],
+        )
+        self.assertEqual(
+            changer._gslapper_overlapping_sockets("DP-1", dp_socket),
+            [all_socket],
+        )
+
+    def test_launch_command_rejects_newlines_in_media_path(self):
+        with self.assertRaisesRegex(ValueError, "newlines"):
+            changer._gslapper_command(
+                Path("/tmp/ipc.sock"),
+                Path("/wallpapers/bad\nname.jpg"),
+                self.make_config(),
+                "DP-1",
+            )
+
+    def test_change_reuses_live_target(self):
+        target = changer.gslapper_socket_path("DP-1")
+        target.touch()
+        with patch(
+            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
+        ), patch(
+            "waypaper.changer._gslapper_ipc", return_value="OK"
+        ) as ipc, patch("waypaper.changer._launch_gslapper") as launch:
+            changer.change_with_gslapper(
+                Path("/wallpapers/new.jpg"), self.make_config(), "DP-1"
+            )
+
+        ipc.assert_called_once_with(target, "change /wallpapers/new.jpg")
+        launch.assert_not_called()
+
+    def test_video_change_error_restarts_only_the_target(self):
+        target = changer.gslapper_socket_path("DP-1")
+        target.touch()
+        error = changer.GSlapperIPCError(
+            "cannot update path (use --auto-stop for video changes)"
+        )
+        with patch(
+            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
+        ), patch(
+            "waypaper.changer._gslapper_ipc", side_effect=error
+        ), patch("waypaper.changer._stop_gslapper_at") as stop, patch(
+            "waypaper.changer._launch_gslapper"
+        ) as launch:
+            cf = self.make_config()
+            image = Path("/wallpapers/new.mp4")
+            changer.change_with_gslapper(image, cf, "DP-1")
+
+        stop.assert_called_once_with(target)
+        launch.assert_called_once_with(target, image, cf, "DP-1")
+
+    def test_unrelated_protocol_error_does_not_restart(self):
+        target = changer.gslapper_socket_path("DP-1")
+        target.touch()
+        with patch(
+            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
+        ), patch(
+            "waypaper.changer._gslapper_ipc",
+            side_effect=changer.GSlapperIPCError("file not accessible"),
+        ), patch("waypaper.changer._launch_gslapper") as launch:
+            with self.assertRaisesRegex(
+                changer.GSlapperIPCError, "file not accessible"
+            ):
+                changer.change_with_gslapper(
+                    Path("/wallpapers/missing.jpg"),
+                    self.make_config(),
+                    "DP-1",
+                )
+
+        launch.assert_not_called()
+
+    def test_stale_target_is_removed_before_launch(self):
+        target = changer.gslapper_socket_path("DP-1")
+        target.touch()
+        with patch(
+            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
+        ), patch(
+            "waypaper.changer._gslapper_ipc",
+            side_effect=ConnectionRefusedError,
+        ), patch("waypaper.changer._launch_gslapper") as launch:
+            cf = self.make_config()
+            image = Path("/wallpapers/new.jpg")
+            changer.change_with_gslapper(image, cf, "DP-1")
+
+        self.assertFalse(target.exists())
+        launch.assert_called_once_with(target, image, cf, "DP-1")
+
+    def test_pause_toggles_from_reported_state(self):
+        target = changer.gslapper_socket_path("DP-1")
+        with patch(
+            "waypaper.changer._gslapper_query",
+            return_value=("paused", "video", Path("/wallpapers/a.mp4")),
+        ), patch("waypaper.changer._gslapper_ipc", return_value="OK") as ipc:
+            changer.toggle_gslapper_pause("DP-1")
+
+        ipc.assert_called_once_with(target, "resume")
+
+    def test_stop_all_only_visits_managed_sockets(self):
+        first = changer.gslapper_socket_path("DP-1")
+        second = changer.gslapper_socket_path("HDMI-A-1")
+        first.touch()
+        second.touch()
+        with patch("waypaper.changer._stop_gslapper_at") as stop:
+            changer.stop_all_gslappers()
+
+        self.assertCountEqual(stop.call_args_list, [call(first), call(second)])
+
+    def test_sound_restart_does_nothing_without_a_managed_target(self):
+        with patch("waypaper.changer._launch_gslapper") as launch:
+            changer.restart_gslapper(
+                Path("/wallpapers/a.mp4"), self.make_config(), "DP-1"
+            )
+
+        launch.assert_not_called()
+
+    def test_launch_waits_until_ipc_is_ready(self):
+        process = MagicMock()
+        process.poll.return_value = None
+        socket_path = changer.gslapper_socket_path("DP-1")
+        cf = self.make_config()
+        image = Path("/wallpapers/a.jpg")
+        with patch(
+            "waypaper.changer.subprocess.Popen", return_value=process
+        ) as popen, patch(
+            "waypaper.changer._gslapper_query",
+            return_value=("playing", "image", image),
+        ):
+            changer._launch_gslapper(socket_path, image, cf, "DP-1")
+
+        popen.assert_called_once_with(
+            changer._gslapper_command(socket_path, image, cf, "DP-1"),
+            stdin=changer.subprocess.DEVNULL,
+            stdout=changer.subprocess.DEVNULL,
+            stderr=changer.subprocess.DEVNULL,
+            start_new_session=True,
+        )
+
+    def test_launch_reports_immediate_process_failure(self):
+        process = MagicMock()
+        process.poll.return_value = 7
+        with patch(
+            "waypaper.changer.subprocess.Popen", return_value=process
+        ), self.assertRaisesRegex(RuntimeError, "code 7"):
+            changer._launch_gslapper(
+                changer.gslapper_socket_path("DP-1"),
+                Path("/wallpapers/a.jpg"),
+                self.make_config(),
+                "DP-1",
+            )
+
+    def test_stop_all_attempts_every_managed_socket_before_reporting(self):
+        first = changer.gslapper_socket_path("DP-1")
+        second = changer.gslapper_socket_path("HDMI-A-1")
+        first.touch()
+        second.touch()
+        with patch(
+            "waypaper.changer._stop_gslapper_at",
+            side_effect=[RuntimeError("stuck"), None],
+        ) as stop, self.assertRaisesRegex(RuntimeError, "stuck"):
+            changer.stop_all_gslappers()
+
+        self.assertCountEqual(stop.call_args_list, [call(first), call(second)])
 
 
 if __name__ == "__main__":
