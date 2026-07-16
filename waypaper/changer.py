@@ -1,6 +1,9 @@
 """Module that runs the system processes to change the wallpaper"""
 
+import hashlib
+import os
 import shlex
+import socket
 import subprocess
 import time
 from typing import Optional
@@ -10,6 +13,58 @@ import screeninfo
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
     LINUX_WALLPAPERENGINE_FILL_OPTIONS
+
+
+GSLAPPER_IPC_TIMEOUT = 2.0
+
+
+class GSlapperIPCError(RuntimeError):
+    """An error returned by gSlapper's IPC protocol."""
+
+
+def _gslapper_runtime_dir() -> Path:
+    runtime_dir = os.environ.get("XDG_RUNTIME_DIR")
+    if not runtime_dir:
+        raise RuntimeError("XDG_RUNTIME_DIR is not set")
+    path = Path(runtime_dir) / "waypaper"
+    path.mkdir(mode=0o700, parents=True, exist_ok=True)
+    return path
+
+
+def gslapper_socket_path(monitor: str) -> Path:
+    digest = hashlib.sha256(monitor.encode("utf-8")).hexdigest()[:16]
+    return _gslapper_runtime_dir() / f"gslapper-{digest}.sock"
+
+
+def _gslapper_ipc(socket_path: Path, command: str) -> str:
+    if "\n" in command or "\r" in command:
+        raise ValueError("gSlapper IPC commands cannot contain newlines")
+
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+        connection.settimeout(GSLAPPER_IPC_TIMEOUT)
+        connection.connect(str(socket_path))
+        connection.sendall(f"{command}\n".encode("utf-8"))
+        with connection.makefile("r", encoding="utf-8", newline="\n") as response_file:
+            response = response_file.readline().rstrip("\r\n")
+
+    if not response:
+        raise GSlapperIPCError("gSlapper returned an empty IPC response")
+    if response.startswith("ERROR:"):
+        raise GSlapperIPCError(response.removeprefix("ERROR:").strip())
+    return response
+
+
+def _gslapper_query(socket_path: Path) -> tuple[str, str, Path]:
+    fields = _gslapper_ipc(socket_path, "query").split(" ", 3)
+    if (
+        len(fields) != 4
+        or fields[0] != "STATUS:"
+        or fields[1] not in {"playing", "paused"}
+        or fields[2] not in {"image", "video"}
+        or not fields[3]
+    ):
+        raise GSlapperIPCError("gSlapper returned an invalid status response")
+    return fields[1], fields[2], Path(fields[3])
 
 
 def format_post_command(
