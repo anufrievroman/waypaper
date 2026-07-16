@@ -292,9 +292,37 @@ class GSlapperIPCTests(unittest.TestCase):
 
         self.assertCountEqual(stop.call_args_list, [call(first), call(second)])
 
+    def test_stop_waits_for_the_server_to_release_its_socket(self):
+        socket_path = changer.gslapper_socket_path("DP-1")
+        ready = threading.Event()
+        received = []
+
+        def server():
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as listener:
+                listener.bind(str(socket_path))
+                listener.listen(1)
+                ready.set()
+                connection, _ = listener.accept()
+                with connection:
+                    received.append(connection.recv(4096))
+                    connection.sendall(b"OK\n")
+            socket_path.unlink()
+
+        thread = threading.Thread(target=server, daemon=True)
+        thread.start()
+        self.assertTrue(ready.wait(1))
+
+        changer._stop_gslapper_at(socket_path)
+
+        thread.join(1)
+        self.assertEqual(received, [b"stop\n"])
+        self.assertFalse(socket_path.exists())
+
     def test_background_action_errors_notify(self):
         action = MagicMock(side_effect=RuntimeError("socket timed out"))
-        with patch("waypaper.changer.notify_waypaper_issue") as notify:
+        with patch("waypaper.changer.notify_waypaper_issue") as notify, patch(
+            "builtins.print"
+        ):
             changer.run_gslapper_action(action, "DP-1")
 
         notify.assert_called_once_with(
@@ -314,7 +342,7 @@ class GSlapperIPCTests(unittest.TestCase):
             side_effect=RuntimeError("gSlapper failed"),
         ), patch("waypaper.changer.notify_waypaper_issue") as notify, patch(
             "waypaper.changer.subprocess.Popen"
-        ) as popen:
+        ) as popen, patch("builtins.print"):
             changer.change_wallpaper(Path("/wallpapers/a.jpg"), cf, "DP-1")
 
         notify.assert_called_once_with(

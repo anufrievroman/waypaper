@@ -40,6 +40,8 @@ def _gslapper_runtime_dir() -> Path:
 
 
 def gslapper_socket_path(monitor: str) -> Path:
+    # ponytail: 64 hash bits keep Unix socket names short; use the full digest
+    # if an output-name collision ever appears in practice.
     digest = hashlib.sha256(monitor.encode("utf-8")).hexdigest()[:16]
     return _gslapper_runtime_dir() / f"gslapper-{digest}.sock"
 
@@ -104,6 +106,7 @@ def _gslapper_command(
         "stretch": "stretch",
         "fit": "panscan=1.0",
         "center": "original",
+        # ponytail: gSlapper has no tile mode; use its native token if added.
         "tile": "fill",
     }
     options = ["loop", fill_options[cf.fill_option.lower()]]
@@ -161,6 +164,8 @@ def _launch_gslapper(
     )
     deadline = time.monotonic() + GSLAPPER_STARTUP_TIMEOUT
     last_error = None
+    # ponytail: fixed short polling keeps startup simple; calibrate the timeout
+    # if manual testing finds hardware that needs more than three seconds.
     while time.monotonic() < deadline:
         exit_code = process.poll()
         if exit_code not in (None, 0):
