@@ -263,6 +263,15 @@ def notify_waypaper_issue(summary: str, body: str) -> None:
         pass
 
 
+def run_gslapper_action(action, *args) -> None:
+    """Run a gSlapper UI action and report failures."""
+    try:
+        action(*args)
+    except Exception as error:
+        print(f"gSlapper action failed: {error}")
+        notify_waypaper_issue("Waypaper gSlapper failed", str(error))
+
+
 def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with swaybg backend"""
 
@@ -673,3 +682,5 @@ def change_wallpaper(image_path: Path, cf: Config, monitor: str):
 
     except Exception as e:
         print(f"Error occured while changing wallpaper: \n{e}")
+        if cf.backend == "gslapper":
+            notify_waypaper_issue("Waypaper gSlapper failed", str(e))

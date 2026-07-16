@@ -292,6 +292,119 @@ class GSlapperIPCTests(unittest.TestCase):
 
         self.assertCountEqual(stop.call_args_list, [call(first), call(second)])
 
+    def test_background_action_errors_notify(self):
+        action = MagicMock(side_effect=RuntimeError("socket timed out"))
+        with patch("waypaper.changer.notify_waypaper_issue") as notify:
+            changer.run_gslapper_action(action, "DP-1")
+
+        notify.assert_called_once_with(
+            "Waypaper gSlapper failed", "socket timed out"
+        )
+
+    def test_wallpaper_change_error_notifies_and_skips_post_command(self):
+        cf = SimpleNamespace(
+            backend="gslapper",
+            post_command="echo should-not-run",
+            use_post_command=True,
+            fill_option="fill",
+            color="#ffffff",
+        )
+        with patch(
+            "waypaper.changer.change_with_gslapper",
+            side_effect=RuntimeError("gSlapper failed"),
+        ), patch("waypaper.changer.notify_waypaper_issue") as notify, patch(
+            "waypaper.changer.subprocess.Popen"
+        ) as popen:
+            changer.change_wallpaper(Path("/wallpapers/a.jpg"), cf, "DP-1")
+
+        notify.assert_called_once_with(
+            "Waypaper gSlapper failed", "gSlapper failed"
+        )
+        popen.assert_not_called()
+
+
+class GSlapperUITests(unittest.TestCase):
+    def test_gslapper_displays_existing_pause_control(self):
+        from waypaper.app import App
+
+        window = SimpleNamespace(
+            cf=SimpleNamespace(backend="gslapper"),
+            txt=SimpleNamespace(msg_stop="Stop all", tip_mpv_stop="mpv stop"),
+            options_box=MagicMock(),
+            mpv_stop_button=MagicMock(),
+            mpv_pause_button=MagicMock(),
+            mpv_sound_toggle=MagicMock(),
+        )
+
+        App.mpv_options_display(window)
+
+        window.mpv_stop_button.set_tooltip_text.assert_called_with("Stop all")
+        self.assertIn(
+            call(window.mpv_pause_button, False, False, 0),
+            window.options_box.pack_end.call_args_list,
+        )
+
+    def test_gslapper_pause_and_stop_schedule_managed_actions(self):
+        from waypaper import app
+
+        window = SimpleNamespace(
+            cf=SimpleNamespace(backend="gslapper", selected_monitor="DP-1")
+        )
+        with patch("waypaper.app.threading.Thread") as thread, patch(
+            "waypaper.app.subprocess.Popen"
+        ):
+            app.App.on_mpv_pause_button_clicked(window, None)
+            app.App.on_mpv_stop_button_clicked(window, None)
+
+        self.assertEqual(thread.call_count, 2)
+        self.assertIs(
+            thread.call_args_list[0].kwargs["target"],
+            changer.run_gslapper_action,
+        )
+        self.assertEqual(
+            thread.call_args_list[0].kwargs["args"],
+            (changer.toggle_gslapper_pause, "DP-1"),
+        )
+        self.assertIs(
+            thread.call_args_list[1].kwargs["target"],
+            changer.run_gslapper_action,
+        )
+        self.assertEqual(
+            thread.call_args_list[1].kwargs["args"],
+            (changer.stop_all_gslappers,),
+        )
+
+    def test_gslapper_sound_schedules_selected_instance_restart(self):
+        from waypaper import app
+
+        toggle = MagicMock()
+        toggle.get_active.return_value = True
+        config = SimpleNamespace(
+            backend="gslapper",
+            selected_monitor="DP-1",
+            selected_wallpaper=Path("/wallpapers/a.mp4"),
+            mpvpaper_sound=False,
+        )
+        window = SimpleNamespace(cf=config)
+        with patch("waypaper.app.threading.Thread") as thread, patch(
+            "waypaper.changer.change_with_gslapper"
+        ):
+            app.App.on_mpv_sound_toggled(window, toggle)
+
+        self.assertTrue(config.mpvpaper_sound)
+        self.assertIs(
+            thread.call_args.kwargs["target"], changer.run_gslapper_action
+        )
+        self.assertEqual(
+            thread.call_args.kwargs["args"],
+            (
+                changer.restart_gslapper,
+                Path("/wallpapers/a.mp4"),
+                config,
+                "DP-1",
+            ),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
