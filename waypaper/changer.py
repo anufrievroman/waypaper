@@ -395,8 +395,13 @@ def toggle_gslapper_pause(monitor: str) -> None:
             raise RuntimeError("No Waypaper-managed gSlapper instances are running")
         states = [_gslapper_query(target)[0] for target in targets]
         command = "pause" if "playing" in states else "resume"
-        for target in targets:
-            _gslapper_ipc(target, command)
+        # gSlapper nests pause commands: a paused instance that receives
+        # another pause needs two resumes before it plays again, so only
+        # command the targets that are not already in the desired state.
+        desired = "paused" if command == "pause" else "playing"
+        for target, state in zip(targets, states):
+            if state != desired:
+                _gslapper_ipc(target, command)
 
 
 def stop_all_gslappers() -> None:

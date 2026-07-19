@@ -246,7 +246,10 @@ class GSlapperIPCTests(unittest.TestCase):
 
         ipc.assert_called_once_with(target, "resume")
 
-    def test_pause_all_converges_each_managed_output(self):
+    def test_pause_all_skips_targets_already_in_the_desired_state(self):
+        # gSlapper nests pause commands: pausing an already-paused instance
+        # requires two resumes before it plays again, so convergence must not
+        # send pause to a target that is already paused.
         monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
         targets = [changer.gslapper_socket_path(m.name) for m in monitors]
         for target in targets:
@@ -265,9 +268,30 @@ class GSlapperIPCTests(unittest.TestCase):
         ) as ipc:
             changer.toggle_gslapper_pause("All")
 
+        self.assertEqual(ipc.call_args_list, [call(targets[0], "pause")])
+
+    def test_resume_all_resumes_every_paused_output(self):
+        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
+        targets = [changer.gslapper_socket_path(m.name) for m in monitors]
+        for target in targets:
+            target.touch()
+
+        with patch(
+            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+        ), patch(
+            "waypaper.changer._gslapper_query",
+            side_effect=[
+                ("paused", "video", Path("/wallpapers/a.mp4")),
+                ("paused", "video", Path("/wallpapers/b.mp4")),
+            ],
+        ), patch(
+            "waypaper.changer._gslapper_ipc", return_value="OK"
+        ) as ipc:
+            changer.toggle_gslapper_pause("All")
+
         self.assertCountEqual(
             ipc.call_args_list,
-            [call(target, "pause") for target in targets],
+            [call(target, "resume") for target in targets],
         )
 
     def test_stop_all_only_visits_managed_sockets(self):
