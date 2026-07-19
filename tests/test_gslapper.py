@@ -120,22 +120,6 @@ class GSlapperIPCTests(unittest.TestCase):
             ],
         )
 
-    def test_all_and_specific_outputs_only_overlap_when_required(self):
-        all_socket = changer.gslapper_socket_path("All")
-        dp_socket = changer.gslapper_socket_path("DP-1")
-        hdmi_socket = changer.gslapper_socket_path("HDMI-A-1")
-        for path in (all_socket, dp_socket, hdmi_socket):
-            path.touch()
-
-        self.assertCountEqual(
-            changer._gslapper_overlapping_sockets("All", all_socket),
-            [dp_socket, hdmi_socket],
-        )
-        self.assertEqual(
-            changer._gslapper_overlapping_sockets("DP-1", dp_socket),
-            [all_socket],
-        )
-
     def test_launch_command_rejects_newlines_in_media_path(self):
         with self.assertRaisesRegex(ValueError, "newlines"):
             changer._gslapper_command(
@@ -149,8 +133,6 @@ class GSlapperIPCTests(unittest.TestCase):
         target = changer.gslapper_socket_path("DP-1")
         target.touch()
         with patch(
-            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
-        ), patch(
             "waypaper.changer._gslapper_ipc", return_value="OK"
         ) as ipc, patch("waypaper.changer._launch_gslapper") as launch:
             changer.change_with_gslapper(
@@ -160,6 +142,50 @@ class GSlapperIPCTests(unittest.TestCase):
         ipc.assert_called_once_with(target, "change /wallpapers/new.jpg")
         launch.assert_not_called()
 
+    def test_all_creates_independent_instances_for_later_output_changes(self):
+        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
+
+        def launch(socket_path, image_path, cf, monitor):
+            socket_path.touch()
+
+        cf = self.make_config()
+        with patch(
+            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+        ), patch(
+            "waypaper.changer._launch_gslapper", side_effect=launch
+        ) as launch_gslapper, patch(
+            "waypaper.changer._gslapper_ipc", return_value="OK"
+        ) as ipc:
+            changer.change_with_gslapper(
+                Path("/wallpapers/all.jpg"), cf, "All"
+            )
+            changer.change_with_gslapper(
+                Path("/wallpapers/dp-1.jpg"), cf, "DP-1"
+            )
+
+        self.assertEqual(
+            launch_gslapper.call_args_list,
+            [
+                call(
+                    changer.gslapper_socket_path("DP-1"),
+                    Path("/wallpapers/all.jpg"),
+                    cf,
+                    "DP-1",
+                ),
+                call(
+                    changer.gslapper_socket_path("DP-3"),
+                    Path("/wallpapers/all.jpg"),
+                    cf,
+                    "DP-3",
+                ),
+            ],
+        )
+        ipc.assert_called_once_with(
+            changer.gslapper_socket_path("DP-1"),
+            "change /wallpapers/dp-1.jpg",
+        )
+        self.assertFalse(changer.gslapper_socket_path("All").exists())
+
     def test_video_change_error_restarts_only_the_target(self):
         target = changer.gslapper_socket_path("DP-1")
         target.touch()
@@ -167,8 +193,6 @@ class GSlapperIPCTests(unittest.TestCase):
             "cannot update path (use --auto-stop for video changes)"
         )
         with patch(
-            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
-        ), patch(
             "waypaper.changer._gslapper_ipc", side_effect=error
         ), patch("waypaper.changer._stop_gslapper_at") as stop, patch(
             "waypaper.changer._launch_gslapper"
@@ -184,8 +208,6 @@ class GSlapperIPCTests(unittest.TestCase):
         target = changer.gslapper_socket_path("DP-1")
         target.touch()
         with patch(
-            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
-        ), patch(
             "waypaper.changer._gslapper_ipc",
             side_effect=changer.GSlapperIPCError("file not accessible"),
         ), patch("waypaper.changer._launch_gslapper") as launch:
@@ -204,8 +226,6 @@ class GSlapperIPCTests(unittest.TestCase):
         target = changer.gslapper_socket_path("DP-1")
         target.touch()
         with patch(
-            "waypaper.changer._gslapper_overlapping_sockets", return_value=[]
-        ), patch(
             "waypaper.changer._gslapper_ipc",
             side_effect=ConnectionRefusedError,
         ), patch("waypaper.changer._launch_gslapper") as launch:
@@ -226,6 +246,30 @@ class GSlapperIPCTests(unittest.TestCase):
 
         ipc.assert_called_once_with(target, "resume")
 
+    def test_pause_all_converges_each_managed_output(self):
+        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
+        targets = [changer.gslapper_socket_path(m.name) for m in monitors]
+        for target in targets:
+            target.touch()
+
+        with patch(
+            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+        ), patch(
+            "waypaper.changer._gslapper_query",
+            side_effect=[
+                ("playing", "video", Path("/wallpapers/a.mp4")),
+                ("paused", "video", Path("/wallpapers/b.mp4")),
+            ],
+        ), patch(
+            "waypaper.changer._gslapper_ipc", return_value="OK"
+        ) as ipc:
+            changer.toggle_gslapper_pause("All")
+
+        self.assertCountEqual(
+            ipc.call_args_list,
+            [call(target, "pause") for target in targets],
+        )
+
     def test_stop_all_only_visits_managed_sockets(self):
         first = changer.gslapper_socket_path("DP-1")
         second = changer.gslapper_socket_path("HDMI-A-1")
@@ -243,6 +287,35 @@ class GSlapperIPCTests(unittest.TestCase):
             )
 
         launch.assert_not_called()
+
+    def test_sound_restart_all_restarts_each_managed_output(self):
+        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
+        targets = [changer.gslapper_socket_path(m.name) for m in monitors]
+        for target in targets:
+            target.touch()
+
+        cf = self.make_config()
+        image = Path("/wallpapers/a.mp4")
+        with patch(
+            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+        ), patch(
+            "waypaper.changer._stop_gslapper_at"
+        ) as stop, patch(
+            "waypaper.changer._launch_gslapper"
+        ) as launch:
+            changer.restart_gslapper(image, cf, "All")
+
+        self.assertCountEqual(
+            stop.call_args_list,
+            [call(target) for target in targets],
+        )
+        self.assertCountEqual(
+            launch.call_args_list,
+            [
+                call(target, image, cf, monitor.name)
+                for target, monitor in zip(targets, monitors)
+            ],
+        )
 
     def test_launch_waits_until_ipc_is_ready(self):
         process = MagicMock()

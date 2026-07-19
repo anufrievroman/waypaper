@@ -81,11 +81,15 @@ def _gslapper_managed_sockets() -> list[Path]:
     return sorted(_gslapper_runtime_dir().glob("gslapper-*.sock"))
 
 
-def _gslapper_overlapping_sockets(monitor: str, target: Path) -> list[Path]:
-    if monitor == "All":
-        return [path for path in _gslapper_managed_sockets() if path != target]
-    all_socket = gslapper_socket_path("All")
-    return [all_socket] if all_socket != target and all_socket.exists() else []
+def _gslapper_outputs(monitor: str) -> list[str]:
+    if monitor != "All":
+        return [monitor]
+    outputs = [
+        display.name for display in screeninfo.get_monitors() if display.name
+    ]
+    if not outputs:
+        raise RuntimeError("Could not detect any outputs for gSlapper")
+    return outputs
 
 
 def _gslapper_media_path(image_path: Path) -> str:
@@ -122,7 +126,7 @@ def _gslapper_command(
         str(socket_path),
         "-o",
         " ".join(options),
-        "*" if monitor == "All" else monitor,
+        monitor,
         _gslapper_media_path(image_path),
     ]
 
@@ -344,40 +348,55 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
     """Change a Waypaper-managed gSlapper instance through IPC."""
     with _GSLAPPER_LIFECYCLE:
-        target = gslapper_socket_path(monitor)
-        for overlapping in _gslapper_overlapping_sockets(monitor, target):
-            _stop_gslapper_at(overlapping)
+        outputs = _gslapper_outputs(monitor)
+        targets = [(output, gslapper_socket_path(output)) for output in outputs]
+        if monitor == "All":
+            wanted = {target for _, target in targets}
+            for stale in _gslapper_managed_sockets():
+                if stale not in wanted:
+                    _stop_gslapper_at(stale)
 
-        if target.exists():
-            try:
-                _gslapper_ipc(target, f"change {_gslapper_media_path(image_path)}")
-                return
-            except (FileNotFoundError, ConnectionRefusedError):
-                target.unlink(missing_ok=True)
-            except GSlapperIPCError as error:
-                if GSLAPPER_VIDEO_CHANGE_ERROR not in str(error):
-                    raise
-                _stop_gslapper_at(target)
+        for output, target in targets:
+            if target.exists():
+                try:
+                    _gslapper_ipc(
+                        target, f"change {_gslapper_media_path(image_path)}"
+                    )
+                    continue
+                except (FileNotFoundError, ConnectionRefusedError):
+                    target.unlink(missing_ok=True)
+                except GSlapperIPCError as error:
+                    if GSLAPPER_VIDEO_CHANGE_ERROR not in str(error):
+                        raise
+                    _stop_gslapper_at(target)
 
-        _launch_gslapper(target, image_path, cf, monitor)
+            _launch_gslapper(target, image_path, cf, output)
 
 
 def restart_gslapper(image_path: Path, cf: Config, monitor: str) -> None:
     """Restart the selected managed instance to apply launch-only options."""
     with _GSLAPPER_LIFECYCLE:
-        target = gslapper_socket_path(monitor)
-        if not target.exists():
-            return
-        _stop_gslapper_at(target)
-        _launch_gslapper(target, image_path, cf, monitor)
+        for output in _gslapper_outputs(monitor):
+            target = gslapper_socket_path(output)
+            if target.exists():
+                _stop_gslapper_at(target)
+                _launch_gslapper(target, image_path, cf, output)
 
 
 def toggle_gslapper_pause(monitor: str) -> None:
     """Toggle playback on the selected managed instance."""
     with _GSLAPPER_LIFECYCLE:
-        target = gslapper_socket_path(monitor)
-        state, _, _ = _gslapper_query(target)
-        _gslapper_ipc(target, "resume" if state == "paused" else "pause")
+        targets = [
+            gslapper_socket_path(output) for output in _gslapper_outputs(monitor)
+        ]
+        if monitor == "All":
+            targets = [target for target in targets if target.exists()]
+        if not targets:
+            raise RuntimeError("No Waypaper-managed gSlapper instances are running")
+        states = [_gslapper_query(target)[0] for target in targets]
+        command = "pause" if "playing" in states else "resume"
+        for target in targets:
+            _gslapper_ipc(target, command)
 
 
 def stop_all_gslappers() -> None:
