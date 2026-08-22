@@ -1082,6 +1082,11 @@ class PortugueseBrazilian:
         self.msg_zen = "Modo Zen"
         self.msg_zen_enter = "Você está entrando no Modo Zen.\nPressione Z para retornar ao modo normal."
         self.msg_hyprpaper_restart = "Reiniciar o Hyprpaper"
+        self.msg_slideshow_panel = "Painel de apresentação"
+        self.msg_change_wallpaper_every = "Alterar papel de parede a cada:"
+        self.msg_daemon_start = "Iniciar"
+        self.msg_daemon_restart = "Reiniciar"
+        self.msg_daemon_stop = "Parar"
 
         self.msg_help = "Keybinds padrão do waypaper:\n\nhjkl - Navegação (←↓↑→)\nEnter - Inicia o papel de parede selecionado\nf - Altera a pasta dos papéis de parede\n"
         self.msg_help += "g - Move até o topo\nG - Navega para o fim\nR - Seleciona um papel de parede aleatório\nr - Recache nos papéis de parede\n"
@@ -1112,6 +1117,7 @@ class PortugueseBrazilian:
         self.tip_mpv_sound = "Reproduzir o som do vídeo"
         self.tip_timer = "Quantas vezes mudar automaticamente o papel de parede"
         self.tip_start = "Iniciar mudança automática do papel de parede após um intervalo de tempo"
+        self.tip_hyprpaper_restart = "Reiniciar o Hyprpaper"
 
 def load_language(lang):
     """Load the language package according to selected language"""
