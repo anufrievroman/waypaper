@@ -103,6 +103,7 @@ class German:
         self.msg_arg_monitor = "geben Sie den gewünschten Monitor mit seinem Namen an"
         self.msg_arg_post = "verhindert das Ausführen des in der Konfiguration festgelegten post_command"
         self.msg_arg_show_path_in_tooltip = "zeigt den relativen Pfad im Tooltip an"
+        self.msg_arg_zen = "im Zen-Modus starten"
         self.msg_show_path_in_tooltip = "Pfad im Tooltip anzeigen"
 
         self.msg_select = "Auswählen"
@@ -182,6 +183,7 @@ class French:
         self.msg_arg_monitor = "spécifiez le moniteur souhaité en utilisant son nom"
         self.msg_arg_post = "empêche l'exécution de post_command défini dans la configuration"
         self.msg_arg_show_path_in_tooltip = "afficher le chemin relatif dans l'infobulle"
+        self.msg_arg_zen = "lancer en mode Zen"
 
         self.msg_select = "Sélectionner"
         self.msg_refresh = "Actualiser"
@@ -260,6 +262,7 @@ class Polish:
         self.msg_arg_monitor = "ustaw pożądany monitor używając jego nazwy"
         self.msg_arg_post = "zapobiega uruchomieniu post_command ustawionego w konfiguracji"
         self.msg_arg_show_path_in_tooltip = "pokaż względną ścieżkę w podpowiedzi"
+        self.msg_arg_zen = "uruchom w trybie Zen"
 
         self.msg_select = "Wybierz"
         self.msg_refresh = "Odświerz"
@@ -419,6 +422,7 @@ class Belarusian:
         self.msg_arg_monitor = "określ żądany monitor, używając jego nazwy"
         self.msg_arg_post = "перашкаджае запуску post_command, зададзенага ў канфігурацыі"
         self.msg_arg_show_path_in_tooltip = "паказваць адносны шлях у падказцы"
+        self.msg_arg_zen = "запусціць у рэжыме Дзен"
 
         self.msg_select = "Выбраць"
         self.msg_refresh = "Абнавіць"
@@ -498,6 +502,7 @@ class Ukrainian:
         self.msg_arg_monitor = "вкажіть бажанний монітор за його назвою"
         self.msg_arg_post = "запобігає запуску post_command"
         self.msg_arg_show_path_in_tooltip = "показати відносний шлях у підказці"
+        self.msg_arg_zen = "запустити в режимі дзен"
 
         self.msg_select = "Вибрати"
         self.msg_refresh = "Оновити"
@@ -578,6 +583,7 @@ class Chinese:
         self.msg_arg_monitor = "通过其名称指定所需的显示器"
         self.msg_arg_post = "阻止运行配置中设置的 post_command"
         self.msg_arg_show_path_in_tooltip = "在工具提示中显示相对路径"
+        self.msg_arg_zen = "以禅模式启动"
 
         self.msg_select = "选择"
         self.msg_refresh = "刷新"
@@ -656,6 +662,7 @@ class TraditionalChinese:
         self.msg_arg_monitor = "用螢幕的名稱來選擇壁紙在那一個螢幕顯示"
         self.msg_arg_post = "停止更換壁紙後運行的命令"
         self.msg_arg_show_path_in_tooltip = "在工具提示中顯示相對路徑"
+        self.msg_arg_zen = "以禪模式啟動"
 
         self.msg_select = "選擇"
         self.msg_refresh = "刷新"
@@ -735,6 +742,7 @@ class Spanish:
         self.msg_arg_monitor = "especifique el monitor deseado usando su nombre"
         self.msg_arg_post = "impide ejecutar el post_command definido en la configuración"
         self.msg_arg_show_path_in_tooltip = "mostrar la ruta relativa en la información sobre herramientas"
+        self.msg_arg_zen = "iniciar en modo Zen"
 
         self.msg_select = "Selecciona"
         self.msg_refresh = "Actualizar"
@@ -813,6 +821,7 @@ class Turkish:
         self.msg_arg_monitor = "istenen monitörü adıyla belirt"
         self.msg_arg_post = "ayar dosyasında tanımlı post_command komutunu çalıştırmayı engeller"
         self.msg_arg_show_path_in_tooltip = "ipucunda göreli yolu göster"
+        self.msg_arg_zen = "Zen modunda başlat"
 
         self.msg_select = "Seç"
         self.msg_refresh = "Yenile"
@@ -891,6 +900,7 @@ class Japanese:
         self.msg_arg_monitor = "モニター名を指定して対象のモニターを選択"
         self.msg_arg_post = "設定ファイルで指定された post_command の実行を防止"
         self.msg_arg_show_path_in_tooltip = "ツールチップに相対パスを表示"
+        self.msg_arg_zen = "禅モードで起動"
 
         self.msg_select = "選択"
         self.msg_refresh = "更新"
@@ -980,6 +990,7 @@ class Finnish:
         self.msg_arg_monitor = "määritä haluttu näyttö nimen avulla"
         self.msg_arg_post = "estää suorittamasta post_command asetettu configssa"
         self.msg_arg_show_path_in_tooltip = "näytä relatiivipolku tool-tipissä"
+        self.msg_arg_zen = "käynnistä Zen-tilassa"
 
         self.msg_select = "Valitse"
         self.msg_refresh = "Lataa uudelleen"
