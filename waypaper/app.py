@@ -10,7 +10,13 @@ import shutil
 import imageio
 from pathlib import Path
 
-from waypaper.changer import change_wallpaper
+from waypaper.changer import (
+    change_wallpaper,
+    restart_gslapper,
+    run_gslapper_action,
+    stop_all_gslappers,
+    toggle_gslapper_pause,
+)
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperengine_image_name
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, SWWW_FILTER_TYPES, \
@@ -583,12 +589,14 @@ class App(Gtk.Window):
         self.options_box.remove(self.mpv_pause_button)
         self.options_box.remove(self.mpv_sound_toggle)
         if self.cf.backend == "mpvpaper":
+            self.mpv_stop_button.set_tooltip_text(self.txt.tip_mpv_stop)
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
             self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
         elif self.cf.backend == "gslapper":
-            # Hide pause button for gSlapper since it doesn't support pause functionality
+            self.mpv_stop_button.set_tooltip_text(self.txt.msg_stop)
             self.options_box.pack_end(self.mpv_stop_button, False, False, 0)
+            self.options_box.pack_end(self.mpv_pause_button, False, False, 0)
             self.options_box.pack_end(self.mpv_sound_toggle, False, False, 0)
 
     def fill_option_display(self):
@@ -927,17 +935,16 @@ class App(Gtk.Window):
         self.cf.mpvpaper_sound = toggle.get_active()
         if self.cf.backend == "mpvpaper":
             subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
-        elif self.cf.backend == "gslapper":
-            # For gSlapper, immediately restart with new audio setting
-            from waypaper.changer import change_with_gslapper
-            from pathlib import Path
-
-            # Get current wallpaper path from config
-            if hasattr(self.cf, 'selected_wallpaper') and self.cf.selected_wallpaper:
-                try:
-                    change_with_gslapper(Path(self.cf.selected_wallpaper), self.cf, self.cf.selected_monitor)
-                except Exception as e:
-                    print(f"Could not restart gSlapper with new audio setting: {e}")
+        elif self.cf.backend == "gslapper" and self.cf.selected_wallpaper:
+            threading.Thread(
+                target=run_gslapper_action,
+                args=(
+                    restart_gslapper,
+                    Path(self.cf.selected_wallpaper),
+                    self.cf,
+                    self.cf.selected_monitor,
+                ),
+            ).start()
 
 
     def on_include_subfolders_toggled(self, toggle) -> None:
@@ -1071,15 +1078,20 @@ class App(Gtk.Window):
         if self.cf.backend == "mpvpaper":
             subprocess.Popen(["killall", "mpvpaper"])
         elif self.cf.backend == "gslapper":
-            subprocess.Popen(["killall", "gslapper"])
+            threading.Thread(
+                target=run_gslapper_action,
+                args=(stop_all_gslappers,),
+            ).start()
 
     def on_mpv_pause_button_clicked(self, widget) -> None:
         """On clicking mpv pause button, pause mpvpaper or show not supported for gSlapper"""
         if self.cf.backend == "mpvpaper":
             subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
         elif self.cf.backend == "gslapper":
-            # gSlapper doesn't support pause, so do nothing or show message
-            print("Pause not supported for gSlapper")
+            threading.Thread(
+                target=run_gslapper_action,
+                args=(toggle_gslapper_pause, self.cf.selected_monitor),
+            ).start()
 
     def is_waypaperd_running(self) -> bool:
         result = subprocess.run(["pgrep", "-f", "waypaperd"], capture_output=True)
