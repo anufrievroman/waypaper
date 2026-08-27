@@ -10,6 +10,9 @@ import screeninfo
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
     LINUX_WALLPAPERENGINE_FILL_OPTIONS
+from waypaper.wallpaperengine import (
+    get_wallpaperengine_project,
+)
 
 
 def format_post_command(
@@ -34,16 +37,29 @@ def format_post_command(
 
 def find_process_pid(command: str) -> Optional[int]:
     """Find the PID of the process matching the exact command"""
+    pids = find_process_pids(command)
+    if pids:
+        return pids[0]
+    return None
+
+
+def find_process_pids(command_fragments: str | list[str]) -> list[int]:
+    """Find all PIDs whose command line contains the provided fragments."""
+    if isinstance(command_fragments, str):
+        fragments = [command_fragments]
+    else:
+        fragments = command_fragments
+
     try:
         result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
         processes = result.stdout.splitlines()
+        pids: list[int] = []
         for process in processes:
-            if command in process:
-                # Extract PID (second column after splitting):
-                return int(process.split()[1])
-        return None
+            if all(fragment in process for fragment in fragments):
+                pids.append(int(process.split()[1]))
+        return pids
     except Exception:
-        return None
+        return []
 
 
 def seek_and_destroy(process: str, monitor: str = "All"):
@@ -73,20 +89,32 @@ def seek_and_destroy(process: str, monitor: str = "All"):
 
     # Otherwise, find PID of the process for certain monitor and kill it:
     else:
+        match_sets: list[list[str]] = []
         if process == "mpvpaper":
-            pid = find_process_pid(f"mpvpaper -f socket-{monitor}")
+            match_sets = [
+                ["mpvpaper", f"/tmp/mpv-socket-{monitor}"],
+                ["mpvpaper", monitor],
+            ]
         elif process == "swaybg":
-            pid = find_process_pid(f"swaybg -o {monitor}")
+            match_sets = [["swaybg", f"-o {monitor}"]]
         elif process == "gslapper":
-            pid = find_process_pid(f"gslapper.*{monitor}")
+            match_sets = [["gslapper", monitor]]
         elif process == "linux-wallpaperengine":
-            pid = find_process_pid(f"linux-wallpaperengine --screen-root {monitor}")
+            match_sets = [["linux-wallpaperengine", f"--screen-root {monitor}"]]
         else:
             return
+
+        pids: list[int] = []
+        for match_set in match_sets:
+            pids = find_process_pids(match_set)
+            if pids:
+                break
         try:
-            subprocess.run(['kill', '-9', str(pid)], check=True)
-            print(f"Detected {process} on {monitor} and killed it")
-        except Exception as e:
+            for pid in pids:
+                subprocess.run(['kill', '-9', str(pid)], check=True)
+            if pids:
+                print(f"Detected {process} on {monitor} and killed it")
+        except Exception:
             pass
 
 
@@ -103,8 +131,23 @@ def notify_waypaper_issue(summary: str, body: str) -> None:
         pass
 
 
+def cleanup_dynamic_backends(monitor: str, exclude: tuple[str, ...] = ()) -> None:
+    """Stop dynamic wallpaper renderers that would conflict with the target backend.
+
+    This is process-state hygiene: it makes sure the backend the user actually
+    selected starts from a clean slate. It is not a backend-selection decision
+    and never overrides the user's choice in the picker.
+    """
+    for backend in ("linux-wallpaperengine", "mpvpaper", "gslapper"):
+        if backend in exclude:
+            continue
+        seek_and_destroy(backend, monitor)
+
+
 def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with swaybg backend"""
+
+    cleanup_dynamic_backends(monitor)
 
     # Check pid of current swaybg process:
     if monitor == "All":
@@ -129,6 +172,8 @@ def change_with_swaybg(image_path: Path, cf: Config, monitor: str):
 
 def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with mpvpaper backend"""
+
+    cleanup_dynamic_backends(monitor, exclude=("mpvpaper",))
 
     fill_types = {
             "fill": "panscan=1.0",
@@ -157,11 +202,11 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 
         # Specify the monitor:
         if monitor == "All":
-            command.extend('*')
+            command.append("ALL")
         else:
             command.extend([monitor])
 
-        command.extend([image_path])
+        command.append(str(image_path))
 
         print(f"{command=}")
         subprocess.Popen(command)
@@ -169,6 +214,8 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
 
 def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with gslapper backend"""
+
+    cleanup_dynamic_backends(monitor, exclude=("gslapper",))
 
     # Map waypaper fill options to gSlapper options (using updated gSlapper capabilities):
     fill_options = {
@@ -221,6 +268,8 @@ def change_with_gslapper(image_path: Path, cf: Config, monitor: str):
 def change_with_swww(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with swww backend"""
 
+    cleanup_dynamic_backends(monitor)
+
     # Because swaybg and hyprpaper are known to conflict with swww, kill them:
     seek_and_destroy("swaybg")
     seek_and_destroy("hyprpaper")
@@ -265,6 +314,8 @@ def change_with_swww(image_path: Path, cf: Config, monitor: str):
 
 def change_with_awww(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with awww backend"""
+
+    cleanup_dynamic_backends(monitor)
 
     # Because swaybg and hyprpaper are known to conflict with swww, kill them:
     seek_and_destroy("swaybg")
@@ -311,6 +362,8 @@ def change_with_awww(image_path: Path, cf: Config, monitor: str):
 def change_with_feh(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with feh backend"""
 
+    cleanup_dynamic_backends(monitor)
+
     fill_types = {
             "fill": "--bg-fill",
             "fit": "--bg-max",
@@ -325,6 +378,8 @@ def change_with_feh(image_path: Path, cf: Config, monitor: str):
 
 def change_with_xwallpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with xwallpaper backend"""
+
+    cleanup_dynamic_backends(monitor)
 
     fill_types = {
             "fill": "--zoom",
@@ -343,6 +398,7 @@ def change_with_xwallpaper(image_path: Path, cf: Config, monitor: str):
 
 def change_with_wallutils(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with wallutils backend"""
+    cleanup_dynamic_backends(monitor)
     fill_types = {
             "fill": "scale",
             "fit": "scale",
@@ -356,12 +412,15 @@ def change_with_wallutils(image_path: Path, cf: Config, monitor: str):
 
 def change_with_finder(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper on macOS"""
+    cleanup_dynamic_backends(monitor)
     script = f'tell application "System Events" to set picture of every desktop to "{image_path}"'
     subprocess.Popen(["osascript", "-e", script])
 
 
 def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
     """Change wallpaper with hyprpaper backend"""
+
+    cleanup_dynamic_backends(monitor)
 
     # Check if hyprpaper is already running, otherwise start it, and preload the wallpaper:
     try:
@@ -411,12 +470,36 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 retry_counter += 1
 
 def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
+    cleanup_dynamic_backends(monitor, exclude=("linux-wallpaperengine",))
     seek_and_destroy("linux-wallpaperengine", monitor)
 
     if cf.fill_option.lower() in LINUX_WALLPAPERENGINE_FILL_OPTIONS:
         fill = cf.fill_option.lower()
     else:
         fill = LINUX_WALLPAPERENGINE_FILL_OPTIONS[3]
+
+    project_metadata = None
+    if not image_path.is_dir():
+        try:
+            project_metadata = get_wallpaperengine_project(image_path)
+        except Exception:
+            project_metadata = None
+
+    # Informational advisory only: never overrides the user's backend choice.
+    # If a video project is detected, surface the well-known CPU/battery tradeoff
+    # of running a raw .mp4 through linux-wallpaperengine vs a video-native
+    # backend, so the user can make the backend switch an informed one.
+    if (
+        getattr(cf, "we_video_advisory", True)
+        and project_metadata is not None
+        and project_metadata.get("type") == "video"
+    ):
+        print(
+            "Note: this is a Wallpaper Engine video project. "
+            "linux-wallpaperengine can be several times heavier than mpvpaper "
+            "for raw .mp4 playback. Switch the backend in the picker if the "
+            "resource usage is a concern."
+        )
 
     command = ["linux-wallpaperengine"]
 
@@ -450,7 +533,7 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     command.extend(["--fps", str(cf.linux_wallpaperengine_fps)])
     command.extend(["--scaling", fill])
 
-    command.append(str(image_path.parent))
+    command.append(str(image_path if image_path.is_dir() else image_path.parent))
     print(f"{command=}")
     process = subprocess.Popen(
         command,
