@@ -349,3 +349,5 @@ class Config:
             self.config_file = pathlib.Path(args.config_file).expanduser()
         if args.no_post_command:
             self.use_post_command = False
+        if args.zen_mode:
+            self.zen_mode = args.zen_mode
