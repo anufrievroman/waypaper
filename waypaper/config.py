@@ -131,7 +131,7 @@ class Config:
         self.slideshow_interval = config.getint("Settings", "slideshow_interval", fallback=self.slideshow_interval)
         self.slideshow_enabled = config.getboolean("Settings", "slideshow_enabled", fallback=self.slideshow_enabled)
         self.show_slideshow_panel = config.getboolean("Settings", "show_slideshow_panel", fallback=self.show_slideshow_panel)
-        self.style_file = config.get("Settings", "stylesheet", fallback=self.style_file)
+        self.style_file = pathlib.Path(config.get("Settings", "stylesheet", fallback=self.style_file)).expanduser()
         self.keybindings_file = pathlib.Path(config.get("Settings", "keybindings", fallback=self.keybindings_file)).expanduser()
         self.wallpaperengine_folder = pathlib.Path(config.get("Settings", "wallpaperengine_folder", fallback=self.wallpaperengine_folder)).expanduser()
         self.linux_wallpaperengine_clamp = config.get("Settings", "linux_wallpaperengine_clamp", fallback=self.linux_wallpaperengine_clamp)
