@@ -33,17 +33,36 @@ def format_post_command(
 
 
 def find_process_pid(command: str) -> Optional[int]:
-    """Find the PID of the process matching the exact command"""
+    """Find the PID of the first process matching the command fragments.
+
+    Uses 'pgrep -f' to match against the full command line in /proc.
+
+    Returns the lowest matching PID as an int, or None if no match is found
+    or if the subprocess encounters an error.
+    """
     try:
-        result = subprocess.run(['ps', 'aux'], stdout=subprocess.PIPE, text=True)
-        processes = result.stdout.splitlines()
-        for process in processes:
-            if command in process:
-                # Extract PID (second column after splitting):
-                return int(process.split()[1])
+        result = subprocess.run(
+            ["pgrep", "-f", command],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (subprocess.SubprocessError, FileNotFoundError, OSError):
         return None
-    except Exception:
+
+    if result.returncode != 0:
         return None
+
+    for line in result.stdout.splitlines():
+        stripped = line.strip()
+        if stripped:
+            try:
+                return int(stripped)
+            except ValueError:
+                # Malformed PID line — skip and try next.
+                continue
+    return None
 
 
 def seek_and_destroy(process: str, monitor: str = "All"):
