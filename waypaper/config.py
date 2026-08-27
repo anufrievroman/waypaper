@@ -54,6 +54,7 @@ class Config:
         self.keybindings_file = self.config_dir / "keybindings.ini"
         self.use_xdg_state = False
         self.use_post_command = True
+        self.write_override_file = False
         self.show_path_in_tooltip = True
         self.waypaperd_cycle_length = 1800
         self.slideshow_interval = 60
@@ -126,6 +127,7 @@ class Config:
         self.show_gifs_only = config.getboolean("Settings", "show_gifs_only", fallback=self.show_gifs_only)
         self.zen_mode = config.getboolean("Settings", "zen_mode", fallback=self.zen_mode)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
+        self.write_override_file = config.getboolean("Settings", "write_override_file", fallback=self.write_override_file)
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
         self.waypaperd_cycle_length = int(config.get("Settings", "waypaperd_cycle_length", fallback=self.waypaperd_cycle_length))
         self.slideshow_interval = config.getint("Settings", "slideshow_interval", fallback=self.slideshow_interval)
@@ -307,6 +309,7 @@ class Config:
         config.set("Settings", "mpvpaper_sound", str(self.mpvpaper_sound))
         config.set("Settings", "mpvpaper_options", str(self.mpvpaper_options))
         config.set("Settings", "use_xdg_state", str(self.use_xdg_state))
+        config.set("Settings", "write_override_file", str(self.write_override_file))
         config.set("Settings", "stylesheet", str(self.style_file))
         config.set("Settings", "keybindings", self.shorten_path(self.keybindings_file))
         config.set("Settings", "wallpaperengine_folder", self.shorten_path(self.wallpaperengine_folder))
