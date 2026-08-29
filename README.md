@@ -78,6 +78,7 @@ cp -r data/macos/Waypaper.app ~/Applications/
 - `python-imageio-ffmpeg`
 - `python-screeninfo`
 - `python-platformdirs`
+- `socat` (only required for the `mpvpaper` backend, used for its IPC socket)
 
 ## Usage
 

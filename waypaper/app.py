@@ -18,7 +18,7 @@ from waypaper.changer import (
     toggle_gslapper_pause,
 )
 from waypaper.config import Config
-from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperengine_image_name
+from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperengine_image_name, is_socat_available
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, SWWW_FILTER_TYPES, \
     get_monitor_options, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
@@ -950,6 +950,8 @@ class App(Gtk.Window):
         """Toggle sound of mpv player or gSlapper"""
         self.cf.mpvpaper_sound = toggle.get_active()
         if self.cf.backend == "mpvpaper":
+            if not is_socat_available():
+                return
             subprocess.Popen(f"echo 'cycle mute' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
         elif self.cf.backend == "gslapper" and self.cf.selected_wallpaper:
             threading.Thread(
@@ -1102,6 +1104,8 @@ class App(Gtk.Window):
     def on_mpv_pause_button_clicked(self, widget) -> None:
         """On clicking mpv pause button, pause mpvpaper or show not supported for gSlapper"""
         if self.cf.backend == "mpvpaper":
+            if not is_socat_available():
+                return
             subprocess.Popen(f"echo 'cycle pause' | socat - /tmp/mpv-socket-{self.cf.selected_monitor}", shell=True)
         elif self.cf.backend == "gslapper":
             threading.Thread(

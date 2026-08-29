@@ -11,6 +11,7 @@ from typing import Optional
 from pathlib import Path
 import screeninfo
 
+from waypaper.common import is_socat_available
 from waypaper.config import Config
 from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
     LINUX_WALLPAPERENGINE_FILL_OPTIONS
@@ -344,6 +345,8 @@ def change_with_mpvpaper(image_path: Path, cf: Config, monitor: str):
         subprocess.check_output(["pgrep", "-f", f"socket-{monitor}"], encoding='utf-8')
         time.sleep(0.2)
         print(f"Detected running mpvpaper on {monitor}, now trying to call mpvpaper socket")
+        if not is_socat_available():
+            return
         subprocess.Popen(f"echo 'loadfile \"{image_path}\"' | socat - /tmp/mpv-socket-{monitor}", shell=True)
 
     # If mpvpaper is not running, create a new process in a new socket:

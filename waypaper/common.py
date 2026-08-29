@@ -164,6 +164,14 @@ def check_installed_backends() -> List[str]:
     return installed_backends
 
 
+def is_socat_available() -> bool:
+    """Check for socat, which the mpvpaper backend needs for its IPC socket"""
+    if shutil.which("socat"):
+        return True
+    print("socat is not installed. It is required for the mpvpaper backend to switch, mute, or pause wallpapers.")
+    return False
+
+
 def get_cached_image_path(image_path: str, cache_dir: Path) -> Path:
     real_path_bytes = bytes(os.path.realpath(image_path), encoding="UTF-8")
     return cache_dir / f"{hashlib.md5(real_path_bytes, usedforsecurity=False).hexdigest()}.png"
