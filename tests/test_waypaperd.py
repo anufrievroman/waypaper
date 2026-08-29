@@ -24,14 +24,18 @@ class WaypaperdTests(unittest.TestCase):
             self.assertEqual(waypaperd.resolve_interval(600), 600)
             read_config_interval.assert_not_called()
 
-    def test_read_config_interval_uses_waypaper_config(self):
+    def test_read_config_interval_uses_slideshow_interval(self):
         with patch("waypaper.waypaperd.Config") as config_class:
             config = config_class.return_value
-            config.waypaperd_cycle_length = 1200
+            config.slideshow_interval = 20
 
             self.assertEqual(waypaperd.read_config_interval(), 1200)
             config.read.assert_called_once_with()
             config.check_validity.assert_called_once_with()
+
+    def test_read_config_interval_falls_back_to_default_on_error(self):
+        with patch("waypaper.waypaperd.Config", side_effect=Exception("no config")):
+            self.assertEqual(waypaperd.read_config_interval(), waypaperd.DEFAULT_INTERVAL_SECONDS)
 
     def test_positive_interval_rejects_non_positive_values(self):
         with self.assertRaises(argparse.ArgumentTypeError):

@@ -55,7 +55,6 @@ class Config:
         self.use_xdg_state = False
         self.use_post_command = True
         self.show_path_in_tooltip = True
-        self.waypaperd_cycle_length = 1800
         self.slideshow_interval = 60
         self.slideshow_enabled = False
         self.show_slideshow_panel = False
@@ -127,7 +126,6 @@ class Config:
         self.zen_mode = config.getboolean("Settings", "zen_mode", fallback=self.zen_mode)
         self.use_xdg_state = config.getboolean("Settings", "use_xdg_state", fallback=self.use_xdg_state)
         self.show_path_in_tooltip = config.getboolean("Settings", "show_path_in_tooltip", fallback=self.show_path_in_tooltip)
-        self.waypaperd_cycle_length = int(config.get("Settings", "waypaperd_cycle_length", fallback=self.waypaperd_cycle_length))
         self.slideshow_interval = config.getint("Settings", "slideshow_interval", fallback=self.slideshow_interval)
         self.slideshow_enabled = config.getboolean("Settings", "slideshow_enabled", fallback=self.slideshow_enabled)
         self.show_slideshow_panel = config.getboolean("Settings", "show_slideshow_panel", fallback=self.show_slideshow_panel)
@@ -211,8 +209,6 @@ class Config:
             self.swww_transition_duration = 2
         if 0 > int(self.swww_transition_fps):
             self.swww_transition_fps = 60
-        if int(self.waypaperd_cycle_length) <= 0:
-            self.waypaperd_cycle_length = 1800
         if self.slideshow_interval <= 0:
             self.slideshow_interval = 60
 
@@ -293,7 +289,6 @@ class Config:
         config.set("Settings", "show_gifs_only", str(self.show_gifs_only))
         config.set("Settings", "zen_mode", str(self.zen_mode))
         config.set("Settings", "post_command", self.post_command)
-        config.set("Settings", "waypaperd_cycle_length", str(self.waypaperd_cycle_length))
         config.set("Settings", "slideshow_interval", str(self.slideshow_interval))
         config.set("Settings", "slideshow_enabled", str(self.slideshow_enabled))
         config.set("Settings", "show_slideshow_panel", str(self.show_slideshow_panel))

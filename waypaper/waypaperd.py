@@ -11,6 +11,9 @@ from waypaper.config import Config
 
 LOG = logging.getLogger(__name__)
 
+# Last-resort interval used only when the config cannot be read at all:
+DEFAULT_INTERVAL_SECONDS = 1800
+
 
 def positive_interval(value: str) -> int:
     interval = int(value)
@@ -34,10 +37,17 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 def read_config_interval() -> int:
-    config = Config()
-    config.read()
-    config.check_validity()
-    return int(config.waypaperd_cycle_length)
+    # The daemon follows the same interval the user sets in the GUI slideshow
+    # (stored in minutes). Fall back to a hardcoded default only if the config
+    # cannot be read, e.g. when waypaperd runs before the GUI was ever launched.
+    try:
+        config = Config()
+        config.read()
+        config.check_validity()
+        return int(config.slideshow_interval) * 60
+    except Exception:
+        LOG.warning("Could not read interval from config, using default of %s seconds.", DEFAULT_INTERVAL_SECONDS)
+        return DEFAULT_INTERVAL_SECONDS
 
 
 def resolve_interval(interval: int | None) -> int:
