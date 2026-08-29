@@ -103,9 +103,10 @@ def run():
             if cf.wallpapers[index] is None:
                 continue
 
-            # Launch commands to change wallpaper in a separate thread:
-            threading.Thread(target=change_wallpaper, args=(wallpaper, cf, monitor)).start()
-            time.sleep(0.1)
+            # Change the wallpaper synchronously, one monitor at a time. This must not run
+            # concurrently: when "All" is present alongside specific monitors, a concurrent
+            # "All" command can finish last and overwrite the per-monitor wallpapers.
+            change_wallpaper(wallpaper, cf, monitor)
 
         # Save new wallpapers:
         if cf.use_xdg_state:
