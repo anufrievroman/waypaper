@@ -117,7 +117,7 @@ def run():
         # On restore, restart the daemon if slideshow was enabled:
         if args.restore and cf.slideshow_enabled:
             try:
-                subprocess.Popen(["waypaperd", str(cf.slideshow_interval * 60)])
+                subprocess.Popen([sys.executable, "-m", "waypaper.waypaperd", str(cf.slideshow_interval * 60)])
             except FileNotFoundError:
                 print("Couldn't launch the daemon for automatic wallpaper change. See documentation on how to enable it.")
 

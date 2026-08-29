@@ -1133,7 +1133,7 @@ class App(Gtk.Window):
             interval_minutes = 60
         subprocess.run(["pkill", "-f", "waypaperd"], capture_output=True)
         try:
-            subprocess.Popen(["waypaperd", str(interval_minutes * 60)])
+            subprocess.Popen([sys.executable, "-m", "waypaper.waypaperd", str(interval_minutes * 60)])
             self.cf.slideshow_interval = interval_minutes
             self.cf.slideshow_enabled = True
             self.cf.save()
