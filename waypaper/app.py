@@ -703,6 +703,13 @@ class App(Gtk.Window):
         self.bottom_loading_box.add(self.loading_label)
         self.bottom_loading_box.show_all()
         
+    def update_caching_label(self, current: int, total: int) -> None:
+        if not self.loading_label:
+            return
+
+        percent = int(current * 100 / total) if total else 100
+        self.loading_label.set_label(f"{self.txt.msg_caching} {percent}%")
+
     def remove_caching_label(self) -> None:
         if not self.loading_label:
             return
@@ -753,7 +760,16 @@ class App(Gtk.Window):
         # This causes image_paths to be the correct number of elements, but image_names will
         # be off by however many zero byte files are present. To fix this a copy is made to
         # iterate through and then the image can be saftley removed from the original lis
-        for image_path in list(self.image_paths):
+        image_paths_copy = list(self.image_paths)
+        total_images = len(image_paths_copy)
+        last_percent = -1
+        for index, image_path in enumerate(image_paths_copy):
+
+            # Update the caching progress percentage, but only when it actually changes:
+            percent = int(index * 100 / total_images) if total_images else 100
+            if percent != last_percent:
+                last_percent = percent
+                GLib.idle_add(self.update_caching_label, index, total_images)
 
             # Skip zero byte files inside the image_path:
             if os.path.getsize(image_path) == 0:
