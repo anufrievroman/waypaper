@@ -143,14 +143,14 @@ class GSlapperIPCTests(unittest.TestCase):
         launch.assert_not_called()
 
     def test_all_creates_independent_instances_for_later_output_changes(self):
-        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
+        monitors = ["DP-1", "DP-3"]
 
         def launch(socket_path, image_path, cf, monitor):
             socket_path.touch()
 
         cf = self.make_config()
         with patch(
-            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+            "waypaper.changer.get_plugged_monitors", return_value=monitors
         ), patch(
             "waypaper.changer._launch_gslapper", side_effect=launch
         ) as launch_gslapper, patch(
@@ -250,13 +250,13 @@ class GSlapperIPCTests(unittest.TestCase):
         # gSlapper nests pause commands: pausing an already-paused instance
         # requires two resumes before it plays again, so convergence must not
         # send pause to a target that is already paused.
-        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
-        targets = [changer.gslapper_socket_path(m.name) for m in monitors]
+        monitors = ["DP-1", "DP-3"]
+        targets = [changer.gslapper_socket_path(m) for m in monitors]
         for target in targets:
             target.touch()
 
         with patch(
-            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+            "waypaper.changer.get_plugged_monitors", return_value=monitors
         ), patch(
             "waypaper.changer._gslapper_query",
             side_effect=[
@@ -271,13 +271,13 @@ class GSlapperIPCTests(unittest.TestCase):
         self.assertEqual(ipc.call_args_list, [call(targets[0], "pause")])
 
     def test_resume_all_resumes_every_paused_output(self):
-        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
-        targets = [changer.gslapper_socket_path(m.name) for m in monitors]
+        monitors = ["DP-1", "DP-3"]
+        targets = [changer.gslapper_socket_path(m) for m in monitors]
         for target in targets:
             target.touch()
 
         with patch(
-            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+            "waypaper.changer.get_plugged_monitors", return_value=monitors
         ), patch(
             "waypaper.changer._gslapper_query",
             side_effect=[
@@ -313,15 +313,15 @@ class GSlapperIPCTests(unittest.TestCase):
         launch.assert_not_called()
 
     def test_sound_restart_all_restarts_each_managed_output(self):
-        monitors = [SimpleNamespace(name="DP-1"), SimpleNamespace(name="DP-3")]
-        targets = [changer.gslapper_socket_path(m.name) for m in monitors]
+        monitors = ["DP-1", "DP-3"]
+        targets = [changer.gslapper_socket_path(m) for m in monitors]
         for target in targets:
             target.touch()
 
         cf = self.make_config()
         image = Path("/wallpapers/a.mp4")
         with patch(
-            "waypaper.changer.screeninfo.get_monitors", return_value=monitors
+            "waypaper.changer.get_plugged_monitors", return_value=monitors
         ), patch(
             "waypaper.changer._stop_gslapper_at"
         ) as stop, patch(
@@ -336,7 +336,7 @@ class GSlapperIPCTests(unittest.TestCase):
         self.assertCountEqual(
             launch.call_args_list,
             [
-                call(target, image, cf, monitor.name)
+                call(target, image, cf, monitor)
                 for target, monitor in zip(targets, monitors)
             ],
         )

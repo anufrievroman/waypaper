@@ -25,7 +25,7 @@ setuptools.setup(
             "waypaperd = waypaper.waypaperd:main"
         ]
     },
-    install_requires=["PyGObject", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg", "screeninfo"],
+    install_requires=["PyGObject", "platformdirs", "Pillow", "imageio", "imageio-ffmpeg"],
     version=version,
     python_requires='>3.10',
     classifiers=[

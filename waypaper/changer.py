@@ -9,12 +9,11 @@ import threading
 import time
 from typing import Optional
 from pathlib import Path
-import screeninfo
 
 from waypaper.common import is_socat_available
 from waypaper.config import Config
-from waypaper.options import get_monitor_names_with_hyprctl, LINUX_WALLPAPERENGINE_CLAMP, \
-    LINUX_WALLPAPERENGINE_FILL_OPTIONS
+from waypaper.options import get_monitor_names_with_hyprctl, get_plugged_monitors, \
+    LINUX_WALLPAPERENGINE_CLAMP, LINUX_WALLPAPERENGINE_FILL_OPTIONS
 
 
 GSLAPPER_IPC_TIMEOUT = 2.0
@@ -85,9 +84,7 @@ def _gslapper_managed_sockets() -> list[Path]:
 def _gslapper_outputs(monitor: str) -> list[str]:
     if monitor != "All":
         return [monitor]
-    outputs = [
-        display.name for display in screeninfo.get_monitors() if display.name
-    ]
+    outputs = [name for name in get_plugged_monitors() if name]
     if not outputs:
         raise RuntimeError("Could not detect any outputs for gSlapper")
     return outputs
@@ -597,9 +594,6 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
 
     # Decide which monitors are affected:
     if monitor == "All":
-        # monitors = [m.name for m in screeninfo.get_monitors()]
-        # monitor_info = subprocess.run(["hyprctl", "monitors", "-j"], capture_output=True, text=True, check=True)
-        # monitors = [m["name"] for m in json.loads(monitor_info.stdout)]
         monitors = get_monitor_names_with_hyprctl()
     else:
         monitors: list = [monitor]
@@ -645,7 +639,7 @@ def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str
     command = ["linux-wallpaperengine"]
 
     if monitor == "All":
-        for monitor in [m.name for m in screeninfo.get_monitors()]:
+        for monitor in get_plugged_monitors():
             if monitor is not None:
                 command.extend(["--screen-root", monitor])
     else:

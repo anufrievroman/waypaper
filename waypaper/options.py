@@ -1,7 +1,10 @@
 """Module that contains lists of possible options used in the application"""
 import json
+import os
 import subprocess
+import sys
 
+from pathlib import Path
 from typing import List, Dict
 
 
@@ -97,6 +100,88 @@ def get_monitor_names_with_hyprctl() -> List[str]:
     return [monitor["name"] for monitor in json.loads(monitors_info.stdout)]
 
 
+def _monitors_from_drm() -> List[str]:
+    """Read connected outputs from the kernel via /sys/class/drm (Wayland / DRM).
+
+    Connector directories are named like 'card0-DP-1'; we strip the 'cardN-'
+    prefix to obtain the output name ('DP-1') as reported by wlroots-based
+    compositors."""
+    names: List[str] = []
+    drm = Path("/sys/class/drm")
+    if not drm.is_dir():
+        return names
+    for card in sorted(drm.glob("card*-*")):
+        try:
+            if (card / "status").read_text().strip() == "connected":
+                name = card.name.split("-", 1)[1]
+                if name not in names:  # dedupe across multiple GPUs
+                    names.append(name)
+        except OSError:
+            continue
+    return names
+
+
+def _monitors_from_xrandr() -> List[str]:
+    """Read active outputs from xrandr (Xorg)."""
+    out = subprocess.run(
+        ["xrandr", "--listmonitors"], capture_output=True, text=True, check=True
+    )
+    # First line is "Monitors: N"; the last token of each row is the output name.
+    names = [line.split()[-1] for line in out.stdout.splitlines()[1:] if line.strip()]
+    # Under XWayland xrandr returns XWAYLAND0/1... — a sign we are really on
+    # Wayland, so fall back to the DRM connector names instead.
+    if any(name.startswith("XWAYLAND") for name in names):
+        return _monitors_from_drm()
+    return names
+
+
+def _monitors_from_macos() -> List[str]:
+    """List connected displays on macOS via system_profiler (no dependency)."""
+    out = subprocess.run(
+        ["system_profiler", "-json", "SPDisplaysDataType"],
+        capture_output=True, text=True, check=True,
+    )
+    data = json.loads(out.stdout)
+    names: List[str] = []
+    for gpu in data.get("SPDisplaysDataType", []):
+        for display in gpu.get("spdisplays_ndrvs", []):
+            # Skip displays that are attached but not online, if reported.
+            if display.get("spdisplays_online") == "spdisplays_no":
+                continue
+            name = display.get("_name")
+            if name:
+                names.append(name)
+    return names
+
+
+def _is_wayland() -> bool:
+    """Best-effort detection of a Wayland session."""
+    return bool(os.environ.get("WAYLAND_DISPLAY")) or \
+        os.environ.get("XDG_SESSION_TYPE") == "wayland"
+
+
+def get_plugged_monitors() -> List[str]:
+    """Get plugged monitor names without third-party dependencies.
+
+    Returns an empty list on any failure, in which case callers fall back to
+    targeting 'All' outputs."""
+    if sys.platform == "darwin":
+        try:
+            return _monitors_from_macos()
+        except Exception:
+            return []
+    # Check WAYLAND_DISPLAY before DISPLAY: on Wayland, DISPLAY is also set for
+    # XWayland, so relying on it would wrongly pick xrandr.
+    if _is_wayland():
+        return _monitors_from_drm()
+    if os.environ.get("DISPLAY"):
+        try:
+            return _monitors_from_xrandr()
+        except Exception:
+            return _monitors_from_drm()
+    return _monitors_from_drm()
+
+
 def get_monitors(backend) -> List[str]:
     """Get a list of monitor names by various means depending on the backend.
     Returns a list of monitor names or an empty list if an error occurs."""
@@ -108,8 +193,7 @@ def get_monitors(backend) -> List[str]:
         elif backend == "awww":
             return get_monitor_names_with_awww()
         else:
-            from screeninfo import get_monitors as _get_monitors
-            return [m.name for m in _get_monitors()]
+            return get_plugged_monitors()
     except Exception as e:
         print(f"Error fetching monitors: {e}. Falling back to 'All'.")
         return []
