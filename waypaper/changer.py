@@ -250,17 +250,50 @@ def seek_and_destroy(process: str, monitor: str = "All"):
         except subprocess.CalledProcessError:
             pass
 
-    # Kill swww-daemon or awww-daemon if both are running at the same time, only works on all monitors
+    # swww-daemon and awww-daemon: clear the background layer instead of killing
+    # the daemon, so other monitors keep their wallpapers.
     elif process == "swww-daemon":
         try:
-            subprocess.Popen(["swww kill"])
+            subprocess.run(
+                ["pgrep", "swww-daemon"],
+                capture_output=True,
+                check=True,
+            )
         except subprocess.CalledProcessError:
             pass
-    elif process == "awww-daemon":
+        else:
+            try:
+                subprocess.Popen(
+                    ["swww", "clear", "--outputs", monitor],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                print(f"Cleared swww background on {monitor}")
+            except Exception:
+                pass
+    elif process == "awww-daemon" and monitor == "All":
+        # awww has no per-output clear command, so we can only kill the daemon
+        # when the request covers every monitor. For a per-monitor request, leave
+        # the daemon alone to preserve the other monitors' backgrounds.
         try:
-            subprocess.Popen(["awww kill"])
+            subprocess.run(
+                ["pgrep", "awww-daemon"],
+                capture_output=True,
+                check=True,
+            )
         except subprocess.CalledProcessError:
             pass
+        else:
+            try:
+                subprocess.Popen(
+                    ["awww", "kill"],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+            except Exception:
+                pass
 
     # Otherwise, find PID of the process for certain monitor and kill it:
     else:
@@ -635,6 +668,11 @@ def change_with_hyprpaper(image_path: Path, cf: Config, monitor: str):
                 retry_counter += 1
 
 def change_with_linux_wallpaperengine(image_path: Path, cf: Config, monitor: str):
+    # Clear static-image backends (swww/awww) on this monitor before launching the new
+    # scene. Otherwise the previous swww/awww background stays in the Wayland background
+    # layer and renders behind the new dynamic wallpaper (visible as two stacked scenes).
+    seek_and_destroy("swww-daemon", monitor)
+    seek_and_destroy("awww-daemon", monitor)
     seek_and_destroy("linux-wallpaperengine", monitor)
 
     if cf.fill_option.lower() in LINUX_WALLPAPERENGINE_FILL_OPTIONS:
