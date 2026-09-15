@@ -12,12 +12,15 @@ import hashlib
 from pathlib import Path
 from typing import List
 from PIL import Image
-import json
 
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GdkPixbuf, Gdk, GLib
 
 from waypaper.options import IMAGE_EXTENSIONS, BACKEND_OPTIONS, VIDEO_EXTENSIONS
+from waypaper.wallpaperengine import (
+    get_wallpaperengine_image_name,
+    get_wallpaperengine_preview,
+)
 
 
 def has_image_extension(file_path: str, backend: str) -> bool:
@@ -65,25 +68,24 @@ def get_image_paths(backend: str,
                 image_path_list.append(os.path.join(root, image_name))
     return image_path_list
 
-def get_wallpaperengine_preview(wallpaperengine_folder: Path | str) -> List[str]:
-    image_path_list = []
-    for root, directories, files in os.walk(wallpaperengine_folder):
-        for file in files:
-            if Path(file).stem == "preview":
-                image_path_list.append(os.path.join(root, file))
-    return image_path_list
-
-def get_wallpaperengine_image_name(full_path: Path | str) -> str:
-    full_path = Path(full_path)
-    image_dir = full_path.parent
-    with open(image_dir / "project.json", "r") as f:
-        project = json.load(f)
-    return project["title"]
-
-
 def get_image_name(full_path: str, base_folder_list: list[Path], include_path: bool) ->  str | None:
-    """Get image name that may or may not include parent folders"""
+    """Get image name that may or may not include parent folders
+
+    For Wallpaper Engine projects (paths that sit next to a ``project.json``
+    file), the tooltip shows the normalized ``Title [type]`` from
+    ``project.json`` instead of the raw path. The Workshop project
+    directory layout makes this cheap to detect without an extra walk.
+    Malformed or missing ``project.json`` falls through to the regular
+    path-based name so the grid never shows an empty tooltip.
+    """
     full_path = Path(os.path.normpath(full_path)).absolute()
+
+    # Workshop projects: surface the normalized title [type] in the tooltip.
+    if (full_path.parent / "project.json").exists():
+        try:
+            return get_wallpaperengine_image_name(full_path)
+        except Exception:
+            pass  # fall through to the regular path-based name
 
     # If path is not required, just return file name:
     if not include_path:
