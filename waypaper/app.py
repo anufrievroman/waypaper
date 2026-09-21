@@ -20,7 +20,7 @@ from waypaper.changer import (
 from waypaper.config import Config
 from waypaper.common import get_image_paths, get_wallpaperengine_preview, get_image_name, get_random_file, cache_image, get_cached_image_path, get_wallpaperengine_image_name, is_socat_available
 from waypaper.options import FILL_OPTIONS, SORT_OPTIONS, SORT_DISPLAYS, VIDEO_EXTENSIONS, SWWW_TRANSITION_TYPES, SWWW_FILTER_TYPES, \
-    get_monitor_options, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
+    get_monitor_options, get_awww_namespaces, LINUX_WALLPAPERENGINE_FILL_OPTIONS, LINUX_WALLPAPERENGINE_CLAMP
 from waypaper.translations import Chinese, English, French, German, Polish, Russian, Belarusian, Spanish
 from waypaper.keybindings import Keys
 
@@ -271,6 +271,7 @@ class App(Gtk.Window):
         # Create a transition type dropdown menu for swww
         self.swww_transitions_options = Gtk.ComboBoxText()
         self.swww_filter_options = Gtk.ComboBoxText()
+        self.awww_namespace_combo = Gtk.ComboBoxText()
 
         #  Get angle for animation
         self.swww_angle_entry = Gtk.Entry()
@@ -395,6 +396,7 @@ class App(Gtk.Window):
         self.fill_option_display()
         self.color_picker_display()
         self.swww_or_awww_options_display()
+        self.awww_namespace_display()
         self.hyprland_restart_button_display()
 
 
@@ -558,6 +560,33 @@ class App(Gtk.Window):
         self.options_box.pack_end(self.swww_duration_entry, False, False, 0)
         self.options_box.pack_end(self.swww_filter_options, False, False, 0)
         self.options_box.pack_end(self.swww_transitions_options, False, False, 0)
+
+    def awww_namespace_display(self) -> None:
+        """Show the namespace option when multiple awww daemons are running."""
+        self.options_box.remove(self.awww_namespace_combo)
+        if self.cf.backend != "awww":
+            return
+
+        namespaces = get_awww_namespaces()
+        if len(namespaces) <= 1:
+            self.cf.awww_namespace = "All"
+            return
+        namespaces.insert(0, "All")
+
+        self.awww_namespace_combo = Gtk.ComboBoxText()
+        for namespace in namespaces:
+            self.awww_namespace_combo.append_text(namespace or "default")
+        if self.cf.awww_namespace in namespaces:
+            active_namespace = namespaces.index(self.cf.awww_namespace)
+        elif "" in namespaces:
+            active_namespace = namespaces.index("")
+        else:
+            active_namespace = 0
+        self.awww_namespace_combo.set_active(active_namespace)
+        self.cf.awww_namespace = namespaces[active_namespace]
+        self.awww_namespace_combo.connect("changed", self.on_awww_namespace_changed, namespaces)
+        self.awww_namespace_combo.set_tooltip_text(self.txt.tip_namespace)
+        self.options_box.pack_start(self.awww_namespace_combo, False, False, 0)
 
     def hyprland_restart_button_display(self) -> None:
         # If hyprpaper is installed, add a button to restart it
@@ -1032,6 +1061,7 @@ class App(Gtk.Window):
         self.fill_option_display()
         self.color_picker_display()
         self.swww_or_awww_options_display()
+        self.awww_namespace_display()
         self.linux_wallpaperengine_options_display()
         self.hyprland_restart_button_display()
         self.show_all()
@@ -1049,6 +1079,13 @@ class App(Gtk.Window):
         active_index = combo.get_active()
         self.cf.swww_filter = SWWW_FILTER_TYPES[active_index]
         print(f"Filter changed to: {self.cf.swww_filter}")
+
+
+    def on_awww_namespace_changed(self, combo, namespaces) -> None:
+        """Update the active awww namespace based on the selected option."""
+        active_index = combo.get_active()
+        if active_index >= 0:
+            self.cf.awww_namespace = namespaces[active_index]
 
 
     def on_color_set(self, color_button):
