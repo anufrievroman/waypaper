@@ -517,6 +517,10 @@ def change_with_awww(image_path: Path, cf: Config, monitor: str):
     awww_version = [int(x) for x in version_p.stdout.strip().split("-")[0].split(" ")[1].split(".")]
 
     command = ["awww", "img", image_path]
+    if cf.awww_namespace == "All":
+        command.append("--all")
+    elif cf.awww_namespace:
+        command.extend(["--namespace", cf.awww_namespace])
     command.extend(["--resize", fill])
     if awww_version >= [0, 11, 0]:
         command.extend(["--fill-color", cf.color.lstrip("#")])

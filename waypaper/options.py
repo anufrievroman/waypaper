@@ -91,6 +91,19 @@ def get_monitor_names_with_awww() -> List[str]:
         print(f"Exception: {e}")
     return connected_monitors
 
+
+def get_awww_namespaces() -> List[str]:
+    """Obtain the namespaces of running awww daemons."""
+    try:
+        output = subprocess.check_output(["awww", "query", "--all", "--json"], encoding="utf-8")
+        query = json.loads(output)
+        if not isinstance(query, dict):
+            return []
+        return list(query)
+    except (OSError, subprocess.CalledProcessError, json.JSONDecodeError):
+        return []
+
+
 def get_monitor_names_with_hyprctl() -> List[str]:
     """Obtain the list of plugged monitors using hyprctl"""
     monitors_info = subprocess.run(["hyprctl", "monitors", "-j"], capture_output=True, text=True, check=True)
