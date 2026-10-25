@@ -19,11 +19,13 @@ GUI wallpaper setter for Wayland, Xorg, and macOS. It works as a frontend for po
 
 ## Installation
 
-Install at least one of the backends and Waypaper, which works as a frontend.
+Install Waypaper and at least one wallpaper backend, unless you use a custom wallpaper command with `backend = none`.
 
 ### 1. Install a backend
 
 Install a preferred backend from your package manager: [swww (archived)](https://github.com/Horus645/swww) or [awww](https://codeberg.org/LGFae/awww) or [swaybg](https://github.com/swaywm/swaybg) or [hyprpaper](https://github.com/hyprwm/hyprpaper) on Wayland or [xwallpaper](https://github.com/stoeckmann/xwallpaper) or [feh](https://github.com/derf/feh) on Xorg or [mpvpaper](https://github.com/GhostNaN/mpvpaper) or [gslapper](https://github.com/Nomadcxx/gSlapper) or [wallutils](https://github.com/xyproto/wallutils) on both. Install [linux-wallpaperengine](https://github.com/Almamu/linux-wallpaperengine) if you want to use Steam's Wallpaper Engine animated wallpapers. On macOS, use the built-in `macos` backend.
+
+For a custom wallpaper command, set `backend = none` and `post_command` in the `[Settings]` section of your configuration file. In this mode, Waypaper runs `post_command` without invoking a built-in wallpaper backend.
 
 ### 2. Install Waypaper
 
@@ -72,7 +74,7 @@ cp -r data/macos/Waypaper.app ~/Applications/
 
 ### Dependencies
 
-- `awww` or `swww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper` or `gslapper` or `linux-wallpaperengine` or `macos`
+- `awww` or `swww` or `swaybg` or `xwallpaper` or `feh` or `wallutils` or `hyprpaper` or `mpvpaper` or `gslapper` or `linux-wallpaperengine` or `macos` (not required with `backend = none`)
 - gobject python library (it might be called `python-gobject` or `python3-gi` or `python3-gobject` in your package manager.)
 - `python-imageio`
 - `python-imageio-ffmpeg`
